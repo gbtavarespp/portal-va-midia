@@ -1,0 +1,2500 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+</head>
+<body>
+<title>VA Mídia Aprovação</title>
+<script>
+/* Configuração de produção. Vazio = usa o banco do Claude (ou demonstração local).
+   Preencha com os dados do seu projeto Supabase para o modo servidor — veja producao/LEIAME.md. */
+window.VA_CONFIG = {
+  supabaseUrl: "",      // ex.: "https://abcd1234.supabase.co"
+  supabaseAnonKey: ""   // chave pública "anon" do projeto (Settings > API)
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap">
+<style>
+/* VA Mídia · Content Approval Portal
+   Direção: preto predominante, amarelo como destaque, superfícies escuras, bordas finas.
+   Visual único escuro por escolha de marca (não segue o tema claro do visualizador). */
+:root{
+  color-scheme: dark;
+  --bg:#0B0B0C;
+  --bg-2:#101012;
+  --surface:#141416;
+  --surface-2:#1B1B1E;
+  --surface-3:#232327;
+  --line:#2A2A2F;
+  --line-soft:#1F1F23;
+  --text:#F3F1EA;
+  --text-2:#BDB9AE;
+  --muted:#85817A;
+  --yellow:#F4C542;
+  --yellow-hi:#FFD45C;
+  --yellow-ink:#16120A;
+  --yellow-soft:rgba(244,197,66,.11);
+  --yellow-line:rgba(244,197,66,.32);
+  --st-analise:#E9BE45;
+  --st-analise-bg:rgba(233,190,69,.12);
+  --st-aprovado:#72C495;
+  --st-aprovado-bg:rgba(114,196,149,.12);
+  --st-publicado:#93B8DE;
+  --st-publicado-bg:rgba(147,184,222,.12);
+  --danger:#E8836F;
+  --danger-bg:rgba(232,131,111,.12);
+  --radius-s:10px;
+  --radius:16px;
+  --radius-l:24px;
+  --shadow:0 18px 50px -20px rgba(0,0,0,.75);
+  --glow:0 0 0 1px var(--yellow-line), 0 10px 40px -12px rgba(244,197,66,.35);
+  --f-display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --f-body:"Onest", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+::selection{background:var(--yellow);color:var(--yellow-ink)}
+:focus-visible{outline:2px solid var(--yellow);outline-offset:2px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- layout ---------- */
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding-inline:clamp(16px,4vw,40px)}
+.stack{display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px}
+.spacer{flex:1}
+
+/* ---------- marca ---------- */
+.brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none;background:none;border:0;padding:0}
+.brand img{height:30px;width:auto;display:block}
+.wordmark{font-family:var(--f-display);font-weight:700;letter-spacing:.06em;font-size:17px;line-height:1;white-space:nowrap}
+.wordmark b{color:var(--yellow);font-weight:700}
+.brand-sub{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border-left:1px solid var(--line);padding-left:12px;line-height:1.3}
+
+/* ---------- topbar ---------- */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(11,11,12,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line-soft)}
+.topbar .wrap{display:flex;align-items:center;gap:14px;min-height:64px}
+.who{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;font-size:13px}
+.who small{color:var(--muted);font-size:11.5px}
+
+/* ---------- botões ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);padding:11px 18px;font-weight:600;font-size:13.5px;letter-spacing:.02em;transition:background .2s var(--ease),border-color .2s var(--ease),transform .15s var(--ease),box-shadow .25s var(--ease),color .2s;text-decoration:none;white-space:nowrap;min-height:44px}
+.btn:hover{background:var(--surface-3);border-color:#3a3a40}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.btn svg{width:17px;height:17px;flex:none}
+.btn-primary{background:var(--yellow);border-color:var(--yellow);color:var(--yellow-ink);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;font-weight:700}
+.btn-primary:hover{background:var(--yellow-hi);border-color:var(--yellow-hi);box-shadow:var(--glow)}
+.btn-outline{background:transparent;border-color:var(--line);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px}
+.btn-outline:hover{border-color:var(--yellow-line);background:var(--yellow-soft)}
+.btn-ghost{background:transparent;border-color:transparent;padding-inline:12px}
+.btn-ghost:hover{background:var(--surface-2);border-color:var(--line-soft)}
+.btn-danger{background:transparent;border-color:rgba(232,131,111,.4);color:var(--danger)}
+.btn-danger:hover{background:var(--danger-bg);border-color:var(--danger)}
+.btn-sm{min-height:36px;padding:7px 13px;font-size:12.5px}
+.btn-block{width:100%}
+.icon-btn{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);transition:all .2s var(--ease);position:relative;flex:none}
+.icon-btn:hover{border-color:var(--yellow-line);background:var(--surface-2)}
+.icon-btn svg{width:18px;height:18px}
+.badge-count{position:absolute;top:-4px;right:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--yellow);color:var(--yellow-ink);font:700 11px/19px var(--f-mono);text-align:center;box-shadow:0 0 0 3px var(--bg)}
+
+/* ---------- formulários ---------- */
+.field{display:flex;flex-direction:column;gap:7px}
+.field label,.label{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.input,.textarea,.select{width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:13px 15px;font-size:15px;transition:border-color .2s,box-shadow .2s,background .2s;min-height:48px}
+.input:hover,.textarea:hover,.select:hover{border-color:#38383e}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--yellow-line);box-shadow:0 0 0 4px rgba(244,197,66,.08);background:var(--surface)}
+.textarea{resize:vertical;min-height:96px;line-height:1.5}
+.input.code{font-family:var(--f-mono);letter-spacing:.32em;text-transform:uppercase;font-size:17px}
+.hint{font-size:12.5px;color:var(--muted)}
+.form-error{display:flex;gap:10px;align-items:flex-start;background:var(--danger-bg);border:1px solid rgba(232,131,111,.35);color:#F4B3A6;border-radius:12px;padding:11px 14px;font-size:13.5px}
+.form-error svg{width:17px;height:17px;flex:none;margin-top:2px}
+
+/* ---------- status ---------- */
+.status{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:5px 10px 5px 9px;border-radius:999px;white-space:nowrap;line-height:1.2}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.status.em_analise{color:var(--st-analise);background:var(--st-analise-bg)}
+.status.aprovado{color:var(--st-aprovado);background:var(--st-aprovado-bg)}
+.status.publicado{color:var(--st-publicado);background:var(--st-publicado-bg)}
+.status.em_analise::before{animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(233,190,69,.5)}50%{box-shadow:0 0 0 4px rgba(233,190,69,0)}}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;border-radius:6px;border:1px solid var(--line);color:var(--text-2);white-space:nowrap}
+.tag.demo{border-color:var(--yellow-line);color:var(--yellow)}
+.tag.warn{border-color:rgba(232,131,111,.4);color:var(--danger)}
+.tag.change{border-color:rgba(232,131,111,.45);color:#F1A08F;background:var(--danger-bg)}
+
+/* ---------- mode banner ---------- */
+.mode-banner{font-size:12.5px;color:var(--text-2);background:var(--surface);border-bottom:1px solid var(--line-soft)}
+.mode-banner .wrap{display:flex;gap:10px;align-items:center;min-height:38px;padding-block:6px}
+.mode-banner svg{width:15px;height:15px;color:var(--yellow);flex:none}
+
+/* ---------- home ---------- */
+.home{position:relative;overflow:hidden}
+.home::before{content:"";position:absolute;inset:-30% -10% auto -10%;height:720px;background:radial-gradient(560px 360px at 18% 20%,rgba(244,197,66,.13),transparent 70%),radial-gradient(420px 300px at 88% 10%,rgba(244,197,66,.06),transparent 70%);pointer-events:none}
+.home-head{display:flex;align-items:center;gap:16px;padding-block:22px}
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(28px,5vw,72px);align-items:center;padding-block:clamp(28px,6vw,72px) clamp(40px,7vw,90px);position:relative}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--yellow);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--yellow)}
+.hero h1{font-family:var(--f-display);font-weight:600;font-size:clamp(30px,4.6vw,56px);line-height:1.06;letter-spacing:-.02em;margin-top:18px}
+.hero h1 em{font-style:normal;color:var(--yellow)}
+.hero p.lead{color:var(--text-2);font-size:clamp(15px,1.4vw,17.5px);max-width:52ch;margin-top:20px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.hero-visual{position:relative}
+.mock{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line);border-radius:var(--radius-l);padding:18px;box-shadow:var(--shadow);transform:rotate(1.2deg)}
+.mock-head{display:flex;align-items:center;gap:10px;padding:4px 4px 14px;border-bottom:1px solid var(--line-soft);margin-bottom:14px}
+.mock-head .dot{width:30px;height:30px;border-radius:50%;background:conic-gradient(from 200deg,var(--yellow),#8a6a14,var(--yellow));padding:2px}
+.mock-head .dot i{display:block;width:100%;height:100%;border-radius:50%;background:var(--surface-2)}
+.mock-lines{display:flex;flex-direction:column;gap:6px}
+.mock-lines span{height:7px;border-radius:4px;background:var(--surface-3);width:110px}
+.mock-lines span+span{width:70px;opacity:.6}
+.mock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.mock-tile{aspect-ratio:4/5;border-radius:10px;position:relative;overflow:hidden;background:var(--surface-2);display:flex;flex-direction:column;justify-content:flex-end;padding:8px}
+.mock-tile .d{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.1em;color:var(--text-2)}
+.mock-tile .s{width:8px;height:8px;border-radius:50%;position:absolute;top:8px;right:8px}
+.mock-tile.t1{background:linear-gradient(160deg,#2a2413,#141416 70%)}
+.mock-tile.t2{background:radial-gradient(circle at 70% 30%,#3a3016 0 28%,transparent 29%),#18181b}
+.mock-tile.t3{background:repeating-linear-gradient(-20deg,#1d1d20 0 14px,#232327 14px 28px)}
+.mock-tile.t4{background:linear-gradient(200deg,#1f2a22,#141416 75%)}
+.mock-tile.t5{background:radial-gradient(circle at 30% 70%,#2c2f36 0 35%,transparent 36%),#16161a}
+.mock-tile.t6{background:linear-gradient(135deg,#2d2511 0 50%,#1a1a1d 50%)}
+.mock-float{position:absolute;left:-22px;bottom:-22px;background:var(--surface-2);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);transform:rotate(-1.5deg)}
+.mock-float .ok{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--st-aprovado-bg);color:var(--st-aprovado)}
+.mock-float .ok svg{width:18px;height:18px}
+.mock-float b{display:block;font-size:13.5px}
+.mock-float small{color:var(--muted);font-size:12px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--radius-l);overflow:hidden;margin-bottom:clamp(40px,7vw,90px)}
+.step{background:var(--bg);padding:26px 24px 28px;display:flex;flex-direction:column;gap:10px}
+.step .n{font-family:var(--f-mono);font-size:11px;letter-spacing:.2em;color:var(--yellow)}
+.step h3{font-size:17px;font-weight:600}
+.step p{color:var(--text-2);font-size:14px}
+.home-foot{border-top:1px solid var(--line-soft);padding-block:22px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12.5px}
+.linkish{background:none;border:0;padding:0;color:var(--text-2);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
+.linkish:hover{color:var(--yellow);text-decoration-color:var(--yellow)}
+
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding-block:40px;position:relative;overflow:hidden}
+.login::before{content:"";position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(244,197,66,.10),transparent 62%);top:-340px;left:50%;transform:translateX(-50%);pointer-events:none}
+.login-card{width:100%;max-width:420px;position:relative;display:flex;flex-direction:column;gap:26px}
+.login-card .panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line);border-radius:var(--radius-l);padding:clamp(22px,5vw,34px);display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow)}
+.login-title{font-family:var(--f-display);font-size:22px;font-weight:600;letter-spacing:-.01em}
+.demo-box{border:1px dashed var(--yellow-line);border-radius:var(--radius);padding:14px 16px;display:flex;flex-direction:column;gap:10px;background:rgba(244,197,66,.035)}
+.demo-box .row{justify-content:space-between;flex-wrap:wrap;gap:8px}
+.demo-cred{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line-soft);text-align:left;width:100%;transition:border-color .2s}
+.demo-cred:hover{border-color:var(--yellow-line)}
+.demo-cred svg{width:18px;height:18px;flex:none;color:var(--muted)}
+.demo-cred > span{min-width:0;display:flex;flex-direction:column}
+.demo-cred b{font-size:13.5px;display:block}
+.demo-cred small{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.back-link{align-self:center}
+
+/* ---------- dashboard do cliente ---------- */
+.page{padding-block:clamp(22px,4vw,40px) 80px}
+.greet{display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px 30px;justify-content:space-between}
+.greet h1{font-family:var(--f-display);font-weight:600;font-size:clamp(26px,3.6vw,40px);letter-spacing:-.02em;line-height:1.1}
+.greet .sub{color:var(--text-2);margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.month-switch{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:8px 14px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);transition:all .2s var(--ease);min-height:38px}
+.chip:hover{border-color:#3d3d44;color:var(--text)}
+.chip[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+.callout{margin-top:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 18px;border-radius:var(--radius);border:1px solid var(--yellow-line);background:linear-gradient(90deg,rgba(244,197,66,.10),rgba(244,197,66,.02) 70%)}
+.callout.calm{border-color:var(--line);background:var(--surface)}
+.callout .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--yellow);color:var(--yellow-ink);flex:none}
+.callout.calm .ic{background:var(--st-aprovado-bg);color:var(--st-aprovado)}
+.callout .ic svg{width:20px;height:20px}
+.callout .tx{flex:1;min-width:200px}
+.callout .tx b{display:block;font-size:15.5px}
+.callout .tx span{color:var(--text-2);font-size:13.5px}
+
+.summary{margin-top:22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--line)}
+.sum{background:var(--bg);border:0;padding:16px 18px 15px;text-align:left;display:flex;flex-direction:column;gap:4px;transition:background .2s var(--ease);position:relative;margin-left:1px}
+.sum:first-child{margin-left:0}
+.sum:hover{background:var(--bg-2)}
+.sum .v{font-family:var(--f-display);font-size:clamp(22px,2.6vw,30px);font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
+.sum .k{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sum .k i{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.sum.em_analise .k i{background:var(--st-analise)}
+.sum.aprovado .k i{background:var(--st-aprovado)}
+.sum.publicado .k i{background:var(--st-publicado)}
+.sum[aria-pressed="true"]{background:var(--surface)}
+.sum[aria-pressed="true"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--yellow)}
+.sum[aria-pressed="true"] .k{color:var(--text)}
+
+.feed-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 14px}
+.feed-head h2{font-size:13px;font-family:var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.feed{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,16px)}
+.tile{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:10px;animation:rise .45s var(--ease) both}
+.tile:focus-visible{outline:2px solid var(--yellow);outline-offset:4px;border-radius:14px}
+.tile .media{position:relative;aspect-ratio:4/5;border-radius:14px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line-soft);transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .3s}
+.tile:hover .media{transform:translateY(-3px);box-shadow:0 20px 40px -22px rgba(0,0,0,.9),0 0 0 1px var(--yellow-line)}
+.tile .media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+.tile:hover .media img{transform:scale(1.025)}
+.tile .fmt{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:rgba(11,11,12,.62);backdrop-filter:blur(6px);color:#fff}
+.tile .fmt svg{width:16px;height:16px}
+.tile .num{position:absolute;top:10px;left:10px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;padding:4px 8px;border-radius:7px;background:rgba(11,11,12,.62);backdrop-filter:blur(6px);color:#fff}
+.tile .flag{position:absolute;left:10px;bottom:10px;right:10px;display:flex;gap:6px;flex-wrap:wrap}
+.tile .flag span{font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:8px;background:rgba(20,16,10,.85);backdrop-filter:blur(6px);border:1px solid rgba(232,131,111,.5);color:#F5B2A3;display:inline-flex;align-items:center;gap:6px}
+.tile .flag span svg{width:13px;height:13px}
+.tile .flag span.cm{border-color:rgba(255,255,255,.2);color:#eee}
+.tile .meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-inline:2px}
+.tile .when{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;color:var(--text-2);text-transform:uppercase;white-space:nowrap}
+.tile .when b{color:var(--text);font-weight:600}
+.tile .ttl{font-size:13.5px;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding-inline:2px;min-height:2.7em}
+.tile .ttl.none{color:var(--muted);font-style:italic}
+@keyframes rise{from{opacity:.001;transform:translateY(8px)}to{opacity:1;transform:none}}
+.noimg{width:100%;height:100%;display:grid;place-items:center;text-align:center;padding:16px;color:var(--muted);font-size:12.5px;background:repeating-linear-gradient(-45deg,var(--surface-2) 0 10px,var(--surface) 10px 20px)}
+.noimg svg{width:26px;height:26px;margin:0 auto 8px;display:block;opacity:.7}
+
+.empty{border:1px dashed var(--line);border-radius:var(--radius);padding:44px 20px;text-align:center;color:var(--text-2);display:flex;flex-direction:column;gap:8px;align-items:center}
+.empty b{color:var(--text);font-size:16px}
+.empty svg{width:28px;height:28px;color:var(--muted)}
+
+/* ---------- skeleton ---------- */
+.sk{background:linear-gradient(90deg,var(--surface) 0%,var(--surface-2) 40%,var(--surface) 80%);background-size:200% 100%;animation:sk 1.3s linear infinite;border-radius:12px}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* ---------- detalhe (modal) ---------- */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(5,5,6,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);animation:fade .25s var(--ease);overflow-y:auto;overscroll-behavior:contain}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{width:min(1120px,100%);margin:clamp(0px,3vh,32px) auto;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-l);box-shadow:var(--shadow);animation:up .35s var(--ease)}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.sheet-head{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:10px;padding:12px clamp(14px,2.4vw,22px);border-bottom:1px solid var(--line-soft);background:rgba(11,11,12,.92);backdrop-filter:blur(10px);border-radius:var(--radius-l) var(--radius-l) 0 0;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+.sheet-head [data-a="close"]{margin-right:auto}
+.sheet-head .t{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,3vw,40px);padding:clamp(16px,3vw,32px)}
+
+/* preview de publicação */
+.post{background:#0F0F11;border:1px solid var(--line);border-radius:18px;overflow:hidden;max-width:470px;width:100%;margin:0 auto;align-self:start;position:sticky;top:80px}
+.post-head{display:flex;align-items:center;gap:10px;padding:11px 13px}
+.avatar{width:34px;height:34px;border-radius:50%;padding:2px;background:conic-gradient(from 210deg,var(--yellow),#9b7616,var(--yellow-hi),var(--yellow));flex:none}
+.avatar span{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:#18181b;border:2px solid #0F0F11;font:700 11px var(--f-display);color:var(--yellow)}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #0F0F11;display:block}
+.post-head b{font-size:13.5px;display:block;line-height:1.2}
+.post-head small{color:var(--muted);font-size:11.5px}
+.post-media{position:relative;aspect-ratio:4/5;background:var(--surface-2)}
+.post-media img{width:100%;height:100%;object-fit:cover;display:block}
+.post-media .nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:rgba(245,243,236,.9);color:#111;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.post-media .nav svg{width:16px;height:16px}
+.post-media .nav.prev{left:10px}.post-media .nav.next{right:10px}
+.post-media .count{position:absolute;top:10px;right:10px;font:600 11.5px var(--f-mono);background:rgba(11,11,12,.7);padding:4px 9px;border-radius:999px}
+.post-media .reel{position:absolute;top:10px;left:10px;display:inline-flex;gap:6px;align-items:center;font:600 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;background:rgba(11,11,12,.7);padding:5px 9px;border-radius:999px}
+.post-media .reel svg{width:13px;height:13px}
+.dots{display:flex;gap:5px;justify-content:center;padding-top:10px}
+.dots i{width:6px;height:6px;border-radius:50%;background:#3a3a40;transition:background .2s}
+.dots i.on{background:var(--yellow)}
+.post-actions{display:flex;align-items:center;gap:16px;padding:10px 14px 4px;color:var(--text)}
+.post-actions svg{width:23px;height:23px}
+.post-actions .sp{flex:1}
+.post-body{padding:6px 14px 16px;font-size:14px;line-height:1.5}
+.post-body .likes{font-weight:600;font-size:13.5px;margin-bottom:5px}
+.post-body .cap{white-space:pre-wrap;word-wrap:break-word}
+.post-body .cap b{margin-right:6px}
+.post-body .cap.none{color:var(--muted);font-style:italic}
+.post-body .more{background:none;border:0;padding:0;color:var(--muted)}
+.post-body .when{margin-top:8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* painel lateral */
+.side{display:flex;flex-direction:column;gap:22px;min-width:0}
+.side h2{font-family:var(--f-display);font-size:clamp(20px,2.3vw,26px);font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.side h2.none{color:var(--muted)}
+.state-card{border-radius:var(--radius);border:1px solid var(--line);background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:14px}
+.state-card.em_analise{border-color:rgba(233,190,69,.35);background:linear-gradient(180deg,rgba(233,190,69,.07),var(--surface) 70%)}
+.state-card.aprovado{border-color:rgba(114,196,149,.35);background:linear-gradient(180deg,rgba(114,196,149,.07),var(--surface) 70%)}
+.state-card.publicado{border-color:rgba(147,184,222,.35);background:linear-gradient(180deg,rgba(147,184,222,.07),var(--surface) 70%)}
+.state-card .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.state-card .top .n{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.state-card .msg{font-size:15px}
+.state-card .msg small{display:block;color:var(--text-2);font-size:13px;margin-top:3px}
+.state-card .actions{display:flex;gap:10px;flex-wrap:wrap}
+.state-card .actions .btn{flex:1 1 180px}
+.big-check{display:flex;gap:12px;align-items:flex-start}
+.big-check .ok{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--st-aprovado);color:#0b1a11;animation:pop .45s var(--ease)}
+.big-check .ok.pub{background:var(--st-publicado);color:#0c1420}
+.big-check .ok svg{width:20px;height:20px}
+@keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.confirm{border:1px solid var(--yellow-line);border-radius:14px;padding:14px;background:var(--bg-2);display:flex;flex-direction:column;gap:12px;animation:up .25s var(--ease)}
+.confirm p{font-size:14px;color:var(--text-2)}
+.confirm p b{color:var(--text)}
+.success{display:flex;gap:10px;align-items:center;color:var(--st-aprovado);font-size:14px;font-weight:600;animation:up .3s var(--ease)}
+.success svg{width:18px;height:18px}
+.pending-change{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--danger-bg);border:1px solid rgba(232,131,111,.35);font-size:13.5px;color:#F4C0B4}
+.pending-change svg{width:17px;height:17px;flex:none;margin-top:2px}
+
+.info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line-soft)}
+.info > div{padding:14px 0;border-bottom:1px solid var(--line-soft);display:flex;flex-direction:column;gap:5px;min-width:0}
+.info > div:nth-child(odd){padding-right:14px}
+.info > div.full{grid-column:1/-1;padding-right:0}
+.info dt{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.info dd{margin:0;font-size:14.5px;white-space:pre-wrap;word-wrap:break-word}
+.info dd.big{font-family:var(--f-display);font-size:15px;font-weight:500;letter-spacing:.02em;text-transform:uppercase}
+.info dd.none{color:var(--muted);font-style:italic}
+
+/* comentários */
+.thread{display:flex;flex-direction:column;gap:12px}
+.thread-head{display:flex;align-items:center;justify-content:space-between}
+.msgs{display:flex;flex-direction:column;gap:10px}
+.msg-b{max-width:88%;display:flex;flex-direction:column;gap:4px;animation:up .25s var(--ease)}
+.msg-b .bub{padding:10px 13px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line-soft);font-size:14px;white-space:pre-wrap;word-wrap:break-word}
+.msg-b .by{font-size:11.5px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.msg-b .by b{color:var(--text-2);font-weight:600}
+.msg-b.client{align-self:flex-end;align-items:flex-end}
+.msg-b.client .bub{background:rgba(244,197,66,.09);border-color:rgba(244,197,66,.22);border-bottom-right-radius:5px}
+.msg-b.agency .bub{border-bottom-left-radius:5px}
+.msg-b.change .bub{border-color:rgba(232,131,111,.45);background:var(--danger-bg)}
+.composer{display:flex;flex-direction:column;gap:10px}
+.composer .row{justify-content:flex-end}
+.muted{color:var(--muted)}
+
+/* ---------- admin ---------- */
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;padding:10px 14px;border-radius:10px;color:var(--text-2);font-weight:500;font-size:14px;white-space:nowrap;min-height:40px}
+.tab:hover{color:var(--text);background:var(--surface)}
+.tab[aria-current="page"]{color:var(--text);background:var(--surface-2)}
+.section-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:34px 0 14px;flex-wrap:wrap}
+.section-title h2{font-family:var(--f-display);font-size:19px;font-weight:600;letter-spacing:-.01em}
+.section-title .muted{font-size:13px}
+.admin-top h1{font-family:var(--f-display);font-size:clamp(24px,3vw,34px);font-weight:600;letter-spacing:-.02em}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:22px}
+.kpi{background:var(--bg);padding:16px 18px;display:flex;flex-direction:column;gap:4px}
+.kpi .v{font-family:var(--f-display);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi .k{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;gap:7px;align-items:center}
+.kpi .k i{width:7px;height:7px;border-radius:50%}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.note{border:1px solid var(--line);border-radius:var(--radius);padding:16px;background:var(--surface);display:flex;flex-direction:column;gap:10px;animation:rise .35s var(--ease) both}
+.note.unread{border-color:var(--yellow-line);box-shadow:inset 3px 0 0 var(--yellow)}
+.note.change.unread{border-color:rgba(232,131,111,.5);box-shadow:inset 3px 0 0 var(--danger)}
+.note .h{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.note .h b{font-size:14px}
+.note dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.note dt{color:var(--muted)}
+.note dd{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.note q{display:block;font-size:14px;color:var(--text);background:var(--bg-2);border-radius:10px;padding:10px 12px;quotes:"“" "”"}
+.note .f{display:flex;gap:8px;justify-content:flex-end}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
+.tbl th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--bg-2);white-space:nowrap}
+.tbl td{padding:13px 14px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr{transition:background .15s}
+.tbl tbody tr.click{cursor:pointer}
+.tbl tbody tr.click:hover{background:var(--surface)}
+.tbl .n{font-variant-numeric:tabular-nums;font-family:var(--f-mono);font-size:13px}
+.tbl .n.hl{color:var(--danger);font-weight:700}
+.cname b{display:block}
+.cname small{color:var(--muted);font-size:12px}
+.activity{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.act{display:flex;gap:12px;align-items:flex-start;padding:13px 16px;border-bottom:1px solid var(--line-soft);background:none;border-left:0;border-right:0;border-top:0;text-align:left;width:100%;transition:background .15s}
+.act:last-child{border-bottom:0}
+.act:hover{background:var(--surface)}
+.act .i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none;background:var(--surface-2)}
+.act .i svg{width:15px;height:15px}
+.act .i.approval{color:var(--st-aprovado);background:var(--st-aprovado-bg)}
+.act .i.change_request{color:var(--danger);background:var(--danger-bg)}
+.act .i.comment{color:var(--yellow);background:var(--yellow-soft)}
+.act .b{flex:1;min-width:0;font-size:13.5px}
+.act .b small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.act .b .q{color:var(--text-2);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.admin-panel{border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--bg-2)}
+.admin-panel h3{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);font-weight:600}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:var(--surface);border:1px solid var(--line-soft)}
+.seg button{border:0;background:none;padding:9px 6px;border-radius:9px;font-size:12px;font-family:var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);min-height:40px}
+.seg button:hover{color:var(--text)}
+.seg button[aria-pressed="true"].em_analise{background:var(--st-analise-bg);color:var(--st-analise)}
+.seg button[aria-pressed="true"].aprovado{background:var(--st-aprovado-bg);color:var(--st-aprovado)}
+.seg button[aria-pressed="true"].publicado{background:var(--st-publicado-bg);color:var(--st-publicado)}
+.history{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-2)}
+.history span{display:flex;gap:8px;align-items:center}
+.history i{width:6px;height:6px;border-radius:50%;background:var(--muted);flex:none}
+
+/* importador */
+.imp-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:20px;align-items:start}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:14px}
+.card h3{font-size:15px;font-weight:600}
+.drop{border:1.5px dashed var(--line);border-radius:14px;padding:22px 16px;text-align:center;color:var(--text-2);font-size:13.5px;transition:all .2s;display:flex;flex-direction:column;gap:10px;align-items:center;background:var(--bg-2)}
+.drop.over{border-color:var(--yellow);background:var(--yellow-soft);color:var(--text)}
+.drop svg{width:24px;height:24px;color:var(--muted)}
+.files{display:flex;flex-wrap:wrap;gap:6px}
+.files span{font-family:var(--f-mono);font-size:11px;padding:4px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line-soft);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pv-list{display:flex;flex-direction:column;gap:10px}
+.pv{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:14px;align-items:start;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);animation:rise .3s var(--ease) both}
+.pv.conflict,.pv.ambiguous{border-color:rgba(232,131,111,.45)}
+.pv .th{width:84px;aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--surface-2);position:relative}
+.pv .th img{width:100%;height:100%;object-fit:cover;display:block}
+.pv .th .noimg{font-size:10px;padding:6px}
+.pv .th .noimg svg{width:18px;height:18px;margin-bottom:4px}
+.pv .bd{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pv .bd b{font-size:14.5px}
+.pv .bd .ln{font-size:12.5px;color:var(--text-2);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pv .bd .cap{font-size:12.5px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pv .warns{display:flex;gap:6px;flex-wrap:wrap}
+.pv .ops{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.pv .choice{display:flex;flex-direction:column;gap:6px;font-size:12.5px;margin-top:4px;padding:10px;border-radius:10px;background:var(--bg-2);border:1px solid var(--line-soft)}
+.pv .choice label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.act-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.act-tag.create{background:var(--st-aprovado-bg);color:var(--st-aprovado)}
+.act-tag.update{background:var(--yellow-soft);color:var(--yellow)}
+.act-tag.same{background:var(--surface-2);color:var(--muted)}
+.act-tag.conflict,.act-tag.ambiguous{background:var(--danger-bg);color:var(--danger)}
+.codebox{font-family:var(--f-mono);font-size:12px;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:12px;padding:12px 14px;white-space:pre-wrap;color:var(--text-2);max-height:260px;overflow:auto}
+.code-pill{font-family:var(--f-mono);letter-spacing:.2em;font-size:13px;padding:5px 10px;border-radius:8px;background:var(--bg-2);border:1px solid var(--line)}
+.logo-prev{height:64px;border-radius:12px;border:1px solid var(--line);background:var(--bg-2);display:flex;align-items:center;justify-content:center;padding:10px 16px}
+.logo-prev img{max-height:44px;width:auto}
+
+/* ---------- toast ---------- */
+.toasts{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center;width:min(92vw,460px);pointer-events:none}
+.toast{pointer-events:auto;background:var(--surface-3);border:1px solid var(--line);color:var(--text);padding:12px 16px;border-radius:14px;box-shadow:var(--shadow);font-size:14px;display:flex;gap:10px;align-items:center;animation:up .3s var(--ease)}
+.toast svg{width:17px;height:17px;flex:none}
+.toast.ok svg{color:var(--st-aprovado)}
+.toast.err{border-color:rgba(232,131,111,.5)}
+.toast.err svg{color:var(--danger)}
+.toast.out{opacity:0;transform:translateY(8px);transition:all .3s}
+
+/* ---------- responsivo ---------- */
+@media (max-width:960px){
+  .hero{grid-template-columns:1fr}
+  .hero-visual{max-width:520px;margin-top:10px}
+  .sheet-body{grid-template-columns:1fr}
+  .post{position:static}
+  .imp-grid{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  .feed{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .feed-head .hint{display:none}
+  .sheet-head .t{display:none}
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sum:nth-child(3){margin-left:0}
+  .sum{margin-top:1px}
+  .sum:nth-child(-n+2){margin-top:0}
+  .steps{grid-template-columns:1fr}
+  .brand-sub{display:none}
+  .who{display:none}
+  .sheet{margin:0;border-radius:0;border:0;min-height:100%}
+  .sheet-head{border-radius:0}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:1fr}
+  .pv{grid-template-columns:64px minmax(0,1fr)}
+  .pv .th{width:64px}
+  .pv .ops{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;justify-content:flex-start}
+  .mock-float{left:8px;bottom:-18px}
+  .info{grid-template-columns:1fr}
+  .info > div:nth-child(odd){padding-right:0}
+  .state-card .actions .btn{flex-basis:100%}
+}
+@media (max-width:420px){
+  .feed{gap:8px}
+  .tile .ttl{font-size:12.5px}
+  .tile .when{font-size:10.5px}
+  .status{font-size:9.5px;padding:4px 8px 4px 7px;letter-spacing:.1em}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+</style>
+<div id="app" aria-live="polite"></div>
+<div id="modal"></div>
+<div class="toasts" id="toasts"></div>
+<script>
+/* ============================================================
+   VAParse — interpreta planejamentos colados (texto, JSON, tabela)
+   e calcula a mesclagem com um planejamento existente.
+   Funções puras: sem acesso a banco nem a DOM.
+   Regra de ouro: nunca inventar. Campo ausente = string vazia.
+   ============================================================ */
+(function (root) {
+  "use strict";
+
+  const MONTHS = ["janeiro","fevereiro","marco","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  const MONTHS_SHORT = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+  const norm = (s) => String(s == null ? "" : s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const titleKey = (s) => norm(s).replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+
+  const FIELD_ALIASES = {
+    id: ["id", "codigo do conteudo"],
+    date: ["data", "dia", "date", "data de publicacao", "publicacao", "data prevista", "quando"],
+    type: ["tipo", "formato", "type", "format", "tipo de conteudo"],
+    title: ["titulo", "title", "tema", "pauta", "nome", "assunto"],
+    objective: ["objetivo", "objective", "meta", "funil", "objetivo estrategico"],
+    description: ["descricao", "description", "descricao estrategica", "estrategia", "briefing", "roteiro", "ideia", "conceito"],
+    caption: ["legenda", "caption", "copy", "texto da legenda", "texto"],
+    image: ["imagem", "imagens", "image", "images", "arte", "artes", "foto", "fotos", "midia", "referencia", "referencia visual", "arquivo"],
+    status: ["status", "situacao", "etapa"],
+  };
+  const ALIAS_TO_FIELD = {};
+  Object.entries(FIELD_ALIASES).forEach(([f, arr]) => arr.forEach((a) => (ALIAS_TO_FIELD[a] = f)));
+  const fieldOf = (label) => ALIAS_TO_FIELD[norm(label).replace(/[:*]/g, "").trim()] || null;
+
+  /* ---------------- normalizadores ---------------- */
+  function normalizeType(v) {
+    const n = norm(v);
+    if (!n) return "";
+    if (/^reels?\b|video|^vídeo/.test(n)) return "Reel";
+    if (/carross|carousel|carrocel|carosel/.test(n)) return "Carrossel";
+    if (/^stor(y|ies)|^storie/.test(n)) return "Story";
+    if (/^post|estatic|^feed|^imagem unica|^foto/.test(n)) return "Post";
+    return String(v).trim().replace(/^\w/, (c) => c.toUpperCase());
+  }
+  function normalizeStatus(v) {
+    const n = norm(v);
+    if (!n) return "";
+    if (/publicad/.test(n)) return "publicado";
+    if (/aprovad/.test(n)) return "aprovado";
+    if (/analise|pendente|aguardando|revis/.test(n)) return "em_analise";
+    return "";
+  }
+  function monthFromName(s) {
+    const n = norm(s);
+    let i = MONTHS.indexOf(n);
+    if (i < 0) i = MONTHS_SHORT.indexOf(n.slice(0, 3));
+    return i >= 0 ? i + 1 : 0;
+  }
+  const pad = (n) => String(n).padStart(2, "0");
+
+  /** Converte uma data em AAAA-MM-DD. ctx = {year, month}. Retorna "" se não reconhecer. */
+  function parseDate(raw, ctx) {
+    const s = String(raw || "").trim();
+    if (!s) return "";
+    ctx = ctx || {};
+    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return valid(+m[1], +m[2], +m[3]);
+    m = s.match(/(\d{1,2})\s*[\/.\-]\s*(\d{1,2})(?:\s*[\/.\-]\s*(\d{2,4}))?/);
+    if (m) {
+      let y = m[3] ? +m[3] : ctx.year;
+      if (y && y < 100) y += 2000;
+      return valid(y, +m[2], +m[1]);
+    }
+    m = norm(s).match(/(\d{1,2})\s*(?:de\s+)?([a-z]{3,})(?:\s*(?:de\s+)?(\d{4}))?/);
+    if (m) {
+      const mo = monthFromName(m[2]);
+      if (mo) return valid(m[3] ? +m[3] : ctx.year, mo, +m[1]);
+    }
+    return "";
+    function valid(y, mo, d) {
+      if (!y || mo < 1 || mo > 12 || d < 1 || d > 31) return "";
+      const dt = new Date(Date.UTC(y, mo - 1, d));
+      if (dt.getUTCMonth() !== mo - 1) return "";
+      return `${y}-${pad(mo)}-${pad(d)}`;
+    }
+  }
+
+  /** "Outubro de 2026", "10/2026", "2026-10", "out/26" -> {month, year} */
+  function parseMonth(raw) {
+    const s = norm(raw);
+    if (!s) return null;
+    let m = s.match(/^(\d{4})-(\d{1,2})$/);
+    if (m) return { year: +m[1], month: +m[2] };
+    m = s.match(/^(\d{1,2})\s*[\/.\-]\s*(\d{2,4})$/);
+    if (m) return { month: +m[1], year: +m[2] < 100 ? 2000 + +m[2] : +m[2] };
+    m = s.match(/([a-z]{3,})\s*(?:de|\/|-)?\s*(\d{2,4})?/);
+    if (m) {
+      const mo = monthFromName(m[1]);
+      if (mo) return { month: mo, year: m[2] ? (+m[2] < 100 ? 2000 + +m[2] : +m[2]) : 0 };
+    }
+    return null;
+  }
+
+  function splitImages(v) {
+    if (Array.isArray(v)) return v.map((x) => String(x).trim()).filter(Boolean);
+    const s = String(v || "").trim();
+    if (!s) return [];
+    return s.split(/\s*(?:[,;\n]|\s\|\s)\s*/).map((x) => x.trim()).filter(Boolean);
+  }
+  const isPlaceholder = (s) => /^\[.*\]$/.test(s.trim()) || /^(arquivo\/?imagem|sem imagem|a definir|tbd|-+)$/i.test(norm(s));
+
+  /** Normaliza um item bruto em {ref,id,date,type,title,objective,description,caption,images,status,warnings}. */
+  function normalizeItem(raw, ctx, idx) {
+    const get = (f) => {
+      if (raw[f] != null) return raw[f];
+      for (const [k, v] of Object.entries(raw)) if (fieldOf(k) === f) return v;
+      return "";
+    };
+    const warnings = [];
+    const dateRaw = String(get("date") || "").trim();
+    const date = parseDate(dateRaw, ctx);
+    if (!dateRaw) warnings.push("Data não informada");
+    else if (!date) warnings.push(`Data não reconhecida: “${dateRaw}”`);
+    const title = String(get("title") || "").trim();
+    if (!title) warnings.push("Título não informado");
+    const caption = String(get("caption") || "").replace(/\r/g, "").trim();
+    if (!caption) warnings.push("Legenda não informada");
+    const imgs = splitImages(get("image"));
+    const images = imgs.filter((x) => !isPlaceholder(x));
+    if (!images.length) warnings.push(imgs.length ? "Imagem citada, mas não anexada" : "Sem imagem");
+    const type = normalizeType(get("type"));
+    if (!type) warnings.push("Tipo não informado");
+    const statusRaw = String(get("status") || "");
+    return {
+      ref: raw.ref != null ? String(raw.ref) : String(idx + 1),
+      id: String(raw.id || "").trim(),
+      date, dateRaw, type, title,
+      objective: String(get("objective") || "").trim(),
+      description: String(get("description") || "").replace(/\r/g, "").trim(),
+      caption, images,
+      status: normalizeStatus(statusRaw),
+      warnings,
+    };
+  }
+
+  /* ---------------- detectores de formato ---------------- */
+  function tryJSON(text) {
+    const t = text.trim();
+    if (!/^[\[{]/.test(t)) return null;
+    try {
+      const j = JSON.parse(t);
+      const list = Array.isArray(j) ? j : (j.contents || j.conteudos || j.posts || j.items || []);
+      if (!Array.isArray(list)) return null;
+      return {
+        format: "JSON",
+        client: Array.isArray(j) ? "" : String(j.client || j.cliente || j.empresa || ""),
+        monthRaw: Array.isArray(j) ? "" : String(j.month || j.mes || j["mês"] || ""),
+        yearRaw: Array.isArray(j) ? "" : String(j.year || j.ano || ""),
+        rows: list.map((x) => (x && typeof x === "object" ? x : {})),
+      };
+    } catch (e) { return { error: "JSON inválido: " + e.message }; }
+  }
+
+  function splitRow(line, sep) {
+    if (sep === "|") return line.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map((c) => c.trim());
+    if (sep === "\t") return line.split("\t").map((c) => c.trim());
+    // CSV simples com aspas
+    const out = []; let cur = ""; let q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (q) { if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === sep) { out.push(cur.trim()); cur = ""; }
+      else cur += ch;
+    }
+    out.push(cur.trim());
+    return out;
+  }
+  function tryTable(text) {
+    const lines = text.replace(/\r/g, "").split("\n").filter((l) => l.trim());
+    if (lines.length < 2) return null;
+    for (const sep of ["\t", "|", ";", ","]) {
+      const head = splitRow(lines[0], sep);
+      if (head.length < 2) continue;
+      const fields = head.map(fieldOf);
+      if (fields.filter(Boolean).length < 2) continue;
+      const rows = [];
+      for (const l of lines.slice(1)) {
+        if (sep === "|" && /^\s*\|?\s*:?-{2,}/.test(l)) continue;
+        const cells = splitRow(l, sep);
+        const r = {};
+        fields.forEach((f, i) => { if (f && cells[i] != null && cells[i] !== "") r[f] = cells[i]; });
+        if (Object.keys(r).length) rows.push(r);
+      }
+      if (rows.length) return { format: sep === "\t" ? "Tabela (colada de planilha)" : sep === "|" ? "Tabela Markdown" : "CSV", client: "", monthRaw: "", yearRaw: "", rows };
+    }
+    return null;
+  }
+
+  function tryText(text) {
+    const lines = text.replace(/\r/g, "").split("\n");
+    let client = "", monthRaw = "";
+    const rows = [];
+    let cur = null, curField = null, pendingHeader = null, sawField = false;
+    const push = () => { if (cur && Object.keys(cur).some((k) => k !== "ref" && String(cur[k]).trim())) rows.push(cur); };
+    const labelRe = /^\s*(?:[-•*]\s*)?([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ /]{1,28}?)\s*:\s*(.*)$/;
+    const blockRe = /^\s*(?:#{1,4}\s*)?(?:(?:conte[uú]do|post|pe[cç]a|item)\s*)?#?(\d{1,3})\s*[.)\-–:º°]?\s*(.*)$/i;
+
+    for (let raw of lines) {
+      const line = raw.replace(/\s+$/, "");
+      if (!line.trim()) { if (curField && cur && cur[curField]) cur[curField] += "\n"; continue; }
+      if (/^\s*-{3,}\s*$/.test(line)) { push(); cur = null; curField = null; continue; }
+
+      // cabeçalho "CLIENTE:" / "MÊS:" com valor na mesma linha ou na próxima
+      if (pendingHeader) {
+        if (!labelRe.test(line) && !blockRe.test(line)) {
+          if (pendingHeader === "client") client = line.trim(); else monthRaw = line.trim();
+          pendingHeader = null; continue;
+        }
+        pendingHeader = null;
+      }
+      const lm = line.match(labelRe);
+      if (lm) {
+        const lab = norm(lm[1]);
+        if (!cur && (lab === "cliente" || lab === "empresa" || lab === "marca")) { if (lm[2].trim()) client = lm[2].trim(); else pendingHeader = "client"; continue; }
+        if (!cur && (lab === "mes" || lab === "mes de referencia" || lab === "periodo" || lab === "competencia")) { if (lm[2].trim()) monthRaw = lm[2].trim(); else pendingHeader = "month"; continue; }
+        if (lab === "conteudos" || lab === "planejamento" || lab === "posts") { continue; }
+        const f = fieldOf(lm[1]);
+        if (f) {
+          sawField = true;
+          if (!cur || (cur[f] != null && String(cur[f]).trim() && (f === "date" || f === "title") && !blockStarted)) {
+            // sem numeração: um campo repetido abre um novo conteúdo
+            if (cur && cur[f] != null && String(cur[f]).trim()) { push(); }
+            cur = { ref: String(rows.length + 1) }; blockStarted = false;
+          }
+          cur[f] = lm[2];
+          curField = f;
+          continue;
+        }
+      }
+      const bm = line.match(blockRe);
+      if (bm && (/^\s*(?:#{1,4}\s*)?(conte|post|pe[cç]a|item)/i.test(line) || /^\s*\d{1,3}\s*[.)\-–:º°]/.test(line) || /^\s*\d{1,3}\s*$/.test(line))) {
+        push();
+        cur = { ref: bm[1] }; blockStarted = true; curField = null;
+        const rest = (bm[2] || "").trim();
+        if (rest) {
+          const inner = rest.match(labelRe);
+          if (inner && fieldOf(inner[1])) { cur[fieldOf(inner[1])] = inner[2]; curField = fieldOf(inner[1]); sawField = true; }
+          else { cur.title = rest; curField = "title"; }
+        }
+        continue;
+      }
+      if (cur && curField) { cur[curField] = (cur[curField] ? cur[curField] + (cur[curField].endsWith("\n") ? "" : "\n") : "") + line.trim(); continue; }
+    }
+    push();
+    rows.forEach((r) => Object.keys(r).forEach((k) => { if (typeof r[k] === "string") r[k] = r[k].replace(/\n{3,}/g, "\n\n").trim(); }));
+    if (!rows.length || !sawField && !rows.some((r) => r.title)) return null;
+    return { format: "Texto estruturado", client, monthRaw, yearRaw: "", rows };
+  }
+  let blockStarted = false;
+
+  /**
+   * Interpreta o texto colado.
+   * Retorna {format, client, month, year, items[], errors[]}.
+   */
+  function parsePlanning(text, fallback) {
+    fallback = fallback || {};
+    const errors = [];
+    const t = String(text || "").trim();
+    if (!t) return { format: "", client: "", month: 0, year: 0, items: [], errors: ["Cole o planejamento no campo acima."] };
+    let res = tryJSON(t);
+    if (res && res.error) { errors.push(res.error); res = null; }
+    if (!res) res = tryTable(t);
+    if (!res) { blockStarted = false; res = tryText(t); }
+    if (!res) return { format: "", client: "", month: 0, year: 0, items: [], errors: errors.length ? errors : ["Não encontrei conteúdos. Use campos como “Data:”, “Tipo:”, “Título:”, ou cole JSON / uma tabela com cabeçalho."] };
+    let month = 0, year = 0;
+    const pm = parseMonth(res.monthRaw);
+    if (pm) { month = pm.month; year = pm.year; }
+    if (res.yearRaw && +res.yearRaw) year = +res.yearRaw;
+    if (!month) month = fallback.month || 0;
+    if (!year) year = fallback.year || 0;
+    const ctx = { month, year };
+    const items = res.rows.map((r, i) => normalizeItem(r, ctx, i));
+    // se o mês não veio no cabeçalho, deduz pelo mês mais frequente das datas
+    if (!pm || !pm.month) {
+      const counts = {};
+      items.forEach((it) => { if (it.date) { const k = it.date.slice(0, 7); counts[k] = (counts[k] || 0) + 1; } });
+      const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      if (best && !fallback.forceMonth) { year = +best[0].slice(0, 4); month = +best[0].slice(5, 7); }
+    }
+    return { format: res.format, client: res.client || "", month, year, items, errors };
+  }
+
+  /* ---------------- mesclagem ---------------- */
+  const EDIT_FIELDS = ["date", "type", "title", "objective", "description", "caption"];
+
+  /**
+   * Compara itens importados com os conteúdos existentes do mesmo planejamento.
+   * Correspondência somente por id explícito ou título idêntico (normalizado).
+   * Nada é apagado; campos vazios na importação nunca apagam dados existentes.
+   * Retorna [{item, action:'create'|'update'|'same'|'conflict'|'ambiguous', match, changes[], reason}] e untouched[].
+   */
+  function planMerge(items, existing) {
+    existing = existing || [];
+    const byId = new Map(existing.map((c) => [c.id, c]));
+    const byTitle = new Map();
+    existing.forEach((c) => { const k = titleKey(c.title); if (!k) return; byTitle.set(k, (byTitle.get(k) || []).concat(c)); });
+    const used = new Set();
+    const seenTitles = new Map();
+    const rows = items.map((it) => {
+      let match = null, reason = "";
+      if (it.id && byId.has(it.id)) match = byId.get(it.id);
+      else if (titleKey(it.title)) {
+        const cands = (byTitle.get(titleKey(it.title)) || []).filter((c) => !used.has(c.id));
+        if (cands.length > 1) return { item: it, action: "ambiguous", match: null, changes: [], reason: `${cands.length} conteúdos existentes com o mesmo título. Não vou adivinhar qual atualizar.` };
+        if (cands.length === 1) match = cands[0];
+      }
+      const tk = titleKey(it.title);
+      if (tk) { if (seenTitles.has(tk)) return { item: it, action: "ambiguous", match: null, changes: [], reason: "Título repetido dentro desta importação." }; seenTitles.set(tk, true); }
+      if (!match) return { item: it, action: "create", match: null, changes: [], reason: "" };
+      used.add(match.id);
+      const changes = [];
+      EDIT_FIELDS.forEach((f) => { const v = it[f]; if (v && String(v).trim() !== String(match[f] || "").trim()) changes.push(f); });
+      const curImgs = (match.images && match.images.length ? match.images : (match.image ? [match.image] : []));
+      // nomes de arquivo só contam como mudança quando o arquivo foi anexado nesta importação
+      const urlImgs = it.images.filter((x) => /^(https?:|data:|blob:|asset:|demo\/)/i.test(x));
+      if ((it._files && it._files.length) || it._attached) changes.push("images");
+      else if (urlImgs.length && JSON.stringify(urlImgs) !== JSON.stringify(curImgs)) changes.push("images");
+      if (!changes.length) return { item: it, action: "same", match, changes, reason: "" };
+      if (match.status === "aprovado" || match.status === "publicado") {
+        reason = match.status === "aprovado" ? "Este conteúdo já foi aprovado pelo cliente." : "Este conteúdo já foi publicado.";
+        return { item: it, action: "conflict", match, changes, reason };
+      }
+      return { item: it, action: "update", match, changes, reason };
+    });
+    const untouched = existing.filter((c) => !used.has(c.id));
+    return { rows, untouched };
+  }
+
+  /** Encontra o cliente pelo nome informado no planejamento. */
+  function matchClient(name, clients) {
+    const k = titleKey(name);
+    if (!k) return null;
+    const exact = clients.filter((c) => titleKey(c.company) === k || titleKey(c.name) === k || titleKey(c.handle) === k.replace(/^@/, ""));
+    if (exact.length === 1) return exact[0];
+    const part = clients.filter((c) => titleKey(c.company).includes(k) || k.includes(titleKey(c.company)));
+    return part.length === 1 ? part[0] : null;
+  }
+
+  const FIELD_LABELS = { date: "data", type: "tipo", title: "título", objective: "objetivo", description: "descrição", caption: "legenda", images: "imagem" };
+
+  const api = { parsePlanning, planMerge, parseDate, parseMonth, normalizeType, normalizeStatus, normalizeItem, matchClient, titleKey, norm, MONTHS, FIELD_LABELS };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.VAParse = api;
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* ============================================================
+   Camada de dados do portal — uma interface, três adaptadores.
+
+   ArtifactStore  -> banco real do Claude (capability `db`) + imagens (`assets`)
+   SupabaseStore  -> produção: Postgres + RLS + login do cliente validado no servidor
+   LocalStore     -> demonstração em memória (nada é salvo), quando não há banco
+
+   A interface usada pelas telas:
+     init()                         -> prepara o adaptador
+     info                           -> {mode, label, persistent, serverIsolation, codesVisible, canUploadImages}
+     watchPublic(cb)                -> {brand, demoCredentials}
+     clientLogin(email, code)       -> sessão do cliente
+     restoreClient()                -> sessão salva (ou null)
+     clientLogout()
+     watchClient(session, cb)       -> {client, plannings, contents, comments}
+     approve(session, contentId)
+     sendComment(session, contentId, text, kind)   kind: 'comment' | 'change_request'
+     adminAccess()                  -> {ok, reason, needsLogin}
+     adminLogin(email, password)    (somente Supabase)
+     watchAdmin(cb)                 -> {clients, vault, plannings, contents, comments, notifications}
+     setStatus(contentId, status) / resolveChange(contentId) / agencyComment(contentId, text)
+     markRead(ids) / saveClient(data) / regenerateCode(clientId) / deleteContent(id)
+     applyImport(plan) / uploadImage(file) / saveBrand(brand) / clearDemo() / loadDemo(seed)
+   ============================================================ */
+(function (root) {
+  "use strict";
+
+  const nowISO = () => new Date().toISOString();
+  const uid = (p) => (p || "") + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  function makeCode(n) {
+    n = n || 6;
+    const a = new Uint32Array(n); (root.crypto || globalThis.crypto).getRandomValues(a);
+    return Array.from(a, (x) => CODE_ALPHABET[x % CODE_ALPHABET.length]).join("");
+  }
+  async function accessHash(email, code) {
+    const txt = `va-midia|${String(email).trim().toLowerCase()}|${String(code).trim().toUpperCase()}`;
+    const buf = await (root.crypto || globalThis.crypto).subtle.digest("SHA-256", new TextEncoder().encode(txt));
+    return Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, "0")).join("");
+  }
+  const safeLS = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
+  class PortalError extends Error { constructor(code, msg) { super(msg || code); this.code = code; } }
+
+  /* ---------- regras comuns (mesmas em todos os adaptadores) ---------- */
+  function approvalPatch(d, by) {
+    const at = nowISO();
+    return { status: "aprovado", approvedAt: at, changeRequested: false, updatedAt: at, history: (d.history || []).concat({ status: "aprovado", at, by: by || "Cliente" }) };
+  }
+  function statusPatch(d, status) {
+    const at = nowISO();
+    const p = { status, updatedAt: at, history: (d.history || []).concat({ status, at, by: "VA Mídia" }) };
+    if (status === "aprovado" && !d.approvedAt) p.approvedAt = at;
+    if (status === "publicado") { p.publishedAt = at; if (!d.approvedAt) p.approvedAt = at; }
+    if (status === "em_analise") { p.approvedAt = null; p.publishedAt = null; }
+    if (status !== "publicado" && d.publishedAt && status !== "em_analise") p.publishedAt = null;
+    return p;
+  }
+  function checkText(text) {
+    const t = String(text || "").trim();
+    if (!t) throw new PortalError("empty", "Escreva sua mensagem antes de enviar.");
+    if (t.length > 2000) throw new PortalError("too_long", "A mensagem passou de 2.000 caracteres. Resuma um pouco.");
+    return t;
+  }
+
+  /* ============================================================
+     ArtifactStore — banco do Claude
+     ============================================================ */
+  class ArtifactStore {
+    constructor(db, caps) {
+      this.db = db; this.user = caps.user; this.assets = caps.assets; this.sample = caps.sample;
+      this.info = { mode: "artifact", label: "Banco de dados do portal", persistent: true, serverIsolation: false, codesVisible: true, canUploadImages: !!caps.assets, canUseAI: !!caps.sample };
+    }
+    async init() {
+      this.canEdit = this.user ? await this.user.canEdit().catch(() => false) : null;
+      this.canWrite = this.user ? await this.user.can("data.write").catch(() => null) : null;
+    }
+    _sub(q, cb, onErr) { return q.onSnapshot(cb, (e) => onErr && onErr(e)); }
+    _docs(snap) { return snap.docs.map((d) => Object.assign({ id: d.id }, d.data())); }
+
+    watchPublic(cb) {
+      const st = { brand: null, demoCredentials: [] };
+      const u1 = this.db.doc("settings/brand").onSnapshot((s) => { st.brand = s.exists ? s.data() : null; cb(Object.assign({}, st)); }, () => {});
+      const u2 = this.db.doc("demo/credentials").onSnapshot((s) => { st.demoCredentials = s.exists ? (s.data().items || []) : []; cb(Object.assign({}, st)); }, () => {});
+      return () => { u1(); u2(); };
+    }
+
+    async clientLogin(email, code) {
+      email = String(email || "").trim(); code = String(code || "").trim();
+      if (!email || !code) throw new PortalError("missing", "Informe o e-mail e o código de acesso.");
+      const h = await accessHash(email, code);
+      const snap = await this.db.doc("access/" + h).get();
+      if (!snap.exists) throw new PortalError("invalid", "E-mail ou código não conferem. Confira os dados enviados pela VA Mídia.");
+      const clientId = snap.data().clientId;
+      const c = await this.db.doc("clients/" + clientId).get();
+      if (!c.exists) throw new PortalError("invalid", "Este acesso não está mais ativo. Fale com a VA Mídia.");
+      const client = Object.assign({ id: c.id }, c.data());
+      if (client.status === "inativo") throw new PortalError("inactive", "Este acesso está pausado. Fale com a VA Mídia.");
+      const session = { kind: "client", clientId, key: h };
+      safeLS.set("va.session", session);
+      return Object.assign({}, session, { client });
+    }
+    async restoreClient() {
+      const s = safeLS.get("va.session");
+      if (!s || s.kind !== "client" || !s.key) return null;
+      const snap = await this.db.doc("access/" + s.key).get().catch(() => null);
+      if (!snap || !snap.exists || snap.data().clientId !== s.clientId) { safeLS.del("va.session"); return null; }
+      const c = await this.db.doc("clients/" + s.clientId).get();
+      if (!c.exists || c.data().status === "inativo") { safeLS.del("va.session"); return null; }
+      return Object.assign({}, s, { client: Object.assign({ id: c.id }, c.data()) });
+    }
+    clientLogout() { safeLS.del("va.session"); }
+
+    watchClient(session, cb, onErr) {
+      const id = session.clientId;
+      const st = { client: session.client, plannings: null, contents: null, comments: null };
+      const emit = () => { if (st.plannings && st.contents && st.comments) cb(Object.assign({}, st)); };
+      const subs = [
+        this.db.doc("clients/" + id).onSnapshot((s) => { if (s.exists) { st.client = Object.assign({ id }, s.data()); emit(); } }, onErr),
+        this._sub(this.db.collection("plannings").where("clientId", "==", id), (s) => { st.plannings = this._docs(s); emit(); }, onErr),
+        this._sub(this.db.collection("contents").where("clientId", "==", id), (s) => { st.contents = this._docs(s); emit(); }, onErr),
+        this._sub(this.db.collection("comments").where("clientId", "==", id), (s) => { st.comments = this._docs(s); emit(); }, onErr),
+      ];
+      return () => subs.forEach((u) => u());
+    }
+
+    async _ownContent(session, contentId) {
+      const ref = this.db.doc("contents/" + contentId);
+      const s = await ref.get();
+      if (!s.exists) throw new PortalError("not_found", "Conteúdo não encontrado.");
+      const d = s.data();
+      if (d.clientId !== session.clientId) throw new PortalError("forbidden", "Este conteúdo não pertence ao seu planejamento.");
+      return { ref, d };
+    }
+    async _notify(n) { await this.db.collection("notifications").add(Object.assign({ read: false, createdAt: nowISO() }, n)); }
+
+    async approve(session, contentId) {
+      const { ref, d } = await this._ownContent(session, contentId);
+      if (d.status !== "em_analise") return { already: true };
+      const patch = approvalPatch(d, session.client && session.client.name);
+      await ref.update(patch);
+      await this._notify({ clientId: session.clientId, contentId, type: "approval", message: "Conteúdo aprovado", clientName: session.client.company, contentTitle: d.title || "" });
+      return { approvedAt: patch.approvedAt };
+    }
+    async sendComment(session, contentId, text, kind) {
+      const t = checkText(text);
+      const { ref, d } = await this._ownContent(session, contentId);
+      if (kind === "change_request" && d.status !== "em_analise") throw new PortalError("closed", "Este conteúdo já foi aprovado. Use os comentários para falar com a VA Mídia.");
+      const at = nowISO();
+      await this.db.collection("comments").add({ contentId, clientId: session.clientId, planningId: d.planningId, authorRole: "client", authorName: session.client.name || session.client.company, kind: kind === "change_request" ? "change_request" : "comment", message: t, createdAt: at });
+      if (kind === "change_request") await ref.update({ changeRequested: true, updatedAt: at });
+      await this._notify({ clientId: session.clientId, contentId, type: kind === "change_request" ? "change_request" : "comment", message: t, clientName: session.client.company, contentTitle: d.title || "" });
+    }
+
+    async adminAccess() {
+      if (this.canEdit) return { ok: true };
+      if (this.canEdit === null) return { ok: true, uncertain: true };
+      return { ok: false, reason: "A área da VA Mídia é liberada para quem tem acesso de edição a este portal no Claude." };
+    }
+    watchAdmin(cb, onErr) {
+      const names = ["clients", "vault", "plannings", "contents", "comments", "notifications"];
+      const st = {};
+      const emit = () => { if (names.every((n) => st[n])) cb(Object.assign({}, st)); };
+      const subs = names.map((n) => this._sub(this.db.collection(n), (s) => { st[n] = this._docs(s); emit(); }, onErr));
+      return () => subs.forEach((u) => u());
+    }
+    async setStatus(contentId, status) {
+      const ref = this.db.doc("contents/" + contentId); const s = await ref.get();
+      if (!s.exists) throw new PortalError("not_found", "Conteúdo não encontrado.");
+      if (s.data().status === status) return;
+      await ref.update(statusPatch(s.data(), status));
+    }
+    async resolveChange(contentId) { await this.db.doc("contents/" + contentId).update({ changeRequested: false, updatedAt: nowISO() }); }
+    async agencyComment(contentId, text) {
+      const t = checkText(text);
+      const s = await this.db.doc("contents/" + contentId).get();
+      if (!s.exists) throw new PortalError("not_found", "Conteúdo não encontrado.");
+      const d = s.data();
+      await this.db.collection("comments").add({ contentId, clientId: d.clientId, planningId: d.planningId, authorRole: "agency", authorName: "VA Mídia", kind: "comment", message: t, createdAt: nowISO() });
+    }
+    async markRead(ids) { for (const id of ids) await this.db.doc("notifications/" + id).update({ read: true }).catch(() => {}); }
+    async setContentImage(contentId, imageRef) { await this.db.doc("contents/" + contentId).update({ image: imageRef, images: [], updatedAt: nowISO() }); }
+    async deleteContent(id) {
+      const cm = await this.db.collection("comments").where("contentId", "==", id).get();
+      for (const d of cm.docs) await this.db.doc("comments/" + d.id).delete();
+      const nt = await this.db.collection("notifications").where("contentId", "==", id).get();
+      for (const d of nt.docs) await this.db.doc("notifications/" + d.id).delete();
+      await this.db.doc("contents/" + id).delete();
+    }
+
+    async saveClient(data) {
+      const id = data.id || uid("cl-");
+      const company = String(data.company || "").trim();
+      const email = String(data.email || "").trim().toLowerCase();
+      if (!company || !email) throw new PortalError("missing", "Empresa e e-mail são obrigatórios.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new PortalError("email", "Confira o e-mail do cliente.");
+      const prev = data.id ? await this.db.doc("vault/" + id).get() : null;
+      const prevV = prev && prev.exists ? prev.data() : null;
+      const code = String(data.code || (prevV && prevV.code) || makeCode()).trim().toUpperCase();
+      if (code.length < 5) throw new PortalError("code", "Use um código com pelo menos 5 caracteres.");
+      const all = await this.db.collection("vault").get();
+      if (all.docs.some((d) => d.id !== id && d.data().email === email)) throw new PortalError("dup", "Já existe um cliente com este e-mail.");
+      const prevClient = data.id ? await this.db.doc("clients/" + id).get() : null;
+      await this.db.doc("clients/" + id).set({
+        name: String(data.name || "").trim(), company, handle: String(data.handle || "").trim().replace(/^@/, ""),
+        status: data.status || "ativo", demo: !!(prevClient && prevClient.exists && prevClient.data().demo),
+        createdAt: prevClient && prevClient.exists ? prevClient.data().createdAt : nowISO(),
+      });
+      if (prevV) { const oh = await accessHash(prevV.email, prevV.code); if (prevV.email !== email || prevV.code !== code) await this.db.doc("access/" + oh).delete(); }
+      await this.db.doc("vault/" + id).set({ email, code });
+      await this.db.doc("access/" + (await accessHash(email, code))).set({ clientId: id });
+      return { id, code };
+    }
+    async regenerateCode(clientId) {
+      const v = await this.db.doc("vault/" + clientId).get();
+      if (!v.exists) throw new PortalError("not_found", "Cliente sem e-mail cadastrado.");
+      const c = await this.db.doc("clients/" + clientId).get();
+      return this.saveClient(Object.assign({ id: clientId }, c.data(), { email: v.data().email, code: makeCode() }));
+    }
+
+    async uploadImage(file) {
+      if (!this.assets) throw new PortalError("no_assets", "O envio de imagens não está disponível nesta visualização.");
+      const type = file.type || (/\.png$/i.test(file.name) ? "image/png" : /\.webp$/i.test(file.name) ? "image/webp" : /\.gif$/i.test(file.name) ? "image/gif" : "image/jpeg");
+      try {
+        const r = await this.assets.upload(file, { type });
+        return "asset:" + r.id;
+      } catch (e) {
+        const m = { too_large: "Imagem acima de 20 MB.", unsupported_type: "Formato de imagem não aceito (use JPG, PNG, WebP ou GIF).", quota_or_state: "O espaço de imagens do portal está cheio.", rate_limited: "Muitos envios seguidos. Tente de novo em instantes." };
+        throw new PortalError(e.code || "upload", m[e.code] || "Não foi possível enviar a imagem.");
+      }
+    }
+    async saveBrand(brand) { await this.db.doc("settings/brand").set(brand || {}); }
+
+    /** plan = {clientId, planning:{id, create, month, year, title}, ops:[{kind:'create'|'update', id?, data}]} */
+    async applyImport(plan) {
+      if (plan.planning.create) await this.db.doc("plannings/" + plan.planning.id).set({ clientId: plan.clientId, month: plan.planning.month, year: plan.planning.year, title: plan.planning.title, createdAt: nowISO() });
+      for (const op of plan.ops) {
+        if (op.kind === "create") await this.db.doc("contents/" + op.id).set(op.data);
+        else await this.db.doc("contents/" + op.id).update(op.data);
+      }
+    }
+
+    async clearDemo() {
+      for (const col of ["notifications", "comments", "contents", "plannings", "access", "clients"]) {
+        const s = await this.db.collection(col).where("demo", "==", true).get();
+        for (const d of s.docs) await this.db.doc(col + "/" + d.id).delete();
+      }
+      const v = await this.db.collection("vault").get();
+      for (const d of v.docs) if (/^demo-/.test(d.id)) await this.db.doc("vault/" + d.id).delete();
+      await this.db.doc("demo/credentials").delete();
+    }
+    async loadDemo(seed) {
+      const put = (p, o) => { const x = Object.assign({}, o); delete x.id; return this.db.doc(p).set(x); };
+      for (const c of seed.clients) await put("clients/" + c.id, c);
+      for (const v of seed.vault) await put("vault/" + v.id, v);
+      for (const a of seed.access) await put("access/" + a.id, Object.assign({}, a, { demo: true }));
+      for (const p of seed.plannings) await put("plannings/" + p.id, p);
+      for (const c of seed.contents) await put("contents/" + c.id, c);
+      for (const c of seed.comments) await put("comments/" + c.id, c);
+      for (const n of seed.notifications) await put("notifications/" + n.id, n);
+      await this.db.doc("demo/credentials").set({ items: seed.demoCredentials, aviso: "Acessos de DEMONSTRAÇÃO" });
+    }
+  }
+
+  /* ============================================================
+     LocalStore — demonstração em memória (sem persistência)
+     ============================================================ */
+  class LocalStore {
+    constructor() {
+      this.info = { mode: "local", label: "Demonstração local", persistent: false, serverIsolation: false, codesVisible: true, canUploadImages: true, canUseAI: false };
+      this.d = { clients: [], vault: [], access: [], plannings: [], contents: [], comments: [], notifications: [], brand: null, demoCredentials: [] };
+      this.listeners = new Set();
+    }
+    async init() {}
+    _emit() { this.listeners.forEach((f) => f()); }
+    _on(f) { this.listeners.add(f); f(); return () => this.listeners.delete(f); }
+    watchPublic(cb) { return this._on(() => cb({ brand: this.d.brand, demoCredentials: this.d.demoCredentials })); }
+    async clientLogin(email, code) {
+      email = String(email || "").trim(); code = String(code || "").trim();
+      if (!email || !code) throw new PortalError("missing", "Informe o e-mail e o código de acesso.");
+      const h = await accessHash(email, code);
+      const a = this.d.access.find((x) => x.id === h);
+      if (!a) throw new PortalError("invalid", "E-mail ou código não conferem. Confira os dados enviados pela VA Mídia.");
+      const client = this.d.clients.find((c) => c.id === a.clientId);
+      if (!client) throw new PortalError("invalid", "Este acesso não está mais ativo.");
+      if (client.status === "inativo") throw new PortalError("inactive", "Este acesso está pausado. Fale com a VA Mídia.");
+      return { kind: "client", clientId: client.id, key: h, client };
+    }
+    async restoreClient() { return null; }
+    clientLogout() {}
+    watchClient(session, cb) {
+      return this._on(() => {
+        const id = session.clientId;
+        cb({ client: this.d.clients.find((c) => c.id === id) || session.client, plannings: this.d.plannings.filter((p) => p.clientId === id), contents: this.d.contents.filter((c) => c.clientId === id), comments: this.d.comments.filter((c) => c.clientId === id) });
+      });
+    }
+    _own(session, id) {
+      const c = this.d.contents.find((x) => x.id === id);
+      if (!c) throw new PortalError("not_found", "Conteúdo não encontrado.");
+      if (c.clientId !== session.clientId) throw new PortalError("forbidden", "Este conteúdo não pertence ao seu planejamento.");
+      return c;
+    }
+    _replace(id, patch) { this.d.contents = this.d.contents.map((c) => (c.id === id ? Object.assign({}, c, patch) : c)); }
+    async approve(session, id) {
+      const c = this._own(session, id);
+      if (c.status !== "em_analise") return { already: true };
+      const p = approvalPatch(c, session.client.name); this._replace(id, p);
+      this.d.notifications = this.d.notifications.concat({ id: uid("nt-"), clientId: c.clientId, contentId: id, type: "approval", message: "Conteúdo aprovado", read: false, createdAt: nowISO(), clientName: session.client.company, contentTitle: c.title });
+      this._emit(); return { approvedAt: p.approvedAt };
+    }
+    async sendComment(session, id, text, kind) {
+      const t = checkText(text); const c = this._own(session, id);
+      if (kind === "change_request" && c.status !== "em_analise") throw new PortalError("closed", "Este conteúdo já foi aprovado. Use os comentários para falar com a VA Mídia.");
+      const at = nowISO();
+      this.d.comments = this.d.comments.concat({ id: uid("cm-"), contentId: id, clientId: c.clientId, planningId: c.planningId, authorRole: "client", authorName: session.client.name || session.client.company, kind: kind === "change_request" ? "change_request" : "comment", message: t, createdAt: at });
+      if (kind === "change_request") this._replace(id, { changeRequested: true, updatedAt: at });
+      this.d.notifications = this.d.notifications.concat({ id: uid("nt-"), clientId: c.clientId, contentId: id, type: kind === "change_request" ? "change_request" : "comment", message: t, read: false, createdAt: at, clientName: session.client.company, contentTitle: c.title });
+      this._emit();
+    }
+    async adminAccess() { return { ok: true }; }
+    watchAdmin(cb) { return this._on(() => cb({ clients: this.d.clients, vault: this.d.vault, plannings: this.d.plannings, contents: this.d.contents, comments: this.d.comments, notifications: this.d.notifications })); }
+    async setStatus(id, status) { const c = this.d.contents.find((x) => x.id === id); if (!c || c.status === status) return; this._replace(id, statusPatch(c, status)); this._emit(); }
+    async resolveChange(id) { this._replace(id, { changeRequested: false }); this._emit(); }
+    async agencyComment(id, text) { const t = checkText(text); const c = this.d.contents.find((x) => x.id === id); this.d.comments = this.d.comments.concat({ id: uid("cm-"), contentId: id, clientId: c.clientId, planningId: c.planningId, authorRole: "agency", authorName: "VA Mídia", kind: "comment", message: t, createdAt: nowISO() }); this._emit(); }
+    async markRead(ids) { this.d.notifications = this.d.notifications.map((n) => (ids.includes(n.id) ? Object.assign({}, n, { read: true }) : n)); this._emit(); }
+    async setContentImage(id, ref) { this._replace(id, { image: ref, images: [] }); this._emit(); }
+    async deleteContent(id) { this.d.contents = this.d.contents.filter((c) => c.id !== id); this.d.comments = this.d.comments.filter((c) => c.contentId !== id); this.d.notifications = this.d.notifications.filter((c) => c.contentId !== id); this._emit(); }
+    async saveClient(data) {
+      const id = data.id || uid("cl-");
+      const company = String(data.company || "").trim(); const email = String(data.email || "").trim().toLowerCase();
+      if (!company || !email) throw new PortalError("missing", "Empresa e e-mail são obrigatórios.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new PortalError("email", "Confira o e-mail do cliente.");
+      if (this.d.vault.some((v) => v.id !== id && v.email === email)) throw new PortalError("dup", "Já existe um cliente com este e-mail.");
+      const prevV = this.d.vault.find((v) => v.id === id);
+      const code = String(data.code || (prevV && prevV.code) || makeCode()).toUpperCase();
+      if (code.length < 5) throw new PortalError("code", "Use um código com pelo menos 5 caracteres.");
+      const prev = this.d.clients.find((c) => c.id === id);
+      const client = { id, name: String(data.name || "").trim(), company, handle: String(data.handle || "").replace(/^@/, "").trim(), status: data.status || "ativo", demo: !!(prev && prev.demo), createdAt: prev ? prev.createdAt : nowISO() };
+      this.d.clients = this.d.clients.filter((c) => c.id !== id).concat(client);
+      if (prevV) { const oh = await accessHash(prevV.email, prevV.code); this.d.access = this.d.access.filter((a) => a.id !== oh); }
+      this.d.vault = this.d.vault.filter((v) => v.id !== id).concat({ id, email, code });
+      this.d.access = this.d.access.concat({ id: await accessHash(email, code), clientId: id });
+      this._emit(); return { id, code };
+    }
+    async regenerateCode(clientId) { const v = this.d.vault.find((x) => x.id === clientId); const c = this.d.clients.find((x) => x.id === clientId); return this.saveClient(Object.assign({}, c, { email: v.email, code: makeCode() })); }
+    async uploadImage(file) { return URL.createObjectURL(file); }
+    async saveBrand(b) { this.d.brand = b; this._emit(); }
+    async applyImport(plan) {
+      if (plan.planning.create) this.d.plannings = this.d.plannings.concat({ id: plan.planning.id, clientId: plan.clientId, month: plan.planning.month, year: plan.planning.year, title: plan.planning.title, createdAt: nowISO() });
+      for (const op of plan.ops) {
+        if (op.kind === "create") this.d.contents = this.d.contents.concat(Object.assign({ id: op.id }, op.data));
+        else this._replace(op.id, op.data);
+      }
+      this._emit();
+    }
+    async clearDemo() {
+      const keep = (x) => !x.demo;
+      ["clients", "plannings", "contents", "comments", "notifications"].forEach((k) => (this.d[k] = this.d[k].filter(keep)));
+      this.d.vault = this.d.vault.filter((v) => !/^demo-/.test(v.id)); this.d.access = this.d.access.filter((a) => !/^demo-/.test(a.clientId)); this.d.demoCredentials = [];
+      this._emit();
+    }
+    async loadDemo(seed) {
+      const ids = new Set(seed.clients.map((c) => c.id));
+      ["clients", "vault", "access", "plannings", "contents", "comments", "notifications"].forEach((k) => {
+        const incoming = seed[k] || [];
+        const inIds = new Set(incoming.map((x) => x.id));
+        this.d[k] = this.d[k].filter((x) => !inIds.has(x.id)).concat(JSON.parse(JSON.stringify(incoming)));
+      });
+      this.d.demoCredentials = seed.demoCredentials; void ids;
+      this._emit();
+    }
+  }
+
+  /* ============================================================
+     SupabaseStore — produção (ver producao/schema.sql)
+     Cliente: só acessa por funções RPC que validam o token no servidor.
+     Equipe: login do Supabase Auth + tabela `admins` + RLS.
+     ============================================================ */
+  const snake = (s) => s.replace(/[A-Z]/g, (m) => "_" + m.toLowerCase());
+  const camel = (s) => s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+  const toCamel = (o) => { const r = {}; Object.keys(o || {}).forEach((k) => (r[camel(k)] = o[k])); return r; };
+  const toSnake = (o) => { const r = {}; Object.keys(o || {}).forEach((k) => (r[snake(k)] = o[k])); return r; };
+  const CONTENT_COLS = ["planning_id", "client_id", "position", "ref", "date", "type", "title", "objective", "description", "caption", "image", "images", "status", "change_requested", "approved_at", "published_at", "history", "updated_at", "is_demo"];
+
+  class SupabaseStore {
+    constructor(cfg) {
+      this.cfg = cfg;
+      this.info = { mode: "supabase", label: "Servidor Supabase", persistent: true, serverIsolation: true, codesVisible: false, canUploadImages: true, canUseAI: false };
+    }
+    async init() {
+      if (!root.supabase || !root.supabase.createClient) throw new PortalError("sdk", "Biblioteca do Supabase não carregou.");
+      this.sb = root.supabase.createClient(this.cfg.supabaseUrl, this.cfg.supabaseAnonKey, { auth: { persistSession: true } });
+    }
+    async _rpc(fn, args) {
+      const { data, error } = await this.sb.rpc(fn, args);
+      if (error) {
+        const m = String(error.message || "");
+        const known = { invalid_login: "E-mail ou código não conferem. Confira os dados enviados pela VA Mídia.", too_many_attempts: "Muitas tentativas. Aguarde 15 minutos e tente de novo.", inactive: "Este acesso está pausado. Fale com a VA Mídia.", session_expired: "Sua sessão expirou. Entre novamente.", not_found: "Conteúdo não encontrado.", closed: "Este conteúdo já foi aprovado. Use os comentários para falar com a VA Mídia.", forbidden: "Acesso negado." };
+        const code = Object.keys(known).find((k) => m.includes(k)) || "server";
+        throw new PortalError(code, known[code] || "Não foi possível falar com o servidor. Tente de novo.");
+      }
+      return data;
+    }
+    _mapContent(r) { const c = toCamel(r); c.demo = r.is_demo; c.order = r.position; return c; }
+
+    watchPublic(cb) {
+      let alive = true;
+      const load = async () => {
+        const { data } = await this.sb.rpc("public_settings");
+        if (alive) cb({ brand: data && data.brand ? data.brand : null, demoCredentials: (data && data.demo_credentials) || [] });
+      };
+      load().catch(() => cb({ brand: null, demoCredentials: [] }));
+      return () => { alive = false; };
+    }
+    async clientLogin(email, code) {
+      if (!String(email || "").trim() || !String(code || "").trim()) throw new PortalError("missing", "Informe o e-mail e o código de acesso.");
+      const r = await this._rpc("client_login", { p_email: email, p_code: code });
+      if (r && r.error) {
+        const m = { invalid_login: "E-mail ou código não conferem. Confira os dados enviados pela VA Mídia.", too_many_attempts: "Muitas tentativas. Aguarde 15 minutos e tente de novo.", inactive: "Este acesso está pausado. Fale com a VA Mídia." };
+        throw new PortalError(r.error, m[r.error] || "Não foi possível entrar.");
+      }
+      const session = { kind: "client", token: r.token, clientId: r.client.id };
+      safeLS.set("va.session.sb", session);
+      return Object.assign({}, session, { client: toCamel(r.client) });
+    }
+    async restoreClient() {
+      const s = safeLS.get("va.session.sb");
+      if (!s || !s.token) return null;
+      try { const p = await this._rpc("client_portal", { p_token: s.token }); return Object.assign({}, s, { client: toCamel(p.client) }); }
+      catch (e) { safeLS.del("va.session.sb"); return null; }
+    }
+    clientLogout() { const s = safeLS.get("va.session.sb"); if (s && s.token) this.sb.rpc("client_logout", { p_token: s.token }); safeLS.del("va.session.sb"); }
+    watchClient(session, cb, onErr) {
+      let alive = true, timer;
+      const load = async () => {
+        try {
+          const p = await this._rpc("client_portal", { p_token: session.token });
+          if (!alive) return;
+          cb({ client: toCamel(p.client), plannings: (p.plannings || []).map(toCamel), contents: (p.contents || []).map((r) => this._mapContent(r)), comments: (p.comments || []).map(toCamel) });
+        } catch (e) { onErr && onErr(e); }
+        if (alive) timer = setTimeout(load, 20000);
+      };
+      this._reloadClient = () => { clearTimeout(timer); load(); };
+      load();
+      return () => { alive = false; clearTimeout(timer); };
+    }
+    async approve(session, id) { const r = await this._rpc("client_approve", { p_token: session.token, p_content_id: id }); this._reloadClient && this._reloadClient(); return r || {}; }
+    async sendComment(session, id, text, kind) { const t = checkText(text); await this._rpc("client_comment", { p_token: session.token, p_content_id: id, p_message: t, p_kind: kind === "change_request" ? "change_request" : "comment" }); this._reloadClient && this._reloadClient(); }
+
+    async adminAccess() {
+      const { data } = await this.sb.auth.getSession();
+      if (!data || !data.session) return { ok: false, needsLogin: true };
+      const isAdmin = await this._rpc("is_admin", {}).catch(() => false);
+      return isAdmin ? { ok: true } : { ok: false, reason: "Esta conta não está cadastrada como equipe da VA Mídia." };
+    }
+    async adminLogin(email, password) {
+      const { error } = await this.sb.auth.signInWithPassword({ email, password });
+      if (error) throw new PortalError("admin_login", "E-mail ou senha da equipe não conferem.");
+      return this.adminAccess();
+    }
+    async adminLogout() { await this.sb.auth.signOut(); }
+    watchAdmin(cb, onErr) {
+      let alive = true, timer;
+      const q = (t, sel) => this.sb.from(t).select(sel || "*");
+      const load = async () => {
+        try {
+          const [cl, pl, co, cm, nt] = await Promise.all([q("clients", "id,name,company,handle,email,status,is_demo,created_at"), q("plannings"), q("contents"), q("comments"), q("notifications").order("created_at", { ascending: false }).limit(300)]);
+          const err = [cl, pl, co, cm, nt].find((r) => r.error);
+          if (err) throw new PortalError("server", err.error.message);
+          if (!alive) return;
+          const clients = cl.data.map((r) => Object.assign(toCamel(r), { demo: r.is_demo }));
+          cb({
+            clients, vault: cl.data.map((r) => ({ id: r.id, email: r.email, code: null })),
+            plannings: pl.data.map((r) => Object.assign(toCamel(r), { demo: r.is_demo })), contents: co.data.map((r) => this._mapContent(r)),
+            comments: cm.data.map(toCamel), notifications: nt.data.map((r) => Object.assign(toCamel(r), { demo: r.is_demo })),
+          });
+        } catch (e) { onErr && onErr(e); }
+        if (alive) timer = setTimeout(load, 15000);
+      };
+      this._reloadAdmin = () => { clearTimeout(timer); load(); };
+      load();
+      return () => { alive = false; clearTimeout(timer); };
+    }
+    _after() { this._reloadAdmin && this._reloadAdmin(); }
+    async _getContent(id) { const { data, error } = await this.sb.from("contents").select("*").eq("id", id).single(); if (error) throw new PortalError("not_found", "Conteúdo não encontrado."); return this._mapContent(data); }
+    async _updContent(id, patch) {
+      const row = toSnake(patch); if ("demo" in patch) { row.is_demo = patch.demo; delete row.demo; } if ("order" in patch) { row.position = patch.order; delete row.order; }
+      Object.keys(row).forEach((k) => { if (!CONTENT_COLS.includes(k)) delete row[k]; });
+      const { error } = await this.sb.from("contents").update(row).eq("id", id); if (error) throw new PortalError("server", error.message);
+    }
+    async setStatus(id, status) { const c = await this._getContent(id); if (c.status === status) return; await this._updContent(id, statusPatch(c, status)); this._after(); }
+    async resolveChange(id) { await this._updContent(id, { changeRequested: false, updatedAt: nowISO() }); this._after(); }
+    async agencyComment(id, text) { const t = checkText(text); const c = await this._getContent(id); const { error } = await this.sb.from("comments").insert({ content_id: id, client_id: c.clientId, planning_id: c.planningId, author_role: "agency", author_name: "VA Mídia", kind: "comment", message: t }); if (error) throw new PortalError("server", error.message); this._after(); }
+    async markRead(ids) { if (!ids.length) return; await this.sb.from("notifications").update({ read: true }).in("id", ids); this._after(); }
+    async setContentImage(id, ref) { await this._updContent(id, { image: ref, images: [], updatedAt: nowISO() }); this._after(); }
+    async deleteContent(id) { const { error } = await this.sb.from("contents").delete().eq("id", id); if (error) throw new PortalError("server", error.message); this._after(); }
+    async saveClient(data) {
+      const r = await this._rpc("admin_save_client", { p_id: data.id || null, p_name: data.name || "", p_company: data.company || "", p_handle: String(data.handle || "").replace(/^@/, ""), p_email: data.email || "", p_status: data.status || "ativo", p_code: data.code || null });
+      this._after(); return { id: r.id, code: r.code };
+    }
+    async regenerateCode(clientId) { const r = await this._rpc("admin_regenerate_code", { p_client_id: clientId }); this._after(); return { id: clientId, code: r.code }; }
+    async uploadImage(file) {
+      const ext = (file.name.match(/\.[a-z0-9]+$/i) || [".jpg"])[0].toLowerCase();
+      const path = new Date().toISOString().slice(0, 7) + "/" + uid("img-") + ext;
+      const { error } = await this.sb.storage.from("content-images").upload(path, file, { contentType: file.type || undefined, upsert: false });
+      if (error) throw new PortalError("upload", "Não foi possível enviar a imagem: " + error.message);
+      return this.sb.storage.from("content-images").getPublicUrl(path).data.publicUrl;
+    }
+    async saveBrand(brand) { const { error } = await this.sb.from("settings").upsert({ key: "brand", value: brand || {} }); if (error) throw new PortalError("server", error.message); }
+    async applyImport(plan) {
+      if (plan.planning.create) {
+        const { error } = await this.sb.from("plannings").insert({ id: plan.planning.id, client_id: plan.clientId, month: plan.planning.month, year: plan.planning.year, title: plan.planning.title });
+        if (error) throw new PortalError("server", error.message);
+      }
+      for (const op of plan.ops) {
+        if (op.kind === "create") {
+          const row = toSnake(op.data); row.id = op.id; row.position = op.data.order; row.is_demo = !!op.data.demo;
+          Object.keys(row).forEach((k) => { if (!CONTENT_COLS.includes(k) && k !== "id") delete row[k]; });
+          const { error } = await this.sb.from("contents").insert(row); if (error) throw new PortalError("server", error.message);
+        } else await this._updContent(op.id, op.data);
+      }
+      this._after();
+    }
+    async clearDemo() { const r = await this._rpc("admin_clear_demo", {}); this._after(); return r; }
+    async loadDemo() { throw new PortalError("unsupported", "No Supabase, carregue a demonstração com o arquivo producao/seed-demo.sql."); }
+  }
+
+  /* ============================================================ */
+  async function pickStore(onStatus) {
+    const cfg = root.VA_CONFIG || {};
+    if (cfg.supabaseUrl && cfg.supabaseAnonKey) {
+      onStatus && onStatus("Conectando ao servidor…");
+      if (!root.supabase) await new Promise((res, rej) => { const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"; s.onload = res; s.onerror = () => rej(new PortalError("sdk", "Não foi possível carregar o Supabase.")); document.head.appendChild(s); });
+      const s = new SupabaseStore(cfg); await s.init(); return s;
+    }
+    if (root.claude && typeof root.claude.use === "function") {
+      const db = await root.claude.use("db").catch(() => null);
+      if (db) {
+        const [user, assets, sample] = await Promise.all(["user", "assets", "sample"].map((n) => root.claude.use(n).catch(() => null)));
+        const s = new ArtifactStore(db, { user, assets, sample }); await s.init(); return s;
+      }
+    }
+    const s = new LocalStore(); await s.init();
+    try { const r = await fetch("demo/seed.json"); if (r.ok) await s.loadDemo(await r.json()); } catch (e) {}
+    return s;
+  }
+
+  root.VAStore = { pickStore, makeCode, accessHash, PortalError, uid, nowISO, ArtifactStore, LocalStore, SupabaseStore };
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
+/* ============================================================
+   VA Mídia · Content Approval Portal — aplicação
+   ============================================================ */
+(function () {
+  "use strict";
+  const P = window.VAParse, ST = window.VAStore;
+
+  /* ---------------- utilidades ---------------- */
+  const $ = (s, r) => (r || document).querySelector(s);
+  const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const MES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+  const MES3 = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+  const STATUS = { em_analise: "Em análise", aprovado: "Aprovado", publicado: "Publicado" };
+  const TYPE_LABEL = (t) => (t ? String(t).toUpperCase() : "TIPO NÃO INFORMADO");
+  const pad = (n) => String(n).padStart(2, "0");
+  function day(date) {
+    if (!date || !/^\d{4}-\d{2}-\d{2}/.test(date)) return null;
+    const [y, m, d] = date.split("-").map(Number);
+    return { short: `${pad(d)} ${MES3[m - 1]}`, full: `${pad(d)} ${MES3[m - 1]} ${y}`, long: `${d} de ${MES[m - 1]} de ${y}`, upper: `${pad(d)} ${MES[m - 1].toUpperCase()} ${y}` };
+  }
+  function dt(iso) {
+    if (!iso) return "";
+    const d = new Date(iso); if (isNaN(d)) return "";
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  function ago(iso) {
+    const d = new Date(iso); if (isNaN(d)) return "";
+    const s = (Date.now() - d.getTime()) / 1000;
+    if (s < 60) return "agora";
+    if (s < 3600) return `há ${Math.floor(s / 60)} min`;
+    if (s < 86400) return `há ${Math.floor(s / 3600)} h`;
+    if (s < 86400 * 7) return `há ${Math.floor(s / 86400)} d`;
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
+  }
+  const monthName = (m, y) => `${MES[m - 1].replace(/^\w/, (c) => c.toUpperCase())} ${y}`;
+  const monthShort = (m, y) => `${MES3[m - 1]} ${y}`;
+  const initials = (s) => String(s || "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  function imgSrc(ref) {
+    if (!ref) return "";
+    if (/^asset:/.test(ref)) return "/_blob/" + ref.slice(6);
+    return ref;
+  }
+  const imagesOf = (c) => (c.images && c.images.length ? c.images : c.image ? [c.image] : []);
+  const byDate = (a, b) => (a.date || "9999").localeCompare(b.date || "9999") || (a.order || 0) - (b.order || 0) || String(a.title).localeCompare(String(b.title));
+  const byPlanning = (a, b) => b.year - a.year || b.month - a.month;
+
+  /* ---------------- ícones ---------------- */
+  const I = {};
+  const svg = (p, extra) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra || ""}>${p}</svg>`;
+  Object.assign(I, {
+    check: svg('<path d="M20 6 9 17l-5-5"/>'),
+    x: svg('<path d="M18 6 6 18M6 6l12 12"/>'),
+    left: svg('<path d="m15 18-6-6 6-6"/>'),
+    right: svg('<path d="m9 18 6-6-6-6"/>'),
+    back: svg('<path d="M19 12H5M12 19l-7-7 7-7"/>'),
+    arrow: svg('<path d="M5 12h14M12 5l7 7-7 7"/>'),
+    heart: svg('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>'),
+    chat: svg('<path d="M21 11.5a8.4 8.4 0 0 1-12.2 7.5L3 21l2-5.3A8.4 8.4 0 1 1 21 11.5z"/>'),
+    send: svg('<path d="m22 2-7 20-4-9-9-4 20-7z"/>'),
+    save: svg('<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>'),
+    reel: svg('<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 8h18M8 3l3 5M14 3l3 5"/><path d="m10 12 4.5 2.5L10 17z" fill="currentColor"/>'),
+    carousel: svg('<rect x="7" y="3" width="14" height="14" rx="2.5"/><path d="M3 7v11a3 3 0 0 0 3 3h11"/>'),
+    post: svg('<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>'),
+    story: svg('<circle cx="12" cy="12" r="9" stroke-dasharray="3 2.2"/><circle cx="12" cy="12" r="4.5"/>'),
+    bell: svg('<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>'),
+    alert: svg('<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/>'),
+    edit: svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+    upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5M12 3v12"/>'),
+    image: svg('<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>'),
+    spark: svg('<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>'),
+    copy: svg('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>'),
+    out: svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'),
+    info: svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/>'),
+    inbox: svg('<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>'),
+    trash: svg('<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>'),
+    key: svg('<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M15 8l2 2"/>'),
+    db: svg('<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'),
+  });
+  const typeIcon = (t) => ({ Reel: I.reel, Carrossel: I.carousel, Story: I.story }[t] || I.post);
+
+  /* ---------------- estado ---------------- */
+  const S = {
+    store: null, info: null, pub: { brand: null, demoCredentials: [] },
+    view: "boot", bootMsg: "Carregando o portal…", fatal: "",
+    session: null, cdata: null, cunsub: null,
+    adata: null, aunsub: null, adminTab: "overview", adminClientId: null, adminAccess: null,
+    filter: "all", planningId: {}, animKey: "",
+    open: null, slide: 0,
+    ui: {}, drafts: {}, busy: {},
+    login: { email: "", code: "", error: "" },
+    alogin: { email: "", password: "", error: "" },
+    imp: null, clientForm: null, pendingStatus: {},
+  };
+  const resetUI = () => { S.ui = {}; S.slide = 0; };
+
+  /* ---------------- toasts ---------------- */
+  function toast(msg, kind) {
+    const box = $("#toasts"); if (!box) return;
+    const el = document.createElement("div");
+    el.className = "toast " + (kind || "ok");
+    el.setAttribute("role", kind === "err" ? "alert" : "status");
+    el.innerHTML = (kind === "err" ? I.alert : I.check) + `<span>${esc(msg)}</span>`;
+    box.appendChild(el);
+    setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 320); }, kind === "err" ? 5200 : 3200);
+  }
+  const errMsg = (e) => (e && e.message && e.code ? e.message : "Algo deu errado. Tente de novo.");
+
+  /* ---------------- marca ---------------- */
+  function brandHTML(sub) {
+    const logo = S.pub.brand && S.pub.brand.logo;
+    const mark = logo ? `<img src="${esc(imgSrc(logo))}" alt="VA Mídia">` : `<span class="wordmark">VA MÍDIA</span>`;
+    return `<button class="brand" data-a="go-home" aria-label="VA Mídia — início">${mark}${sub ? `<span class="brand-sub">${esc(sub)}</span>` : ""}</button>`;
+  }
+  function modeBanner() {
+    if (!S.info || S.info.mode !== "local") return "";
+    return `<div class="mode-banner"><div class="wrap">${I.info}<span><b>Demonstração local.</b> Este navegador não tem banco conectado: aprovações e comentários ficam só nesta aba e somem ao recarregar.</span></div></div>`;
+  }
+
+  /* ============================================================
+     RENDER
+     ============================================================ */
+  function render() {
+    const app = $("#app");
+    // preserva foco, seleção e rolagem do modal
+    const ae = document.activeElement;
+    const focusId = ae && ae.id ? ae.id : null;
+    const sel = ae && "selectionStart" in ae ? [ae.selectionStart, ae.selectionEnd] : null;
+    const ov = $(".overlay"); const ovTop = ov ? ov.scrollTop : 0;
+
+    let html = "";
+    switch (S.view) {
+      case "boot": html = viewBoot(); break;
+      case "home": html = viewHome(); break;
+      case "login": html = viewLogin(); break;
+      case "client": html = viewClient(); break;
+      case "adminLogin": html = viewAdminLogin(); break;
+      case "denied": html = viewDenied(); break;
+      case "admin": html = viewAdmin(); break;
+    }
+    app.innerHTML = modeBanner() + html;
+    $("#modal").innerHTML = S.open ? viewDetail() : "";
+    document.body.style.overflow = S.open ? "hidden" : "";
+
+    const ov2 = $(".overlay"); if (ov2 && ovTop) ov2.scrollTop = ovTop;
+    if (focusId) { const el = document.getElementById(focusId); if (el) { el.focus({ preventScroll: true }); if (sel && "setSelectionRange" in el) try { el.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
+  }
+
+  /* ---------------- boot ---------------- */
+  function viewBoot() {
+    if (S.fatal) return `<div class="login"><div class="login-card"><div class="panel"><div class="form-error">${I.alert}<span>${esc(S.fatal)}</span></div></div></div></div>`;
+    return `<div class="wrap page"><div class="row" style="justify-content:space-between"><span class="wordmark">VA MÍDIA</span><span class="sk" style="width:120px;height:36px;border-radius:999px"></span></div>
+      <div class="sk" style="height:40px;width:min(420px,80%);margin-top:40px"></div>
+      <div class="sk" style="height:18px;width:200px;margin-top:14px"></div>
+      <div class="summary" style="margin-top:30px;border:0;background:none;gap:8px">${'<div class="sk" style="height:70px"></div>'.repeat(4)}</div>
+      <div class="feed" style="margin-top:30px">${'<div class="sk" style="aspect-ratio:4/5"></div>'.repeat(6)}</div>
+      <p class="sr" role="status">${esc(S.bootMsg)}</p></div>`;
+  }
+
+  /* ---------------- home ---------------- */
+  function viewHome() {
+    return `<div class="home"><div class="wrap">
+      <header class="home-head">${brandHTML("Content Approval Portal")}<span class="spacer"></span>
+        <button class="btn btn-ghost btn-sm" data-a="go-admin">Área da VA Mídia</button></header>
+      <section class="hero">
+        <div>
+          <span class="eyebrow">Content Approval Portal</span>
+          <h1>Seu planejamento. Sua aprovação. <em>Tudo em um só lugar.</em></h1>
+          <p class="lead">O portal onde os clientes da VA Mídia analisam o planejamento mensal de conteúdo, veem cada post como ele vai aparecer no feed e aprovam com um toque.</p>
+          <div class="cta"><button class="btn btn-primary" data-a="go-login">Acessar planejamento ${I.arrow}</button></div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="mock">
+            <div class="mock-head"><span class="dot"><i></i></span><span class="mock-lines"><span></span><span></span></span></div>
+            <div class="mock-grid">
+              <div class="mock-tile t1"><span class="s" style="background:var(--st-aprovado)"></span><span class="d">03 OUT</span></div>
+              <div class="mock-tile t2"><span class="s" style="background:var(--st-analise)"></span><span class="d">07 OUT</span></div>
+              <div class="mock-tile t3"><span class="s" style="background:var(--st-analise)"></span><span class="d">10 OUT</span></div>
+              <div class="mock-tile t4"><span class="s" style="background:var(--st-aprovado)"></span><span class="d">14 OUT</span></div>
+              <div class="mock-tile t5"><span class="s" style="background:var(--st-publicado)"></span><span class="d">17 OUT</span></div>
+              <div class="mock-tile t6"><span class="s" style="background:var(--st-analise)"></span><span class="d">21 OUT</span></div>
+            </div>
+          </div>
+          <div class="mock-float"><span class="ok">${I.check}</span><span><b>Conteúdo aprovado</b><small>A VA Mídia segue com a produção</small></span></div>
+        </div>
+      </section>
+      <section class="steps" aria-label="Como funciona">
+        <div class="step"><span class="n">01</span><h3>Você recebe seu acesso</h3><p>A VA Mídia envia seu e-mail de acesso e um código exclusivo. Só você vê o seu planejamento.</p></div>
+        <div class="step"><span class="n">02</span><h3>Analisa cada conteúdo</h3><p>Veja o post no formato do feed, com legenda, data, objetivo e a ideia por trás de cada peça.</p></div>
+        <div class="step"><span class="n">03</span><h3>Aprova ou pede ajuste</h3><p>Aprove com um toque ou diga o que quer mudar. Você acompanha tudo até a publicação.</p></div>
+      </section>
+      <footer class="home-foot"><span>VA Mídia · Content Approval Portal</span><span class="spacer"></span><button class="linkish" data-a="go-admin">Entrar como equipe VA Mídia</button></footer>
+    </div></div>`;
+  }
+
+  /* ---------------- login do cliente ---------------- */
+  function viewLogin() {
+    const L = S.login;
+    const demo = (S.pub.demoCredentials || []).length ? `<div class="demo-box">
+        <div class="row"><span class="label">Acessos de demonstração</span><span class="tag demo">Dados fictícios</span></div>
+        ${S.pub.demoCredentials.map((d, i) => `<button type="button" class="demo-cred" data-a="fill-demo" data-i="${i}"><span><b>${esc(d.company)}</b><small>${esc(d.email)} · ${esc(d.code)}</small></span>${I.arrow}</button>`).join("")}
+      </div>` : "";
+    return `<main class="login"><div class="wrap"><div class="login-card" style="margin:0 auto">
+      <div style="text-align:center">${brandHTML("")}</div>
+      <form class="panel" data-form="login" novalidate>
+        <div><span class="eyebrow">Portal de Aprovação</span><h1 class="login-title" style="margin-top:10px">Acesse o seu planejamento</h1></div>
+        <div class="field"><label for="lg-email">E-mail</label><input class="input" id="lg-email" type="email" autocomplete="email" inputmode="email" placeholder="cliente@email.com" value="${esc(L.email)}" data-bind="login.email" required></div>
+        <div class="field"><label for="lg-code">Código de acesso</label><input class="input code" id="lg-code" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" placeholder="XXXXXX" maxlength="16" value="${esc(L.code)}" data-bind="login.code" required></div>
+        ${L.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(L.error)}</span></div>` : ""}
+        <button class="btn btn-primary btn-block" type="submit" ${S.busy.login ? "disabled" : ""}>${S.busy.login ? "Verificando…" : "Acessar planejamento"}</button>
+        <p class="hint">Não tem o código? Peça para a equipe da VA Mídia.</p>
+      </form>
+      ${demo}
+      <button class="linkish back-link" data-a="go-home">Voltar para o início</button>
+    </div></div></main>`;
+  }
+
+  /* ---------------- login da equipe (Supabase) ---------------- */
+  function viewAdminLogin() {
+    const L = S.alogin;
+    return `<main class="login"><div class="wrap"><div class="login-card" style="margin:0 auto">
+      <div style="text-align:center">${brandHTML("")}</div>
+      <form class="panel" data-form="alogin" novalidate>
+        <div><span class="eyebrow">Equipe VA Mídia</span><h1 class="login-title" style="margin-top:10px">Entrar na área administrativa</h1></div>
+        <div class="field"><label for="al-email">E-mail da equipe</label><input class="input" id="al-email" type="email" autocomplete="username" value="${esc(L.email)}" data-bind="alogin.email"></div>
+        <div class="field"><label for="al-pass">Senha</label><input class="input" id="al-pass" type="password" autocomplete="current-password" value="${esc(L.password)}" data-bind="alogin.password"></div>
+        ${L.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(L.error)}</span></div>` : ""}
+        <button class="btn btn-primary btn-block" type="submit" ${S.busy.alogin ? "disabled" : ""}>${S.busy.alogin ? "Entrando…" : "Entrar"}</button>
+      </form>
+      <button class="linkish back-link" data-a="go-home">Voltar para o início</button>
+    </div></div></main>`;
+  }
+  function viewDenied() {
+    return `<main class="login"><div class="wrap"><div class="login-card" style="margin:0 auto">
+      <div style="text-align:center">${brandHTML("")}</div>
+      <div class="panel"><h1 class="login-title">Área restrita à equipe</h1><p class="muted">${esc((S.adminAccess && S.adminAccess.reason) || "Você não tem acesso à área da VA Mídia.")}</p>
+      <button class="btn btn-primary" data-a="go-login">Sou cliente — acessar planejamento</button></div>
+      <button class="linkish back-link" data-a="go-home">Voltar para o início</button></div></div></main>`;
+  }
+
+  /* ---------------- blocos compartilhados ---------------- */
+  function planningsFor(data, clientId) { return (data.plannings || []).filter((p) => p.clientId === clientId).sort(byPlanning); }
+  function pickPlanning(data, clientId, key) {
+    const list = planningsFor(data, clientId);
+    if (!list.length) return null;
+    const chosen = list.find((p) => p.id === S.planningId[key]);
+    if (chosen) return chosen;
+    const withPending = list.find((p) => (data.contents || []).some((c) => c.planningId === p.id && c.status === "em_analise"));
+    return withPending || list[0];
+  }
+  function counts(list) {
+    const c = { all: list.length, em_analise: 0, aprovado: 0, publicado: 0, change: 0 };
+    list.forEach((x) => { c[x.status] = (c[x.status] || 0) + 1; if (x.changeRequested && x.status === "em_analise") c.change++; });
+    return c;
+  }
+  function summaryBar(c) {
+    const items = [["all", "Conteúdos", c.all], ["em_analise", "Em análise", c.em_analise], ["aprovado", "Aprovados", c.aprovado], ["publicado", "Publicados", c.publicado]];
+    return `<div class="summary" role="group" aria-label="Resumo e filtros">${items.map(([k, lab, v]) => `<button class="sum ${k}" data-a="filter" data-f="${k}" aria-pressed="${S.filter === k}"><span class="v">${pad(v)}</span><span class="k"><i></i>${lab}</span></button>`).join("")}</div>`;
+  }
+  function monthChips(list, current, key) {
+    if (list.length < 2) return "";
+    return `<div class="month-switch" role="group" aria-label="Mês do planejamento">${list.map((p) => `<button class="chip" data-a="planning" data-key="${esc(key)}" data-id="${esc(p.id)}" aria-pressed="${p.id === current.id}">${monthShort(p.month, p.year)}</button>`).join("")}</div>`;
+  }
+  function mediaHTML(src, alt) {
+    if (!src) return `<span class="noimg">${I.image}<span>Imagem não fornecida</span></span>`;
+    return `<img src="${esc(src)}" alt="${esc(alt || "")}" loading="lazy" data-fallback>`;
+  }
+  function tileHTML(c, i, cmCount, animate) {
+    const d = day(c.date);
+    const imgs = imagesOf(c);
+    return `<button class="tile" data-a="open" data-id="${esc(c.id)}" style="${animate ? `animation-delay:${Math.min(i, 12) * 35}ms` : "animation:none"}" aria-label="${esc((c.title || "Sem título") + ", " + (d ? d.long : "data não informada") + ", " + STATUS[c.status])}">
+      <span class="media" style="display:block">${mediaHTML(imgSrc(imgs[0]), c.title)}
+        <span class="num">#${pad(c.order || i + 1)}</span>
+        <span class="fmt" title="${esc(c.type || "")}">${typeIcon(c.type)}</span>
+        ${c.changeRequested && c.status === "em_analise" || cmCount ? `<span class="flag">${c.changeRequested && c.status === "em_analise" ? `<span>${I.edit}Alteração solicitada</span>` : ""}${cmCount ? `<span class="cm">${I.chat}${cmCount}</span>` : ""}</span>` : ""}
+      </span>
+      <span class="meta"><span class="when"><b>${d ? d.short : "SEM DATA"}</b> · ${esc(c.type ? c.type.toUpperCase() : "—")}</span><span class="status ${esc(c.status)}">${STATUS[c.status] || c.status}</span></span>
+      <span class="ttl${c.title ? "" : " none"}">${esc(c.title || "Título não informado")}</span>
+    </button>`;
+  }
+  function feedHTML(list, comments, emptyText) {
+    const animKey = S.view + "|" + S.filter + "|" + list.map((c) => c.id).join(",");
+    const animate = animKey !== S.animKey; S.animKey = animKey;
+    if (!list.length) return `<div class="empty">${I.inbox}<b>${esc(emptyText[0])}</b><span>${esc(emptyText[1])}</span></div>`;
+    const cc = {}; (comments || []).forEach((m) => (cc[m.contentId] = (cc[m.contentId] || 0) + 1));
+    return `<div class="feed">${list.map((c, i) => tileHTML(c, i, cc[c.id] || 0, animate)).join("")}</div>`;
+  }
+  const EMPTY = {
+    all: ["Nenhum conteúdo neste planejamento", "Assim que a VA Mídia publicar o planejamento, ele aparece aqui."],
+    em_analise: ["Nada aguardando análise", "Todos os conteúdos deste mês já foram revisados."],
+    aprovado: ["Nenhum conteúdo aprovado ainda", "Os conteúdos que você aprovar aparecem aqui."],
+    publicado: ["Nenhum conteúdo publicado ainda", "Depois de produzido e aprovado, o conteúdo publicado aparece aqui."],
+  };
+
+  /* ---------------- dashboard do cliente ---------------- */
+  function viewClient() {
+    const s = S.session, d = S.cdata;
+    const client = (d && d.client) || s.client;
+    const top = `<header class="topbar"><div class="wrap">${brandHTML("Portal de Aprovação")}<span class="spacer"></span>
+      <span class="who"><b>${esc(client.company)}</b><small>${client.handle ? "@" + esc(client.handle) : ""}</small></span>
+      <button class="btn btn-ghost btn-sm" data-a="logout">${I.out}<span>Sair</span></button></div></header>`;
+    if (!d) return top + `<div class="wrap page">${viewBoot()}</div>`;
+    const planning = pickPlanning(d, client.id, "client");
+    const hello = `<h1>Olá, ${esc(client.name || client.company)}</h1>`;
+    if (!planning) return top + `<main class="wrap page"><div class="greet"><div>${hello}<p class="sub">Planejamento de conteúdo</p></div></div>
+      <div class="empty" style="margin-top:30px">${I.inbox}<b>Seu planejamento ainda não foi publicado</b><span>Quando a VA Mídia publicar o planejamento do mês, ele aparece aqui.</span></div></main>`;
+    const all = d.contents.filter((c) => c.planningId === planning.id).sort(byDate);
+    const c = counts(all);
+    const shown = S.filter === "all" ? all : all.filter((x) => x.status === S.filter);
+    const pending = all.filter((x) => x.status === "em_analise" && !x.changeRequested);
+    const changes = all.filter((x) => x.status === "em_analise" && x.changeRequested);
+    let callout;
+    if (pending.length) callout = `<div class="callout"><span class="ic">${I.bell}</span><span class="tx"><b>${pending.length === 1 ? "1 conteúdo aguardando sua aprovação" : pending.length + " conteúdos aguardando sua aprovação"}</b><span>Abra cada um, confira a arte e a legenda, e aprove ou peça um ajuste.${changes.length ? ` ${changes.length === 1 ? "1 alteração pedida por você está" : changes.length + " alterações pedidas por você estão"} com a VA Mídia.` : ""}</span></span><button class="btn btn-primary" data-a="open" data-id="${esc(pending[0].id)}">Revisar agora ${I.arrow}</button></div>`;
+    else if (changes.length) callout = `<div class="callout calm"><span class="ic" style="background:var(--danger-bg);color:var(--danger)">${I.edit}</span><span class="tx"><b>${changes.length === 1 ? "1 alteração em andamento" : changes.length + " alterações em andamento"}</b><span>A VA Mídia está ajustando o que você pediu. Os demais conteúdos já foram revisados.</span></span></div>`;
+    else callout = `<div class="callout calm"><span class="ic">${I.check}</span><span class="tx"><b>Tudo em dia</b><span>Nenhum conteúdo aguardando você neste mês.</span></span></div>`;
+    return top + `<main class="wrap page">
+      <div class="greet"><div>${hello}<p class="sub"><span>Planejamento de conteúdo · <b style="color:var(--text)">${monthName(planning.month, planning.year)}</b></span>${client.demo ? '<span class="tag demo">Demonstração</span>' : ""}</p></div>
+      ${monthChips(planningsFor(d, client.id), planning, "client")}</div>
+      ${callout}
+      ${summaryBar(c)}
+      <div class="feed-head"><h2>${S.filter === "all" ? "Feed do mês" : STATUS[S.filter]} · ${shown.length}</h2><span class="hint">Toque em um conteúdo para ver os detalhes</span></div>
+      ${feedHTML(shown, d.comments, EMPTY[S.filter])}
+    </main>`;
+  }
+
+  /* ---------------- detalhe do conteúdo ---------------- */
+  function currentContext() {
+    if (!S.open) return null;
+    const isAdmin = S.open.from === "admin";
+    const data = isAdmin ? S.adata : S.cdata;
+    if (!data) return null;
+    const c = data.contents.find((x) => x.id === S.open.id);
+    if (!c) return null;
+    const client = isAdmin ? (data.clients.find((x) => x.id === c.clientId) || { company: "", handle: "" }) : (data.client || S.session.client);
+    const siblings = data.contents.filter((x) => x.planningId === c.planningId).sort(byDate);
+    const filtered = S.open.filter && S.open.filter !== "all" ? siblings.filter((x) => x.status === S.open.filter) : siblings;
+    const nav = filtered.some((x) => x.id === c.id) ? filtered : siblings;
+    const comments = (data.comments || []).filter((m) => m.contentId === c.id).sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+    return { isAdmin, data, c, client, nav, comments, idx: nav.findIndex((x) => x.id === c.id) };
+  }
+
+  function viewDetail() {
+    const ctx = currentContext();
+    if (!ctx) return "";
+    const { c, client, nav, idx, isAdmin } = ctx;
+    const d = day(c.date);
+    const prev = nav[idx - 1], next = nav[idx + 1];
+    return `<div class="overlay" data-a="overlay"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dt-title">
+      <div class="sheet-head">
+        <button class="btn btn-ghost btn-sm" data-a="close" id="dt-close">${I.back}<span>Voltar ao planejamento</span></button>
+        <span class="t">Conteúdo #${pad(c.order || idx + 1)} · ${d ? d.full : "Data não informada"}${isAdmin ? " · " + esc(client.company) : ""}</span>
+        <button class="icon-btn" data-a="nav" data-id="${prev ? esc(prev.id) : ""}" ${prev ? "" : "disabled style=\"opacity:.35\""} aria-label="Conteúdo anterior">${I.left}</button>
+        <button class="icon-btn" data-a="nav" data-id="${next ? esc(next.id) : ""}" ${next ? "" : "disabled style=\"opacity:.35\""} aria-label="Próximo conteúdo">${I.right}</button>
+      </div>
+      <div class="sheet-body">
+        <div>${postPreview(c, client)}</div>
+        <div class="side">
+          <h2 id="dt-title" class="${c.title ? "" : "none"}">${esc(c.title || "Título não informado")}</h2>
+          ${isAdmin ? adminStatePanel(ctx) : clientStateCard(ctx)}
+          ${infoList(c)}
+          ${threadHTML(ctx)}
+        </div>
+      </div></div></div>`;
+  }
+
+  function postPreview(c, client) {
+    const imgs = imagesOf(c);
+    const i = Math.min(S.slide, Math.max(0, imgs.length - 1));
+    const handle = client.handle || String(client.company || "cliente").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    const cap = c.caption || "";
+    const long = cap.length > 240;
+    const shownCap = long && !S.ui.capOpen ? cap.slice(0, 220).replace(/\s+\S*$/, "") + "… " : cap;
+    const d = day(c.date);
+    return `<article class="post" aria-label="Pré-visualização da publicação">
+      <header class="post-head"><span class="avatar"><span>${esc(initials(client.company))}</span></span><span><b>${esc(handle)}</b><small>Pré-visualização · ${esc(c.type || "formato não informado")}</small></span></header>
+      <div class="post-media">${mediaHTML(imgSrc(imgs[i]), c.title)}
+        ${c.type === "Reel" ? `<span class="reel">${I.reel}Reel</span>` : ""}
+        ${imgs.length > 1 ? `<span class="count">${i + 1}/${imgs.length}</span>
+          ${i > 0 ? `<button class="nav prev" data-a="slide" data-d="-1" aria-label="Imagem anterior">${I.left}</button>` : ""}
+          ${i < imgs.length - 1 ? `<button class="nav next" data-a="slide" data-d="1" aria-label="Próxima imagem">${I.right}</button>` : ""}` : ""}
+      </div>
+      ${imgs.length > 1 ? `<div class="dots" aria-hidden="true">${imgs.map((_, k) => `<i class="${k === i ? "on" : ""}"></i>`).join("")}</div>` : ""}
+      <div class="post-actions" aria-hidden="true">${I.heart}${I.chat}${I.send}<span class="sp"></span>${I.save}</div>
+      <div class="post-body">
+        ${cap ? `<p class="cap"><b>${esc(handle)}</b>${esc(shownCap)}${long ? `<button class="more" data-a="cap">${S.ui.capOpen ? " ver menos" : "mais"}</button>` : ""}</p>` : `<p class="cap none">Legenda não informada no planejamento.</p>`}
+        <p class="when">${d ? "Programado para " + d.long : "Data de publicação não informada"}</p>
+      </div>
+    </article>`;
+  }
+
+  function infoList(c) {
+    const d = day(c.date);
+    const f = (k, v, cls, full) => `<div class="${full ? "full" : ""}"><dt>${k}</dt><dd class="${v ? cls || "" : "none"}">${v ? esc(v) : "Não informado"}</dd></div>`;
+    return `<dl class="info">
+      ${f("Data de publicação", d ? d.upper : "", "big")}
+      ${f("Tipo de conteúdo", c.type ? c.type.toUpperCase() : "", "big")}
+      ${f("Objetivo", c.objective ? c.objective.toUpperCase() : "", "big")}
+      <div><dt>Status</dt><dd><span class="status ${esc(c.status)}">${STATUS[c.status]}</span></dd></div>
+      ${f("Descrição", c.description, "", true)}
+      ${f("Legenda", c.caption, "", true)}
+    </dl>`;
+  }
+
+  function clientStateCard(ctx) {
+    const { c, idx } = ctx;
+    const u = S.ui;
+    const num = `<span class="n">Conteúdo #${pad(c.order || idx + 1)}</span>`;
+    if (c.status === "aprovado") return `<div class="state-card aprovado"><div class="top">${num}<span class="status aprovado">Aprovado</span></div>
+      <div class="big-check"><span class="ok">${I.check}</span><div class="msg"><b>Conteúdo aprovado</b><small>Aprovado em ${esc(dt(c.approvedAt)) || "data não registrada"}</small><small>A VA Mídia seguirá com a produção deste conteúdo.</small></div></div>
+      ${u.flash === "approved" ? `<div class="success">${I.check}Aprovação registrada. Obrigado!</div>` : ""}</div>`;
+    if (c.status === "publicado") return `<div class="state-card publicado"><div class="top">${num}<span class="status publicado">Publicado</span></div>
+      <div class="big-check"><span class="ok pub">${I.check}</span><div class="msg"><b>Conteúdo publicado</b>${c.publishedAt ? `<small>Publicado em ${esc(dt(c.publishedAt))}</small>` : ""}</div></div></div>`;
+    // em análise
+    let body;
+    if (u.confirm) body = `<div class="confirm" role="alertdialog" aria-labelledby="cf-t"><p id="cf-t">Aprovar <b>${esc(c.title || "este conteúdo")}</b>? Depois da aprovação, a VA Mídia segue com a produção.</p>
+      <div class="actions"><button class="btn btn-primary" data-a="approve-yes" id="cf-yes" ${S.busy.approve ? "disabled" : ""}>${S.busy.approve ? "Registrando…" : "Confirmar aprovação"}</button><button class="btn btn-ghost" data-a="approve-no">Cancelar</button></div></div>`;
+    else if (u.change) body = `<div class="composer"><div class="field"><label for="chg-text">O que você gostaria de alterar?</label>
+      <textarea class="textarea" id="chg-text" data-draft="chg-${esc(c.id)}" maxlength="2000" placeholder="Ex.: Gostaria de alterar a primeira imagem.">${esc(S.drafts["chg-" + c.id] || "")}</textarea></div>
+      ${u.err ? `<div class="form-error" role="alert">${I.alert}<span>${esc(u.err)}</span></div>` : ""}
+      <div class="actions"><button class="btn btn-primary" data-a="change-send" ${S.busy.change ? "disabled" : ""}>${S.busy.change ? "Enviando…" : "Enviar solicitação"}</button><button class="btn btn-ghost" data-a="change-cancel">Cancelar</button></div></div>`;
+    else body = `<div class="actions"><button class="btn btn-primary" data-a="approve">${I.check}Aprovar conteúdo</button><button class="btn btn-outline" data-a="change">${I.edit}${c.changeRequested ? "Pedir outra alteração" : "Solicitar alteração"}</button></div>`;
+    return `<div class="state-card em_analise"><div class="top">${num}<span class="status em_analise">Em análise</span></div>
+      ${c.changeRequested ? `<div class="pending-change">${I.edit}<span>Você pediu uma alteração. A VA Mídia está ajustando e responde por aqui. Se preferir, você ainda pode aprovar como está.</span></div>` : `<div class="msg"><b>Aguardando sua aprovação</b><small>Confira a arte, a legenda e a estratégia. Se estiver tudo certo, aprove.</small></div>`}
+      ${u.flash === "change" ? `<div class="success">${I.check}Solicitação enviada para a VA Mídia.</div>` : ""}
+      ${body}</div>`;
+  }
+
+  function adminStatePanel(ctx) {
+    const { c } = ctx;
+    const pend = S.pendingStatus[c.id];
+    const sel = pend || c.status;
+    const hist = (c.history || []).slice().reverse().slice(0, 6);
+    return `<div class="admin-panel">
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap"><h3>Controle da VA Mídia</h3><span class="status ${esc(c.status)}">${STATUS[c.status]}</span></div>
+      ${c.changeRequested && c.status === "em_analise" ? `<div class="pending-change">${I.edit}<span>O cliente pediu alteração. Veja o pedido nos comentários abaixo.</span></div>` : ""}
+      <div class="field"><span class="label">Status do conteúdo</span>
+        <div class="seg" role="group" aria-label="Status">${Object.keys(STATUS).map((k) => `<button class="${k}" data-a="pick-status" data-s="${k}" aria-pressed="${sel === k}">${STATUS[k]}</button>`).join("")}</div></div>
+      ${pend && pend !== c.status ? `<div class="confirm"><p>Mudar de <b>${STATUS[c.status]}</b> para <b>${STATUS[pend]}</b>?${pend === "em_analise" ? " A aprovação registrada será desfeita." : ""}${pend === "publicado" ? " A data de publicação será registrada agora." : ""}</p>
+        <div class="actions"><button class="btn btn-primary btn-sm" data-a="save-status" ${S.busy.status ? "disabled" : ""}>Salvar status</button><button class="btn btn-ghost btn-sm" data-a="cancel-status">Cancelar</button></div></div>` : ""}
+      <div class="row" style="flex-wrap:wrap;gap:8px">
+        ${c.changeRequested && c.status === "em_analise" ? `<button class="btn btn-sm" data-a="resolve">${I.check}Marcar alteração como resolvida</button>` : ""}
+        ${S.info.canUploadImages ? `<label class="btn btn-sm" for="img-swap">${I.upload}Trocar imagem</label><input type="file" id="img-swap" accept="image/*" class="sr" data-a-change="swap-image">` : ""}
+        ${S.ui.del ? `<button class="btn btn-danger btn-sm" data-a="delete-yes">Confirmar exclusão</button><button class="btn btn-ghost btn-sm" data-a="delete-no">Cancelar</button>` : `<button class="btn btn-ghost btn-sm" data-a="delete">${I.trash}Excluir</button>`}
+      </div>
+      ${c.approvedAt ? `<p class="hint">Aprovado em ${esc(dt(c.approvedAt))}${c.publishedAt ? ` · Publicado em ${esc(dt(c.publishedAt))}` : ""}</p>` : ""}
+      ${hist.length ? `<div class="history"><span class="label">Histórico</span>${hist.map((h) => `<span><i style="background:var(--st-${h.status === "em_analise" ? "analise" : h.status})"></i>${STATUS[h.status] || esc(h.status)} · ${esc(dt(h.at))}${h.by ? " · " + esc(h.by) : ""}</span>`).join("")}</div>` : ""}
+    </div>`;
+  }
+
+  function threadHTML(ctx) {
+    const { c, comments, isAdmin } = ctx;
+    const key = (isAdmin ? "adm-" : "cm-") + c.id;
+    return `<section class="thread" aria-label="Comentários">
+      <div class="thread-head"><span class="label">Comentários · ${comments.length}</span></div>
+      <div class="msgs">${comments.length ? comments.map((m) => `<div class="msg-b ${m.authorRole === "agency" ? "agency" : "client"} ${m.kind === "change_request" ? "change" : ""}">
+          <div class="bub">${esc(m.message)}</div>
+          <div class="by"><b>${esc(m.authorName || (m.authorRole === "agency" ? "VA Mídia" : "Cliente"))}</b><span>${esc(dt(m.createdAt))}</span>${m.kind === "change_request" ? '<span class="tag change">Solicitação de alteração</span>' : ""}</div>
+        </div>`).join("") : `<p class="hint">Nenhum comentário ainda.${isAdmin ? "" : " Escreva abaixo se quiser comentar algo com a VA Mídia."}</p>`}</div>
+      <div class="composer"><label class="sr" for="cm-text">${isAdmin ? "Responder como VA Mídia" : "Escreva um comentário"}</label>
+        <textarea class="textarea" id="cm-text" data-draft="${esc(key)}" maxlength="2000" placeholder="${isAdmin ? "Responder como VA Mídia…" : "Escreva um comentário para a VA Mídia…"}" style="min-height:76px">${esc(S.drafts[key] || "")}</textarea>
+        ${S.ui.cmErr ? `<div class="form-error" role="alert">${I.alert}<span>${esc(S.ui.cmErr)}</span></div>` : ""}
+        <div class="row"><button class="btn btn-sm" data-a="comment-send" ${S.busy.comment ? "disabled" : ""}>${I.send}${S.busy.comment ? "Enviando…" : "Enviar comentário"}</button></div>
+      </div>
+    </section>`;
+  }
+
+  /* ============================================================
+     ADMIN
+     ============================================================ */
+  function adminTop() {
+    const a = S.adata;
+    const unread = a ? a.notifications.filter((n) => !n.read).length : 0;
+    const tab = (k, l) => `<button class="tab" data-a="atab" data-t="${k}" ${S.adminTab === k ? 'aria-current="page"' : ""}>${l}</button>`;
+    return `<header class="topbar"><div class="wrap">${brandHTML("Área da VA Mídia")}
+      <nav class="tabs" aria-label="Seções">${tab("overview", "Visão geral")}${tab("import", "Importar planejamento")}${tab("clients", "Clientes")}</nav>
+      <span class="spacer"></span>
+      <button class="icon-btn" data-a="atab" data-t="overview" aria-label="Notificações: ${unread} não lidas">${I.bell}${unread ? `<span class="badge-count">${unread}</span>` : ""}</button>
+      <button class="btn btn-ghost btn-sm" data-a="admin-exit">${I.out}<span class="sr">Sair da área da equipe</span></button>
+    </div></header>`;
+  }
+  function viewAdmin() {
+    if (!S.adata) return adminTop() + `<div class="wrap page">${viewBoot()}</div>`;
+    let body;
+    if (S.adminTab === "import") body = viewImport();
+    else if (S.adminTab === "clients") body = viewClients();
+    else if (S.adminClientId) body = viewAdminClient();
+    else body = viewOverview();
+    return adminTop() + `<main class="wrap page">${body}</main>`;
+  }
+
+  function lastActivityByClient(a) {
+    const m = {};
+    a.notifications.forEach((n) => { if (!m[n.clientId] || n.createdAt > m[n.clientId]) m[n.clientId] = n.createdAt; });
+    return m;
+  }
+  function noteCard(n) {
+    const label = n.type === "change_request" ? "Solicitação de alteração" : n.type === "approval" ? "Conteúdo aprovado" : "Novo comentário em conteúdo";
+    return `<article class="note ${n.read ? "" : "unread"} ${n.type === "change_request" ? "change" : ""}">
+      <div class="h"><b>${label}</b>${n.read ? "" : '<span class="tag demo">Nova</span>'}</div>
+      <dl><dt>Cliente</dt><dd>${esc(n.clientName || "")}</dd><dt>Conteúdo</dt><dd>${esc(n.contentTitle || "")}</dd><dt>Data</dt><dd>${esc(dt(n.createdAt))}</dd></dl>
+      ${n.type !== "approval" ? `<q>${esc(n.message)}</q>` : ""}
+      <div class="f">${n.read ? "" : `<button class="btn btn-ghost btn-sm" data-a="note-read" data-id="${esc(n.id)}">Marcar como lida</button>`}<button class="btn btn-primary btn-sm" data-a="note-open" data-id="${esc(n.id)}">Visualizar</button></div>
+    </article>`;
+  }
+  function viewOverview() {
+    const a = S.adata;
+    const activeClients = a.clients.filter((c) => c.status !== "inativo");
+    const c = counts(a.contents);
+    const unread = a.notifications.filter((n) => !n.read).sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt)));
+    const recent = a.notifications.slice().sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt))).slice(0, 12);
+    const last = lastActivityByClient(a);
+    const rows = a.clients.slice().sort((x, y) => String(last[y.id] || "").localeCompare(String(last[x.id] || "")) || x.company.localeCompare(y.company)).map((cl) => {
+      const p = pickPlanning(a, cl.id, "admin-" + cl.id);
+      const list = p ? a.contents.filter((x) => x.planningId === p.id) : [];
+      const k = counts(list);
+      return `<tr class="click" data-a="aclient" data-id="${esc(cl.id)}" tabindex="0">
+        <td class="cname"><b>${esc(cl.company)}</b><small>${cl.handle ? "@" + esc(cl.handle) : ""}${cl.demo ? ' · <span class="tag demo" style="padding:1px 6px">Demo</span>' : ""}${cl.status === "inativo" ? ' · <span class="tag">Pausado</span>' : ""}</small></td>
+        <td>${p ? monthName(p.month, p.year) : '<span class="muted">Sem planejamento</span>'}</td>
+        <td class="n">${pad(k.all)}</td><td class="n">${pad(k.em_analise)}</td><td class="n">${pad(k.aprovado)}</td><td class="n">${pad(k.publicado)}</td>
+        <td class="n ${k.change ? "hl" : ""}">${pad(k.change)}</td>
+        <td class="muted" style="white-space:nowrap">${last[cl.id] ? esc(ago(last[cl.id])) : "—"}</td>
+        <td><span class="btn btn-sm">Abrir</span></td></tr>`;
+    }).join("");
+    const envNote = S.info.mode === "artifact"
+      ? `Dados salvos no banco deste portal no Claude. Cada cliente só vê o próprio planejamento pelo app, mas o isolamento no servidor por cliente e o acesso de clientes externos exigem o modo servidor (Supabase) — veja o guia de produção.`
+      : S.info.mode === "supabase" ? `Dados no servidor Supabase, com isolamento por cliente aplicado no banco (RLS + funções).` : `Modo local: nada é salvo.`;
+    return `<div class="admin-top"><h1>Visão geral</h1><p class="muted" style="margin-top:8px">Planejamentos, aprovações e pedidos dos clientes, em tempo real.</p></div>
+      <div class="kpis">
+        <div class="kpi"><span class="v">${pad(activeClients.length)}</span><span class="k">Clientes ativos</span></div>
+        <div class="kpi"><span class="v">${pad(c.em_analise)}</span><span class="k"><i style="background:var(--st-analise)"></i>Em análise</span></div>
+        <div class="kpi"><span class="v">${pad(c.aprovado)}</span><span class="k"><i style="background:var(--st-aprovado)"></i>Aprovados</span></div>
+        <div class="kpi"><span class="v">${pad(c.publicado)}</span><span class="k"><i style="background:var(--st-publicado)"></i>Publicados</span></div>
+        <div class="kpi"><span class="v" style="${c.change ? "color:var(--danger)" : ""}">${pad(c.change)}</span><span class="k"><i style="background:var(--danger)"></i>Alterações pedidas</span></div>
+      </div>
+      <div class="section-title"><h2>${unread.length ? `${unread.length === 1 ? "1 novidade" : unread.length + " novidades"} para a equipe` : "Novidades"}</h2>${unread.length > 1 ? `<button class="btn btn-ghost btn-sm" data-a="read-all">Marcar todas como lidas</button>` : ""}</div>
+      ${unread.length ? `<div class="notes">${unread.map(noteCard).join("")}</div>` : `<div class="empty">${I.check}<b>Tudo lido</b><span>Quando um cliente aprovar, comentar ou pedir alteração, aparece aqui.</span></div>`}
+      <div class="section-title"><h2>Clientes</h2><span class="muted">Mês em destaque: o planejamento mais recente com pendências</span></div>
+      ${a.clients.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Cliente</th><th>Planejamento</th><th>Conteúdos</th><th>Em análise</th><th>Aprovados</th><th>Publicados</th><th>Alterações</th><th>Última interação</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+        : `<div class="empty">${I.inbox}<b>Nenhum cliente cadastrado</b><span>Cadastre o primeiro cliente na aba Clientes.</span><button class="btn btn-primary btn-sm" data-a="atab" data-t="clients">Cadastrar cliente</button></div>`}
+      <div class="section-title"><h2>Últimas interações</h2></div>
+      ${recent.length ? `<div class="activity">${recent.map((n) => `<button class="act" data-a="note-open" data-id="${esc(n.id)}">
+          <span class="i ${esc(n.type)}">${n.type === "approval" ? I.check : n.type === "change_request" ? I.edit : I.chat}</span>
+          <span class="b"><b>${esc(n.clientName || "")}</b> ${n.type === "approval" ? "aprovou" : n.type === "change_request" ? "pediu alteração em" : "comentou em"} “${esc(n.contentTitle || "")}”
+          ${n.type !== "approval" ? `<span class="q">${esc(n.message)}</span>` : ""}<small>${esc(dt(n.createdAt))}</small></span></button>`).join("")}</div>`
+        : `<div class="empty"><span>Sem interações ainda.</span></div>`}
+      <p class="hint" style="margin-top:28px;display:flex;gap:8px;align-items:flex-start">${I.db}<span>${esc(envNote)}</span></p>`;
+  }
+
+  function viewAdminClient() {
+    const a = S.adata;
+    const cl = a.clients.find((x) => x.id === S.adminClientId);
+    if (!cl) { S.adminClientId = null; return viewOverview(); }
+    const key = "admin-" + cl.id;
+    const p = pickPlanning(a, cl.id, key);
+    const head = `<button class="btn btn-ghost btn-sm" data-a="aback">${I.back}Todos os clientes</button>
+      <div class="greet" style="margin-top:14px"><div><h1>${esc(cl.company)}</h1><p class="sub">${cl.handle ? "@" + esc(cl.handle) + " · " : ""}${p ? "Planejamento · <b style=\"color:var(--text)\">" + monthName(p.month, p.year) + "</b>" : "Sem planejamento"}${cl.demo ? ' <span class="tag demo">Demonstração</span>' : ""}</p></div>
+      <div class="row" style="flex-wrap:wrap">${p ? monthChips(planningsFor(a, cl.id), p, key) : ""}<button class="btn btn-primary btn-sm" data-a="import-for" data-id="${esc(cl.id)}">${I.upload}Importar planejamento</button></div></div>`;
+    if (!p) return head + `<div class="empty" style="margin-top:24px">${I.inbox}<b>Nenhum planejamento para este cliente</b><span>Cole o planejamento do mês na aba Importar e o portal monta o feed.</span></div>`;
+    const all = a.contents.filter((x) => x.planningId === p.id).sort(byDate);
+    const shown = S.filter === "all" ? all : all.filter((x) => x.status === S.filter);
+    const k = counts(all);
+    return head + `${k.change ? `<div class="callout" style="border-color:rgba(232,131,111,.45);background:linear-gradient(90deg,rgba(232,131,111,.1),transparent 70%)"><span class="ic" style="background:var(--danger);color:#1a0d09">${I.edit}</span><span class="tx"><b>${k.change === 1 ? "1 alteração pedida pelo cliente" : k.change + " alterações pedidas pelo cliente"}</b><span>Abra o conteúdo para ler o pedido e responder.</span></span></div>` : ""}
+      ${summaryBar(k)}
+      <div class="feed-head"><h2>${S.filter === "all" ? "Feed do mês" : STATUS[S.filter]} · ${shown.length}</h2></div>
+      ${feedHTML(shown, a.comments.filter((m) => m.clientId === cl.id), EMPTY[S.filter])}`;
+  }
+
+  /* ---------------- clientes ---------------- */
+  function viewClients() {
+    const a = S.adata;
+    const vault = {}; a.vault.forEach((v) => (vault[v.id] = v));
+    const f = S.clientForm;
+    const form = f ? `<form class="card" data-form="client" novalidate>
+        <h3>${f.id ? "Editar cliente" : "Novo cliente"}</h3>
+        <div class="grid2">
+          <div class="field"><label for="cf-company">Empresa</label><input class="input" id="cf-company" data-bind="clientForm.company" value="${esc(f.company)}" required></div>
+          <div class="field"><label for="cf-name">Nome do contato</label><input class="input" id="cf-name" data-bind="clientForm.name" value="${esc(f.name)}" placeholder="Usado no “Olá, …”"></div>
+          <div class="field"><label for="cf-handle">@ do Instagram</label><input class="input" id="cf-handle" data-bind="clientForm.handle" value="${esc(f.handle)}" placeholder="empresa"></div>
+          <div class="field"><label for="cf-email">E-mail de acesso</label><input class="input" id="cf-email" type="email" data-bind="clientForm.email" value="${esc(f.email)}" required></div>
+          ${S.info.codesVisible || !f.id ? `<div class="field"><label for="cf-code">Código de acesso</label><div class="row"><input class="input code" id="cf-code" data-bind="clientForm.code" value="${esc(f.code)}" placeholder="Gerado automaticamente"><button type="button" class="btn btn-sm" data-a="gen-code">Gerar</button></div></div>` : `<div class="field"><span class="label">Código de acesso</span><p class="hint">Por segurança, o código fica guardado só em formato cifrado. Use “Novo código” na lista para gerar outro.</p></div>`}
+          <div class="field"><label for="cf-status">Situação</label><select class="select" id="cf-status" data-bind="clientForm.status"><option value="ativo" ${f.status !== "inativo" ? "selected" : ""}>Ativo</option><option value="inativo" ${f.status === "inativo" ? "selected" : ""}>Pausado (não consegue entrar)</option></select></div>
+        </div>
+        ${f.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(f.error)}</span></div>` : ""}
+        <div class="row"><button class="btn btn-primary" type="submit" ${S.busy.client ? "disabled" : ""}>${S.busy.client ? "Salvando…" : "Salvar cliente"}</button><button type="button" class="btn btn-ghost" data-a="client-cancel">Cancelar</button></div>
+      </form>` : "";
+    const rows = a.clients.slice().sort((x, y) => x.company.localeCompare(y.company)).map((c) => {
+      const v = vault[c.id] || {};
+      return `<tr><td class="cname"><b>${esc(c.company)}</b><small>${esc(c.name || "")}${c.handle ? " · @" + esc(c.handle) : ""}</small></td>
+        <td>${esc(v.email || "—")}</td>
+        <td>${v.code ? `<span class="code-pill">${S.ui["show-" + c.id] ? esc(v.code) : "••••••"}</span> <button class="btn btn-ghost btn-sm" data-a="reveal" data-id="${esc(c.id)}">${S.ui["show-" + c.id] ? "Ocultar" : "Mostrar"}</button>${S.ui["show-" + c.id] ? ` <button class="btn btn-ghost btn-sm" data-a="copy-access" data-id="${esc(c.id)}">${I.copy}Copiar acesso</button>` : ""}` : `<span class="muted">Cifrado</span>`}</td>
+        <td>${c.status === "inativo" ? '<span class="tag">Pausado</span>' : '<span class="tag" style="color:var(--st-aprovado);border-color:rgba(114,196,149,.4)">Ativo</span>'}${c.demo ? ' <span class="tag demo">Demo</span>' : ""}</td>
+        <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm" data-a="client-edit" data-id="${esc(c.id)}">${I.edit}Editar</button><button class="btn btn-ghost btn-sm" data-a="client-code" data-id="${esc(c.id)}">${I.key}Novo código</button></td></tr>`;
+    }).join("");
+    const brand = S.pub.brand && S.pub.brand.logo;
+    const hasDemo = a.clients.some((c) => c.demo);
+    return `<div class="admin-top row" style="justify-content:space-between;flex-wrap:wrap"><div><h1>Clientes</h1><p class="muted" style="margin-top:8px">Cada cliente entra com o e-mail e o código de acesso e vê somente o próprio planejamento.</p></div>
+      ${f ? "" : `<button class="btn btn-primary" data-a="client-new">Novo cliente</button>`}</div>
+      ${S.ui.newCode ? `<div class="callout" style="margin-top:20px"><span class="ic">${I.key}</span><span class="tx"><b>Acesso de ${esc(S.ui.newCode.company)}</b><span>E-mail: ${esc(S.ui.newCode.email)} · Código: <span class="code-pill">${esc(S.ui.newCode.code)}</span>${S.info.codesVisible ? "" : " — anote agora, ele não aparece de novo."}</span></span><button class="btn btn-sm" data-a="copy-new">${I.copy}Copiar</button><button class="btn btn-ghost btn-sm" data-a="dismiss-new">Fechar</button></div>` : ""}
+      <div style="margin-top:22px">${form}</div>
+      ${a.clients.length ? `<div class="tbl-wrap" style="margin-top:18px"><table class="tbl"><thead><tr><th>Cliente</th><th>E-mail de acesso</th><th>Código</th><th>Situação</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>` : `<div class="empty" style="margin-top:18px">${I.inbox}<b>Nenhum cliente ainda</b></div>`}
+      <div class="section-title"><h2>Marca</h2></div>
+      <div class="card"><h3>Logo da VA Mídia</h3><p class="hint">Envie o arquivo oficial do logo (PNG com fundo transparente ou SVG). Ele substitui o nome em texto no topo de todas as telas, sem alterar proporção.</p>
+        <div class="row" style="flex-wrap:wrap"><div class="logo-prev">${brand ? `<img src="${esc(imgSrc(brand))}" alt="Logo atual">` : '<span class="wordmark">VA MÍDIA</span>'}</div>
+        ${S.info.canUploadImages ? `<label class="btn btn-sm" for="logo-file">${I.upload}Enviar logo</label><input id="logo-file" type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" class="sr" data-a-change="logo">` : '<span class="hint">Envio de imagens indisponível nesta visualização.</span>'}
+        ${brand ? `<button class="btn btn-ghost btn-sm" data-a="logo-remove">Remover</button>` : ""}</div></div>
+      <div class="section-title"><h2>Dados de demonstração</h2></div>
+      <div class="card"><p class="hint">Os clientes Torra Serena Cafés e Movere Pilates Studio são fictícios e ficam marcados como DEMO. Remova antes de cadastrar clientes reais, se preferir.</p>
+        <div class="row" style="flex-wrap:wrap">${hasDemo ? (S.ui.clearDemo ? `<button class="btn btn-danger btn-sm" data-a="demo-clear-yes" ${S.busy.demo ? "disabled" : ""}>Confirmar remoção</button><button class="btn btn-ghost btn-sm" data-a="demo-clear-no">Cancelar</button>` : `<button class="btn btn-danger btn-sm" data-a="demo-clear">${I.trash}Remover dados de demonstração</button>`) : ""}
+        ${S.info.mode !== "supabase" ? `<button class="btn btn-sm" data-a="demo-load" ${S.busy.demo ? "disabled" : ""}>${hasDemo ? "Restaurar demonstração original" : "Carregar demonstração"}</button>` : ""}</div></div>`;
+  }
+
+  /* ---------------- importador ---------------- */
+  const SAMPLE = `CLIENTE:
+Torra Serena Cafés
+
+MÊS:
+Novembro de 2026
+
+CONTEÚDOS:
+
+1.
+Data: 04/11
+Tipo: Reel
+Título: Como nasce um blend
+Objetivo: Humanização
+Descrição: Mostrar a prova de xícara que define cada blend.
+Legenda: Antes de chegar até você, cada blend passa por muitas xícaras de teste. ☕
+Imagem: blend.jpg
+
+2.
+Data: 11/11
+Tipo: Carrossel
+Título: Café e sobremesa: 4 combinações
+Objetivo: Educação
+Descrição: Sugestões de harmonização com os blends da casa.
+Legenda:
+Imagem:`;
+
+  function newImport(clientId) {
+    const now = new Date();
+    return { text: "", files: [], clientId: clientId || "", month: 0, year: now.getFullYear(), parsed: null, rows: null, untouched: [], choices: {}, itemFiles: {}, error: "", busy: false, ai: false, sample: false };
+  }
+  function impExisting(im) {
+    const a = S.adata;
+    const p = a.plannings.find((x) => x.clientId === im.clientId && x.month === im.month && x.year === im.year);
+    return { planning: p || null, contents: p ? a.contents.filter((c) => c.planningId === p.id) : [] };
+  }
+  function recomputeMerge() {
+    const im = S.imp;
+    if (!im.parsed) return;
+    const ex = impExisting(im);
+    im.parsed.items.forEach((it, i) => { it._attached = resolveItemImages(i, it).files.length > 0; });
+    const m = P.planMerge(im.parsed.items, ex.contents);
+    im.rows = m.rows; im.untouched = m.untouched;
+  }
+  function fileFor(name) {
+    const n = P.norm(name).replace(/^.*[\\/]/, "");
+    return S.imp.files.find((f) => P.norm(f.name) === n) || S.imp.files.find((f) => P.norm(f.name).replace(/\.[a-z0-9]+$/, "") === n.replace(/\.[a-z0-9]+$/, ""));
+  }
+  const isUrlish = (s) => /^(https?:|data:|blob:|asset:|demo\/)/i.test(s);
+  function resolveItemImages(idx, item) {
+    const own = S.imp.itemFiles[idx];
+    if (own && own.length) return { files: own, urls: [], missing: [] };
+    const files = [], urls = [], missing = [];
+    item.images.forEach((x) => { if (isUrlish(x)) urls.push(x); else { const f = fileFor(x); if (f) files.push(f); else missing.push(x); } });
+    return { files, urls, missing };
+  }
+  function viewImport() {
+    const a = S.adata, im = S.imp;
+    const opts = a.clients.slice().sort((x, y) => x.company.localeCompare(y.company)).map((c) => `<option value="${esc(c.id)}" ${im.clientId === c.id ? "selected" : ""}>${esc(c.company)}${c.demo ? " (demo)" : ""}</option>`).join("");
+    const monthOpts = MES.map((m, i) => `<option value="${i + 1}" ${im.month === i + 1 ? "selected" : ""}>${m.replace(/^\w/, (c) => c.toUpperCase())}</option>`).join("");
+    const left = `<div class="card">
+        <div class="row" style="justify-content:space-between;flex-wrap:wrap"><h3>1. Cole o planejamento do mês</h3><button class="btn btn-ghost btn-sm" data-a="imp-sample">Ver exemplo de formato</button></div>
+        <p class="hint">Aceita texto com campos (Data, Tipo, Título, Objetivo, Descrição, Legenda, Imagem), JSON ou tabela copiada da planilha. Nada é inventado: o que não vier no texto fica em branco.</p>
+        <textarea class="textarea" id="imp-text" data-bind="imp.text" style="min-height:280px;font-family:var(--f-mono);font-size:13px" placeholder="CLIENTE:\nEmpresa X\n\nMÊS:\nOutubro de 2026\n\n1.\nData: 03/10\nTipo: Reel\nTítulo: …">${esc(im.text)}</textarea>
+        <div class="drop" id="imp-drop" data-drop="imp">${I.upload}<span>Arraste as imagens do planejamento aqui ou <label for="imp-files" class="linkish" style="cursor:pointer">escolha os arquivos</label>.<br><span class="hint">O nome do arquivo liga a imagem ao conteúdo (ex.: “Imagem: capa.jpg”).</span></span>
+          <input id="imp-files" type="file" accept="image/*" multiple class="sr" data-a-change="imp-files">
+          ${im.files.length ? `<div class="files">${im.files.map((f) => `<span title="${esc(f.name)}">${esc(f.name)}</span>`).join("")}</div><button class="btn btn-ghost btn-sm" data-a="imp-clear-files">Limpar arquivos</button>` : ""}</div>
+        ${im.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(im.error)}</span></div>` : ""}
+        <div class="row" style="flex-wrap:wrap"><button class="btn btn-primary" data-a="imp-parse">Interpretar planejamento</button>
+          ${S.info.canUseAI ? `<button class="btn btn-outline" data-a="imp-ai" ${im.ai ? "disabled" : ""}>${I.spark}${im.ai ? "Interpretando com IA…" : "Interpretar com IA"}</button>` : ""}</div>
+        ${S.info.canUseAI ? `<p class="hint">Use “Interpretar com IA” para textos soltos, sem campos. A IA só organiza o que está escrito; você confere tudo antes de publicar.</p>` : ""}
+      </div>`;
+    const right = `<div class="card"><h3>2. Cliente e mês</h3>
+        <div class="field"><label for="imp-client">Cliente</label><select class="select" id="imp-client" data-bind="imp.clientId" data-recompute><option value="">Escolha o cliente</option>${opts}</select>
+          ${im.parsed && im.parsed.client ? `<span class="hint">No texto: “${esc(im.parsed.client)}”${im.clientId ? "" : " — não encontrei esse cliente, escolha acima ou cadastre em Clientes."}</span>` : ""}</div>
+        <div class="grid2"><div class="field"><label for="imp-month">Mês</label><select class="select" id="imp-month" data-bind="imp.month" data-num data-recompute><option value="0">—</option>${monthOpts}</select></div>
+        <div class="field"><label for="imp-year">Ano</label><input class="input" id="imp-year" type="number" min="2020" max="2100" data-bind="imp.year" data-num data-recompute value="${esc(im.year)}"></div></div>
+        ${im.clientId && im.month ? (() => { const ex = impExisting(im); return `<p class="hint">${ex.planning ? `Já existe o planejamento de ${monthName(im.month, im.year)} com ${ex.contents.length} conteúdos. A importação atualiza sem duplicar e preserva aprovações e comentários.` : `Será criado o planejamento de ${monthName(im.month, im.year)}.`}</p>`; })() : ""}
+      </div>`;
+    let preview = "";
+    if (im.parsed && im.rows) {
+      const n = { create: 0, update: 0, same: 0, conflict: 0, ambiguous: 0 };
+      im.rows.forEach((r) => n[r.action]++);
+      preview = `<div class="section-title"><h2>3. Confira antes de publicar</h2><span class="muted">${esc(im.parsed.format)} · ${im.rows.length} conteúdos · ${n.create} novos · ${n.update} atualizados · ${n.same} sem mudança${n.conflict + n.ambiguous ? ` · <b style="color:var(--danger)">${n.conflict + n.ambiguous} precisam de decisão</b>` : ""}</span></div>
+        <div class="pv-list">${im.rows.map((r, i) => previewRow(r, i)).join("")}</div>
+        ${im.untouched.length ? `<p class="hint" style="margin-top:12px">${im.untouched.length} conteúdo(s) já existentes não aparecem nesta importação e serão mantidos como estão: ${im.untouched.map((c) => "“" + esc(c.title || "sem título") + "”").join(", ")}.</p>` : ""}
+        <div class="row" style="margin-top:18px;flex-wrap:wrap"><button class="btn btn-primary" data-a="imp-apply" ${im.busy || !im.clientId || !im.month || !im.year ? "disabled" : ""}>${im.busy ? "Publicando…" : "Publicar planejamento"}</button>
+          ${!im.clientId || !im.month ? '<span class="hint">Escolha o cliente e o mês para publicar.</span>' : ""}</div>`;
+    }
+    return `<div class="admin-top"><h1>Importar planejamento</h1><p class="muted" style="margin-top:8px">Cole o planejamento do mês e o portal monta o feed do cliente. Sem cadastrar conteúdo por conteúdo.</p></div>
+      <div class="imp-grid" style="margin-top:22px">${left}${right}</div>${preview}`;
+  }
+  const urlCache = new WeakMap();
+  function fileURL(f) { if (!urlCache.has(f)) urlCache.set(f, URL.createObjectURL(f)); return urlCache.get(f); }
+  function previewRow(r, i) {
+    const it = r.item;
+    const res = resolveItemImages(i, it);
+    const thumb = res.files[0] ? fileURL(res.files[0]) : res.urls[0] ? imgSrc(res.urls[0]) : (r.match && imagesOf(r.match)[0] ? imgSrc(imagesOf(r.match)[0]) : "");
+    const d = day(it.date);
+    const warns = it.warnings.filter((w) => !(w === "Sem imagem" && (res.files.length || (r.match && imagesOf(r.match).length))) && !(w === "Imagem citada, mas não anexada" && res.files.length)).map((w) => `<span class="tag warn">${esc(w)}</span>`);
+    res.missing.forEach((m) => warns.push(`<span class="tag warn">Arquivo “${esc(m)}” não anexado</span>`));
+    const labels = { create: "Novo", update: "Atualiza", same: "Sem mudança", conflict: "Decidir", ambiguous: "Decidir" };
+    const ch = S.imp.choices[i];
+    let choice = "";
+    if (r.action === "conflict") choice = `<div class="choice"><span>${esc(r.reason)} Mudanças: ${r.changes.map((x) => P.FIELD_LABELS[x]).join(", ")}.</span>
+      <label><input type="radio" name="ch-${i}" data-a-change="imp-choice" data-i="${i}" value="keep" ${ch !== "apply" ? "checked" : ""}> Manter o conteúdo atual (recomendado)</label>
+      <label><input type="radio" name="ch-${i}" data-a-change="imp-choice" data-i="${i}" value="apply" ${ch === "apply" ? "checked" : ""}> Aplicar mudanças${r.match.status === "aprovado" ? " e voltar para Em análise (o cliente aprova de novo)" : " (continua Publicado)"}</label></div>`;
+    if (r.action === "ambiguous") choice = `<div class="choice"><span>${esc(r.reason)}</span>
+      <label><input type="radio" name="ch-${i}" data-a-change="imp-choice" data-i="${i}" value="skip" ${ch !== "create" ? "checked" : ""}> Não importar este item</label>
+      <label><input type="radio" name="ch-${i}" data-a-change="imp-choice" data-i="${i}" value="create" ${ch === "create" ? "checked" : ""}> Criar como conteúdo novo</label></div>`;
+    return `<div class="pv ${r.action}" style="animation-delay:${Math.min(i, 10) * 30}ms">
+      <div class="th">${thumb ? `<img src="${esc(thumb)}" alt="" data-fallback>` : `<span class="noimg">${I.image}<span>Sem imagem</span></span>`}</div>
+      <div class="bd"><b>${esc(it.title || "Título não informado")}</b>
+        <span class="ln"><span class="when" style="font-family:var(--f-mono)">${d ? d.full : "SEM DATA"}</span>·<span>${esc(it.type || "Tipo não informado")}</span>${it.objective ? `·<span>${esc(it.objective)}</span>` : ""}${it.status ? `<span class="status ${it.status}">${STATUS[it.status]}</span>` : ""}</span>
+        ${it.caption ? `<span class="cap">${esc(it.caption)}</span>` : ""}
+        ${r.action === "update" ? `<span class="ln">Campos alterados: ${r.changes.map((x) => P.FIELD_LABELS[x]).join(", ")}. Status, aprovação e comentários são preservados.</span>` : ""}
+        ${warns.length ? `<span class="warns">${warns.join("")}</span>` : ""}
+        ${choice}
+      </div>
+      <div class="ops"><span class="act-tag ${r.action}">${labels[r.action]}</span>
+        ${r.action !== "same" && S.info.canUploadImages ? `<label class="btn btn-ghost btn-sm" for="pv-f-${i}">${I.image}Imagem</label><input id="pv-f-${i}" type="file" accept="image/*" multiple class="sr" data-a-change="imp-item-file" data-i="${i}">` : ""}</div>
+    </div>`;
+  }
+
+  /* ============================================================
+     AÇÕES
+     ============================================================ */
+  async function goAdmin() {
+    S.view = "boot"; render();
+    const acc = await S.store.adminAccess();
+    S.adminAccess = acc;
+    if (acc.needsLogin) { S.view = "adminLogin"; render(); return; }
+    if (!acc.ok) { S.view = "denied"; render(); return; }
+    enterAdmin();
+  }
+  function enterAdmin() {
+    S.view = "admin"; S.adminTab = "overview"; S.adminClientId = null; S.filter = "all"; S.imp = newImport();
+    if (S.aunsub) S.aunsub();
+    S.aunsub = S.store.watchAdmin((d) => { S.adata = d; if (S.imp && S.imp.parsed) recomputeMerge(); render(); }, (e) => toast(dbErr(e), "err"));
+    render();
+  }
+  function dbErr(e) {
+    const c = e && e.code;
+    if (c === "revoked") return "Seu acesso a este portal mudou. Recarregue a página.";
+    if (c === "invalid_argument") return "Sem permissão para salvar aqui.";
+    if (c === "quota_exceeded") return "O banco do portal atingiu o limite de documentos.";
+    return errMsg(e);
+  }
+  function openClient(session) {
+    S.session = session; S.view = "client"; S.filter = "all"; S.cdata = null; resetUI();
+    if (S.cunsub) S.cunsub();
+    S.cunsub = S.store.watchClient(session, (d) => { S.cdata = d; if (d.client && d.client.status === "inativo") { logout("Este acesso foi pausado pela VA Mídia."); return; } render(); }, (e) => toast(dbErr(e), "err"));
+    render();
+  }
+  function logout(msg) {
+    if (S.cunsub) S.cunsub(); S.cunsub = null;
+    S.store.clientLogout(); S.session = null; S.cdata = null; S.open = null;
+    S.login = { email: "", code: "", error: msg || "" }; S.view = "login"; render();
+  }
+  function openContent(id, from) {
+    S.open = { id, from, filter: S.filter, returnFocus: id }; resetUI(); render();
+    const b = $("#dt-close"); if (b) b.focus({ preventScroll: true });
+  }
+  function closeContent() {
+    const back = S.open && S.open.returnFocus; S.open = null; resetUI(); render();
+    if (back) { const t = document.querySelector(`.tile[data-id="${CSS.escape(back)}"]`); if (t) t.focus({ preventScroll: true }); }
+  }
+
+  const actions = {
+    "go-home": () => { if (S.view === "client" || S.view === "admin") return; S.view = "home"; S.open = null; render(); scrollTo(0, 0); },
+    "go-login": () => { S.view = "login"; render(); scrollTo(0, 0); },
+    "go-admin": () => goAdmin(),
+    "fill-demo": (el) => { const d = S.pub.demoCredentials[+el.dataset.i]; S.login.email = d.email; S.login.code = d.code; S.login.error = ""; render(); const b = $('[data-form="login"] button[type="submit"]'); if (b) b.focus(); },
+    logout: () => logout(),
+    filter: (el) => { S.filter = el.dataset.f; render(); },
+    planning: (el) => { S.planningId[el.dataset.key] = el.dataset.id; S.filter = "all"; render(); },
+    open: (el) => openContent(el.dataset.id, S.view === "admin" ? "admin" : "client"),
+    close: () => closeContent(),
+    overlay: (el, ev) => { if (ev.target === el) closeContent(); },
+    nav: (el) => { if (!el.dataset.id) return; S.open.id = el.dataset.id; resetUI(); render(); const ov = $(".overlay"); if (ov) ov.scrollTop = 0; },
+    slide: (el) => { S.slide = Math.max(0, S.slide + +el.dataset.d); render(); },
+    cap: () => { S.ui.capOpen = !S.ui.capOpen; render(); },
+    approve: () => { S.ui.confirm = true; S.ui.change = false; S.ui.flash = null; render(); const b = $("#cf-yes"); if (b) b.focus(); },
+    "approve-no": () => { S.ui.confirm = false; render(); },
+    "approve-yes": async () => {
+      S.busy.approve = true; render();
+      try {
+        const r = await S.store.approve(S.session, S.open.id);
+        S.ui.confirm = false; S.ui.flash = "approved";
+        toast(r && r.already ? "Este conteúdo já estava aprovado." : "Conteúdo aprovado.");
+      } catch (e) { toast(errMsg(e), "err"); }
+      S.busy.approve = false; render();
+    },
+    change: () => { S.ui.change = true; S.ui.confirm = false; S.ui.flash = null; S.ui.err = ""; render(); const t = $("#chg-text"); if (t) t.focus(); },
+    "change-cancel": () => { S.ui.change = false; S.ui.err = ""; render(); },
+    "change-send": async () => {
+      const key = "chg-" + S.open.id;
+      S.busy.change = true; S.ui.err = ""; render();
+      try { await S.store.sendComment(S.session, S.open.id, S.drafts[key], "change_request"); S.drafts[key] = ""; S.ui.change = false; S.ui.flash = "change"; toast("Solicitação enviada para a VA Mídia."); }
+      catch (e) { S.ui.err = errMsg(e); }
+      S.busy.change = false; render();
+    },
+    "comment-send": async () => {
+      const admin = S.open.from === "admin";
+      const key = (admin ? "adm-" : "cm-") + S.open.id;
+      S.busy.comment = true; S.ui.cmErr = ""; render();
+      try {
+        if (admin) await S.store.agencyComment(S.open.id, S.drafts[key]);
+        else await S.store.sendComment(S.session, S.open.id, S.drafts[key], "comment");
+        S.drafts[key] = ""; toast(admin ? "Resposta enviada ao cliente." : "Comentário enviado para a VA Mídia.");
+      } catch (e) { S.ui.cmErr = errMsg(e); }
+      S.busy.comment = false; render();
+    },
+    // admin
+    atab: (el) => { S.adminTab = el.dataset.t; if (el.dataset.t === "overview") S.adminClientId = null; S.filter = "all"; render(); scrollTo(0, 0); },
+    "admin-exit": async () => { if (S.aunsub) S.aunsub(); S.aunsub = null; S.adata = null; if (S.store.adminLogout) await S.store.adminLogout(); S.view = "home"; render(); },
+    aclient: (el) => { S.adminClientId = el.dataset.id; S.adminTab = "overview"; S.filter = "all"; render(); scrollTo(0, 0); },
+    aback: () => { S.adminClientId = null; S.filter = "all"; render(); },
+    "note-open": async (el) => {
+      const n = S.adata.notifications.find((x) => x.id === el.dataset.id); if (!n) return;
+      if (!S.adata.contents.some((c) => c.id === n.contentId)) { toast("Este conteúdo foi removido.", "err"); return; }
+      S.adminClientId = n.clientId;
+      const c = S.adata.contents.find((x) => x.id === n.contentId); S.planningId["admin-" + n.clientId] = c.planningId;
+      openContent(n.contentId, "admin");
+      if (!n.read) S.store.markRead([n.id]).catch(() => {});
+    },
+    "note-read": (el) => S.store.markRead([el.dataset.id]).catch((e) => toast(dbErr(e), "err")),
+    "read-all": () => S.store.markRead(S.adata.notifications.filter((n) => !n.read).map((n) => n.id)).then(() => toast("Tudo marcado como lido.")).catch((e) => toast(dbErr(e), "err")),
+    "pick-status": (el) => { S.pendingStatus[S.open.id] = el.dataset.s; render(); },
+    "cancel-status": () => { delete S.pendingStatus[S.open.id]; render(); },
+    "save-status": async () => {
+      const id = S.open.id, st = S.pendingStatus[id];
+      S.busy.status = true; render();
+      try { await S.store.setStatus(id, st); delete S.pendingStatus[id]; toast(`Status atualizado para ${STATUS[st]}.`); } catch (e) { toast(dbErr(e), "err"); }
+      S.busy.status = false; render();
+    },
+    resolve: async () => { try { await S.store.resolveChange(S.open.id); toast("Alteração marcada como resolvida."); } catch (e) { toast(dbErr(e), "err"); } },
+    delete: () => { S.ui.del = true; render(); },
+    "delete-no": () => { S.ui.del = false; render(); },
+    "delete-yes": async () => { const id = S.open.id; try { S.open = null; resetUI(); await S.store.deleteContent(id); toast("Conteúdo excluído."); } catch (e) { toast(dbErr(e), "err"); } render(); },
+    "import-for": (el) => { S.imp = newImport(el.dataset.id); S.adminTab = "import"; render(); scrollTo(0, 0); },
+    "client-new": () => { S.clientForm = { company: "", name: "", handle: "", email: "", code: S.info.codesVisible ? ST.makeCode() : "", status: "ativo", error: "" }; render(); const i = $("#cf-company"); if (i) i.focus(); },
+    "client-edit": (el) => { const c = S.adata.clients.find((x) => x.id === el.dataset.id); const v = S.adata.vault.find((x) => x.id === c.id) || {}; S.clientForm = { id: c.id, company: c.company, name: c.name || "", handle: c.handle || "", email: v.email || "", code: v.code || "", status: c.status || "ativo", error: "" }; render(); scrollTo(0, 0); },
+    "client-cancel": () => { S.clientForm = null; render(); },
+    "gen-code": () => { S.clientForm.code = ST.makeCode(); render(); },
+    "client-code": async (el) => {
+      try { const c = S.adata.clients.find((x) => x.id === el.dataset.id); const v = S.adata.vault.find((x) => x.id === c.id) || {}; const r = await S.store.regenerateCode(c.id); S.ui.newCode = { company: c.company, email: v.email, code: r.code }; toast("Novo código gerado. O código anterior deixou de funcionar."); render(); scrollTo(0, 0); }
+      catch (e) { toast(errMsg(e), "err"); }
+    },
+    reveal: (el) => { const k = "show-" + el.dataset.id; S.ui[k] = !S.ui[k]; render(); },
+    "copy-access": (el) => { const c = S.adata.clients.find((x) => x.id === el.dataset.id); const v = S.adata.vault.find((x) => x.id === c.id); copy(`Portal de Aprovação VA Mídia\nE-mail: ${v.email}\nCódigo de acesso: ${v.code}`); },
+    "copy-new": () => copy(`Portal de Aprovação VA Mídia\nE-mail: ${S.ui.newCode.email}\nCódigo de acesso: ${S.ui.newCode.code}`),
+    "dismiss-new": () => { S.ui.newCode = null; render(); },
+    "logo-remove": async () => { try { await S.store.saveBrand({ logo: null }); toast("Logo removido."); } catch (e) { toast(dbErr(e), "err"); } },
+    "demo-clear": () => { S.ui.clearDemo = true; render(); },
+    "demo-clear-no": () => { S.ui.clearDemo = false; render(); },
+    "demo-clear-yes": async () => { S.busy.demo = true; render(); try { await S.store.clearDemo(); toast("Dados de demonstração removidos."); } catch (e) { toast(dbErr(e), "err"); } S.busy.demo = false; S.ui.clearDemo = false; render(); },
+    "demo-load": async () => {
+      S.busy.demo = true; render();
+      try { const r = await fetch("demo/seed.json"); if (!r.ok) throw new Error(); await S.store.loadDemo(await r.json()); toast("Demonstração carregada."); }
+      catch (e) { toast(e && e.code ? errMsg(e) : "Não encontrei o arquivo de demonstração.", "err"); }
+      S.busy.demo = false; render();
+    },
+    "imp-sample": () => { S.imp.text = SAMPLE; S.imp.error = ""; render(); },
+    "imp-clear-files": () => { S.imp.files = []; recomputeMerge(); render(); },
+    "imp-parse": () => parseImport(),
+    "imp-ai": () => aiImport(),
+    "imp-apply": () => applyImport(),
+  };
+  async function copy(text) {
+    try { await navigator.clipboard.writeText(text); toast("Copiado."); } catch (e) { toast("Não consegui copiar. Selecione o texto e copie manualmente.", "err"); }
+  }
+
+  function parseImport(fromAI) {
+    const im = S.imp;
+    im.error = ""; im.choices = {}; im.itemFiles = {};
+    const r = P.parsePlanning(im.text, { year: im.year || new Date().getFullYear(), month: im.month });
+    if (!r.items.length) { im.parsed = null; im.rows = null; im.error = r.errors[0] || "Não encontrei conteúdos no texto."; render(); return; }
+    im.parsed = r; if (fromAI) im.parsed.format = "Interpretado com IA";
+    if (r.client) { const m = P.matchClient(r.client, S.adata.clients); if (m) im.clientId = m.id; }
+    if (r.month) im.month = r.month; if (r.year) im.year = r.year;
+    recomputeMerge(); render();
+    const t = document.querySelector(".pv-list"); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  async function aiImport() {
+    const im = S.imp;
+    if (!im.text.trim()) { im.error = "Cole o planejamento antes de pedir para a IA interpretar."; render(); return; }
+    const sample = S.store.sample; if (!sample) return;
+    im.ai = true; im.error = ""; render();
+    const prompt = `Você converte planejamentos de conteúdo de redes sociais em JSON para um sistema de aprovação.
+Regras obrigatórias:
+- Responda somente com um objeto JSON neste formato: {"cliente": "", "mes": "", "conteudos": [{"data": "", "tipo": "", "titulo": "", "objetivo": "", "descricao": "", "legenda": "", "imagem": ""}]}
+- Copie os textos exatamente como aparecem. Não resuma, não corrija, não traduza e não complete frases.
+- Se uma informação não estiver no texto, use "". Nunca invente data, título, legenda, objetivo, descrição, tipo ou imagem.
+- "data": como aparece no texto (ex.: "03/10"). "mes": mês e ano de referência se aparecerem (ex.: "outubro de 2026").
+- "imagem": nomes de arquivo ou links citados para aquele conteúdo, separados por vírgula.
+- Um item em "conteudos" para cada publicação planejada, na ordem do texto.
+
+Texto do planejamento:
+"""
+${im.text.slice(0, 50000)}
+"""`;
+    try {
+      const j = await sample.json(prompt, { modelTier: "default" });
+      if (!j || !Array.isArray(j.conteudos)) throw { code: "invalid_json" };
+      im.aiSource = im.text;
+      const saved = im.text;
+      im.text = JSON.stringify(j, null, 2);
+      parseImport(true);
+      im.text = saved;
+    } catch (e) {
+      const m = { not_granted: "O uso da IA não foi autorizado nesta visualização.", rate_limited: "Limite de uso atingido. Tente de novo em alguns minutos.", invalid_json: "A IA não devolveu um resultado válido. Tente de novo ou use campos como “Data:” e “Título:”.", prompt_too_large: "Texto grande demais. Divida o planejamento em partes." };
+      im.error = m[e && e.code] || "A IA não conseguiu interpretar agora. Use “Interpretar planejamento”.";
+    }
+    im.ai = false; render();
+  }
+  async function applyImport() {
+    const im = S.imp, a = S.adata;
+    if (!im.clientId || !im.month || !im.year) return;
+    im.busy = true; render();
+    try {
+      const ex = impExisting(im);
+      const planningId = ex.planning ? ex.planning.id : `${im.clientId}-${im.year}-${pad(im.month)}-${Math.random().toString(36).slice(2, 6)}`;
+      const plan = { clientId: im.clientId, planning: { id: planningId, create: !ex.planning, month: im.month, year: im.year, title: `Planejamento de conteúdo · ${monthName(im.month, im.year)}` }, ops: [] };
+      let order = ex.contents.reduce((m, c) => Math.max(m, c.order || 0), 0);
+      const now = ST.nowISO();
+      const tally = { create: 0, update: 0, keep: 0 };
+      for (let i = 0; i < im.rows.length; i++) {
+        const r = im.rows[i], it = r.item, ch = im.choices[i];
+        const doCreate = r.action === "create" || (r.action === "ambiguous" && ch === "create");
+        const doUpdate = r.action === "update" || (r.action === "conflict" && ch === "apply");
+        if (!doCreate && !doUpdate) { tally.keep++; continue; }
+        const res = resolveItemImages(i, it);
+        const refs = [];
+        for (const f of res.files) refs.push(await S.store.uploadImage(f));
+        res.urls.forEach((u) => refs.push(u));
+        if (doCreate) {
+          const status = it.status || "em_analise";
+          order++;
+          plan.ops.push({ kind: "create", id: `${planningId}-${ST.uid("c")}`, data: {
+            planningId, clientId: im.clientId, order, ref: it.ref, date: it.date, type: it.type, title: it.title, objective: it.objective, description: it.description, caption: it.caption,
+            image: refs[0] || "", images: refs.length > 1 ? refs : [], status, changeRequested: false,
+            approvedAt: status !== "em_analise" ? now : null, publishedAt: status === "publicado" ? now : null,
+            createdAt: now, updatedAt: now, history: [{ status, at: now, by: "VA Mídia (importação)" }], demo: false } });
+          tally.create++;
+        } else {
+          const data = { updatedAt: now };
+          r.changes.forEach((f) => { if (f !== "images") data[f] = it[f]; });
+          if (refs.length) { data.image = refs[0]; data.images = refs.length > 1 ? refs : []; }
+          if (r.action === "conflict" && r.match.status === "aprovado") { data.status = "em_analise"; data.approvedAt = null; data.history = (r.match.history || []).concat({ status: "em_analise", at: now, by: "VA Mídia (planejamento atualizado)" }); }
+          plan.ops.push({ kind: "update", id: r.match.id, data });
+          tally.update++;
+        }
+      }
+      await S.store.applyImport(plan);
+      toast(`Planejamento publicado: ${tally.create} novos, ${tally.update} atualizados, ${tally.keep} mantidos.`);
+      S.planningId["admin-" + im.clientId] = planningId;
+      S.adminClientId = im.clientId; S.adminTab = "overview"; S.filter = "all";
+      S.imp = newImport();
+      render(); scrollTo(0, 0);
+    } catch (e) { im.busy = false; im.error = errMsg(e); toast(errMsg(e), "err"); render(); }
+  }
+
+  /* ---------------- eventos ---------------- */
+  document.addEventListener("click", (ev) => {
+    const el = ev.target.closest("[data-a]");
+    if (!el || el.disabled) return;
+    const fn = actions[el.dataset.a];
+    if (!fn) return;
+    if (el.dataset.a === "overlay" && ev.target !== el) return;
+    ev.preventDefault();
+    fn(el, ev);
+  });
+  document.addEventListener("keydown", (ev) => {
+    const tr = ev.target.closest && ev.target.closest("tr[data-a]");
+    if (tr && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); actions[tr.dataset.a](tr, ev); return; }
+    if (!S.open) return;
+    const typing = /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName);
+    if (ev.key === "Escape") { if (S.ui.confirm || S.ui.change) { S.ui.confirm = false; S.ui.change = false; render(); } else closeContent(); }
+    else if (!typing && (ev.key === "ArrowRight" || ev.key === "ArrowLeft")) {
+      const b = document.querySelectorAll('.sheet-head [data-a="nav"]')[ev.key === "ArrowLeft" ? 0 : 1];
+      if (b && b.dataset.id) b.click();
+    }
+  });
+  function setPath(path, value) {
+    const parts = path.split("."); let o = S;
+    for (let i = 0; i < parts.length - 1; i++) o = o[parts[i]];
+    o[parts[parts.length - 1]] = value;
+  }
+  document.addEventListener("input", (ev) => {
+    const t = ev.target;
+    if (t.dataset.bind) { setPath(t.dataset.bind, t.dataset.num !== undefined ? +t.value || 0 : t.value); if (t.dataset.recompute !== undefined && S.imp) { recomputeMerge(); if (t.tagName === "SELECT") render(); } }
+    if (t.dataset.draft) S.drafts[t.dataset.draft] = t.value;
+  });
+  document.addEventListener("change", async (ev) => {
+    const t = ev.target;
+    if (t.dataset.bind && t.tagName === "SELECT") { setPath(t.dataset.bind, t.dataset.num !== undefined ? +t.value || 0 : t.value); if (t.dataset.recompute !== undefined) recomputeMerge(); render(); return; }
+    if (t.dataset.bind && t.dataset.recompute !== undefined) { recomputeMerge(); render(); return; }
+    const a = t.dataset.aChange; if (!a) return;
+    if (a === "imp-files") { S.imp.files = S.imp.files.concat(Array.from(t.files || [])); recomputeMerge(); render(); }
+    if (a === "imp-item-file") { const i = +t.dataset.i; const fs = Array.from(t.files || []); S.imp.itemFiles[i] = fs; S.imp.parsed.items[i]._files = fs; recomputeMerge(); render(); }
+    if (a === "imp-choice") { S.imp.choices[+t.dataset.i] = t.value; }
+    if (a === "swap-image" && t.files[0]) {
+      try { const ref = await S.store.uploadImage(t.files[0]); await S.store.setContentImage(S.open.id, ref); toast("Imagem atualizada."); } catch (e) { toast(errMsg(e), "err"); }
+    }
+    if (a === "logo" && t.files[0]) {
+      try { const ref = await S.store.uploadImage(t.files[0]); await S.store.saveBrand({ logo: ref }); toast("Logo atualizado."); } catch (e) { toast(errMsg(e), "err"); }
+    }
+  });
+  document.addEventListener("submit", async (ev) => {
+    const f = ev.target.dataset.form; if (!f) return;
+    ev.preventDefault();
+    if (f === "login") {
+      S.busy.login = true; S.login.error = ""; render();
+      try { const s = await S.store.clientLogin(S.login.email, S.login.code); S.busy.login = false; S.login = { email: "", code: "", error: "" }; openClient(s); scrollTo(0, 0); }
+      catch (e) { S.busy.login = false; S.login.error = errMsg(e); render(); const i = $("#lg-code"); if (i) i.focus(); }
+    }
+    if (f === "alogin") {
+      S.busy.alogin = true; S.alogin.error = ""; render();
+      try { const acc = await S.store.adminLogin(S.alogin.email, S.alogin.password); S.busy.alogin = false; S.alogin = { email: "", password: "", error: "" }; S.adminAccess = acc; if (acc.ok) enterAdmin(); else { S.view = "denied"; render(); } }
+      catch (e) { S.busy.alogin = false; S.alogin.error = errMsg(e); render(); }
+    }
+    if (f === "client") {
+      S.busy.client = true; S.clientForm.error = ""; render();
+      try {
+        const cf = S.clientForm; const r = await S.store.saveClient(cf);
+        const isNew = !cf.id; S.clientForm = null;
+        if (isNew || r.code !== cf.code) S.ui.newCode = { company: cf.company, email: cf.email.trim().toLowerCase(), code: r.code };
+        toast(isNew ? "Cliente cadastrado." : "Cliente atualizado.");
+      } catch (e) { S.clientForm.error = errMsg(e); }
+      S.busy.client = false; render();
+    }
+  });
+  // arrastar e soltar imagens no importador
+  document.addEventListener("dragover", (ev) => { const d = ev.target.closest && ev.target.closest("[data-drop]"); if (d) { ev.preventDefault(); d.classList.add("over"); } });
+  document.addEventListener("dragleave", (ev) => { const d = ev.target.closest && ev.target.closest("[data-drop]"); if (d) d.classList.remove("over"); });
+  document.addEventListener("drop", (ev) => {
+    const d = ev.target.closest && ev.target.closest("[data-drop]"); if (!d) return;
+    ev.preventDefault(); d.classList.remove("over");
+    const files = Array.from(ev.dataTransfer.files || []).filter((f) => /^image\//.test(f.type) || /\.(jpe?g|png|webp|gif|svg)$/i.test(f.name));
+    S.imp.files = S.imp.files.concat(files); recomputeMerge(); render();
+  });
+  // imagem quebrada -> aviso visual
+  document.addEventListener("error", (ev) => {
+    const t = ev.target;
+    if (t && t.tagName === "IMG" && t.hasAttribute("data-fallback")) {
+      const s = document.createElement("span"); s.className = "noimg"; s.innerHTML = I.image + "<span>Imagem indisponível</span>"; t.replaceWith(s);
+    }
+  }, true);
+
+  /* ---------------- início ---------------- */
+  async function boot() {
+    render();
+    try {
+      S.store = await ST.pickStore((m) => { S.bootMsg = m; });
+      S.info = S.store.info;
+      S.store.watchPublic((p) => { S.pub = p; if (S.view !== "boot") render(); });
+      const hash = (location.hash || "").replace("#", "");
+      if (hash === "admin") { await goAdmin(); return; }
+      const restored = await S.store.restoreClient().catch(() => null);
+      if (restored) { openClient(restored); return; }
+      S.view = hash === "entrar" ? "login" : "home"; render();
+    } catch (e) {
+      S.fatal = (e && e.message) || "Não foi possível iniciar o portal."; render();
+    }
+  }
+  boot();
+})();
+
+</script>
+</body>
+</html>

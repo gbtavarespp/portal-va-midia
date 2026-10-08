@@ -1,0 +1,808 @@
+{
+ "_aviso": "DADOS DE DEMONSTRAÇÃO — clientes, conteúdos e comentários fictícios. Não são dados reais.",
+ "clients": [
+  {
+   "id": "demo-torra",
+   "name": "Marina",
+   "company": "Torra Serena Cafés",
+   "handle": "torraserena",
+   "status": "ativo",
+   "demo": true,
+   "createdAt": "2026-08-20T12:00:00.000Z"
+  },
+  {
+   "id": "demo-movere",
+   "name": "Rafael",
+   "company": "Movere Pilates Studio",
+   "handle": "moverepilates",
+   "status": "ativo",
+   "demo": true,
+   "createdAt": "2026-08-20T12:00:00.000Z"
+  }
+ ],
+ "vault": [
+  {
+   "id": "demo-torra",
+   "email": "torraserena@example.com",
+   "code": "CAFE26"
+  },
+  {
+   "id": "demo-movere",
+   "email": "movere@example.com",
+   "code": "MOVE26"
+  }
+ ],
+ "access": [
+  {
+   "id": "c7e6cbc9c37e2b13410e71dec2720c0b1d5ce47efcbcab59b6265ddd98929d62",
+   "clientId": "demo-torra"
+  },
+  {
+   "id": "bcf8712912bc5bd56427eebff3ccf8a52930f68ca5a3cfd3575e7de421c4eb58",
+   "clientId": "demo-movere"
+  }
+ ],
+ "plannings": [
+  {
+   "id": "demo-torra-2026-09",
+   "clientId": "demo-torra",
+   "month": 9,
+   "year": 2026,
+   "title": "Planejamento de conteúdo · Setembro 2026",
+   "createdAt": "2026-08-25T13:00:00.000Z",
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "month": 10,
+   "year": 2026,
+   "title": "Planejamento de conteúdo · Outubro 2026",
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "month": 10,
+   "year": 2026,
+   "title": "Planejamento de conteúdo · Outubro 2026",
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "demo": true
+  }
+ ],
+ "contents": [
+  {
+   "id": "demo-torra-2026-09-01",
+   "planningId": "demo-torra-2026-09",
+   "clientId": "demo-torra",
+   "order": 1,
+   "ref": "1",
+   "date": "2026-09-05",
+   "type": "Post",
+   "title": "Chegou a primavera, chegou o cold brew",
+   "objective": "Vendas",
+   "description": "Anúncio da volta do cold brew ao cardápio, com foto do copo na bancada.",
+   "caption": "A primavera chegou e o nosso cold brew voltou. 18 horas de extração a frio, notas de chocolate e zero amargor. Vem provar! ☀️",
+   "image": "demo/img/demo-torra-2026-09-01-1.svg",
+   "images": [],
+   "status": "publicado",
+   "changeRequested": false,
+   "approvedAt": "2026-08-27T17:05:00.000Z",
+   "publishedAt": "2026-09-05T12:00:00.000Z",
+   "createdAt": "2026-08-25T13:00:00.000Z",
+   "updatedAt": "2026-09-05T12:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-08-25T13:00:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-08-27T17:05:00.000Z",
+     "by": "Cliente"
+    },
+    {
+     "status": "publicado",
+     "at": "2026-09-05T12:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-09-02",
+   "planningId": "demo-torra-2026-09",
+   "clientId": "demo-torra",
+   "order": 2,
+   "ref": "2",
+   "date": "2026-09-12",
+   "type": "Reel",
+   "title": "Um dia na nossa torrefação",
+   "objective": "Humanização",
+   "description": "Reel curto com a rotina da equipe, da chegada das sacas até a primeira xícara do dia.",
+   "caption": "Tem muito cuidado antes do café chegar até você. Um dia com a gente na torrefação. ☕",
+   "image": "demo/img/demo-torra-2026-09-02-1.svg",
+   "images": [],
+   "status": "publicado",
+   "changeRequested": false,
+   "approvedAt": "2026-08-27T17:06:00.000Z",
+   "publishedAt": "2026-09-12T21:00:00.000Z",
+   "createdAt": "2026-08-25T13:00:00.000Z",
+   "updatedAt": "2026-09-12T21:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-08-25T13:00:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-08-27T17:06:00.000Z",
+     "by": "Cliente"
+    },
+    {
+     "status": "publicado",
+     "at": "2026-09-12T21:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-09-03",
+   "planningId": "demo-torra-2026-09",
+   "clientId": "demo-torra",
+   "order": 3,
+   "ref": "3",
+   "date": "2026-09-19",
+   "type": "Carrossel",
+   "title": "Espresso, ristretto ou lungo?",
+   "objective": "Educação",
+   "description": "Carrossel explicando a diferença entre as três extrações, com proporções.",
+   "caption": "Você sabe a diferença? Arrasta pro lado e descubra qual combina com você. 👉",
+   "image": "demo/img/demo-torra-2026-09-03-1.svg",
+   "images": [],
+   "status": "publicado",
+   "changeRequested": false,
+   "approvedAt": "2026-08-28T13:40:00.000Z",
+   "publishedAt": "2026-09-19T15:00:00.000Z",
+   "createdAt": "2026-08-25T13:00:00.000Z",
+   "updatedAt": "2026-09-19T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-08-25T13:00:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-08-28T13:40:00.000Z",
+     "by": "Cliente"
+    },
+    {
+     "status": "publicado",
+     "at": "2026-09-19T15:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-09-04",
+   "planningId": "demo-torra-2026-09",
+   "clientId": "demo-torra",
+   "order": 4,
+   "ref": "4",
+   "date": "2026-09-30",
+   "type": "Post",
+   "title": "Dia Internacional do Café",
+   "objective": "Engajamento",
+   "description": "Post comemorativo pedindo para os seguidores contarem como tomam o primeiro café do dia.",
+   "caption": "Hoje o dia é dele! Conta pra gente nos comentários: como é o seu primeiro café do dia?",
+   "image": "demo/img/demo-torra-2026-09-04-1.svg",
+   "images": [],
+   "status": "aprovado",
+   "changeRequested": false,
+   "approvedAt": "2026-08-28T13:42:00.000Z",
+   "publishedAt": null,
+   "createdAt": "2026-08-25T13:00:00.000Z",
+   "updatedAt": "2026-08-28T13:42:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-08-25T13:00:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-08-28T13:42:00.000Z",
+     "by": "Cliente"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-01",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 1,
+   "ref": "1",
+   "date": "2026-10-03",
+   "type": "Reel",
+   "title": "Da saca à xícara: bastidores da torra",
+   "objective": "Humanização",
+   "description": "Mostrar os bastidores da torra, do grão verde até o café pronto, com a equipe explicando cada etapa.",
+   "caption": "Do grão verde até a sua xícara: é assim que a gente torra o café que você toma. Salva pra ver depois! ☕🔥",
+   "image": "demo/img/demo-torra-2026-10-01-1.svg",
+   "images": [],
+   "status": "aprovado",
+   "changeRequested": false,
+   "approvedAt": "2026-09-24T18:12:00.000Z",
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-24T18:12:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-09-24T18:12:00.000Z",
+     "by": "Cliente"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-02",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 2,
+   "ref": "2",
+   "date": "2026-10-07",
+   "type": "Carrossel",
+   "title": "5 erros ao preparar café coado em casa",
+   "objective": "Educação",
+   "description": "Conteúdo educativo com os erros mais comuns no preparo do coado e como corrigir cada um.",
+   "caption": "Seu café coado pode ficar muito melhor com pequenos ajustes. Arrasta pro lado e veja se você comete algum desses erros. 👉",
+   "image": "demo/img/demo-torra-2026-10-02-1.svg",
+   "images": [
+    "demo/img/demo-torra-2026-10-02-1.svg",
+    "demo/img/demo-torra-2026-10-02-2.svg",
+    "demo/img/demo-torra-2026-10-02-3.svg",
+    "demo/img/demo-torra-2026-10-02-4.svg"
+   ],
+   "status": "em_analise",
+   "changeRequested": true,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-03",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 3,
+   "ref": "3",
+   "date": "2026-10-10",
+   "type": "Post",
+   "title": "Novo blend: Serra da Mantiqueira",
+   "objective": "Conversão",
+   "description": "Lançamento do blend de outubro, com notas sensoriais e chamada para a loja on-line.",
+   "caption": "Chegou o Serra da Mantiqueira: notas de caramelo, laranja e chocolate ao leite. Edição limitada, já disponível no site. Link na bio.",
+   "image": "demo/img/demo-torra-2026-10-03-1.svg",
+   "images": [],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-04",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 4,
+   "ref": "4",
+   "date": "2026-10-14",
+   "type": "Story",
+   "title": "Enquete: qual método você usa?",
+   "objective": "Engajamento",
+   "description": "Sequência de stories com enquete sobre métodos de preparo, para alimentar os próximos conteúdos.",
+   "caption": "",
+   "image": "demo/img/demo-torra-2026-10-04-1.svg",
+   "images": [],
+   "status": "aprovado",
+   "changeRequested": false,
+   "approvedAt": "2026-09-24T18:14:00.000Z",
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-24T18:14:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-09-24T18:14:00.000Z",
+     "by": "Cliente"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-05",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 5,
+   "ref": "5",
+   "date": "2026-10-17",
+   "type": "Reel",
+   "title": "Latte art em 30 segundos",
+   "objective": "Alcance",
+   "description": "Reel em plano fechado do barista fazendo um coração e uma tulipa, com trilha em alta.",
+   "caption": "30 segundos de pura calma. Qual desenho você quer ver no próximo vídeo? 🤍",
+   "image": "demo/img/demo-torra-2026-10-05-1.svg",
+   "images": [],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-06",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 6,
+   "ref": "6",
+   "date": "2026-10-21",
+   "type": "Carrossel",
+   "title": "Guia rápido de moagem",
+   "objective": "Educação",
+   "description": "Guia visual relacionando tipo de moagem e método de preparo.",
+   "caption": "Salva esse guia! A moagem certa muda tudo no sabor do seu café.",
+   "image": "demo/img/demo-torra-2026-10-06-1.svg",
+   "images": [
+    "demo/img/demo-torra-2026-10-06-1.svg",
+    "demo/img/demo-torra-2026-10-06-2.svg",
+    "demo/img/demo-torra-2026-10-06-3.svg",
+    "demo/img/demo-torra-2026-10-06-4.svg"
+   ],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-07",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 7,
+   "ref": "7",
+   "date": "2026-10-25",
+   "type": "Post",
+   "title": "Clientes que viraram amigos",
+   "objective": "Humanização",
+   "description": "Depoimento em foto de um cliente frequente da cafeteria, com autorização de uso de imagem.",
+   "caption": "",
+   "image": "demo/img/demo-torra-2026-10-07-1.svg",
+   "images": [],
+   "status": "aprovado",
+   "changeRequested": false,
+   "approvedAt": "2026-09-25T12:03:00.000Z",
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-25T12:03:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-09-25T12:03:00.000Z",
+     "by": "Cliente"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-torra-2026-10-08",
+   "planningId": "demo-torra-2026-10",
+   "clientId": "demo-torra",
+   "order": 8,
+   "ref": "8",
+   "date": "2026-10-31",
+   "type": "Reel",
+   "title": "Halloween na cafeteria",
+   "objective": "Engajamento",
+   "description": "Bebida temática de Halloween, preparo em time-lapse.",
+   "caption": "",
+   "image": "demo/img/demo-torra-2026-10-08-1.svg",
+   "images": [],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-22T12:30:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-22T12:30:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10-01",
+   "planningId": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "order": 1,
+   "ref": "1",
+   "date": "2026-10-02",
+   "type": "Reel",
+   "title": "3 exercícios para aliviar a lombar",
+   "objective": "Educação",
+   "description": "Sequência curta com três exercícios de solo, com a instrutora demonstrando e legenda na tela.",
+   "caption": "Passa muitas horas sentado? Esses 3 exercícios ajudam a aliviar a tensão na lombar. Salva e faz hoje mesmo. 🧘",
+   "image": "demo/img/demo-movere-2026-10-01-1.svg",
+   "images": [],
+   "status": "aprovado",
+   "changeRequested": false,
+   "approvedAt": "2026-09-25T21:20:00.000Z",
+   "publishedAt": null,
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "updatedAt": "2026-09-25T21:20:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-23T14:00:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-09-25T21:20:00.000Z",
+     "by": "Cliente"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10-02",
+   "planningId": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "order": 2,
+   "ref": "2",
+   "date": "2026-10-06",
+   "type": "Carrossel",
+   "title": "Pilates não é só alongamento",
+   "objective": "Educação",
+   "description": "Quebrar o mito de que Pilates é só alongamento, mostrando ganhos de força e postura.",
+   "caption": "Pilates é força, controle e consciência corporal. Arrasta pro lado e entenda por quê. 👉",
+   "image": "demo/img/demo-movere-2026-10-02-1.svg",
+   "images": [
+    "demo/img/demo-movere-2026-10-02-1.svg",
+    "demo/img/demo-movere-2026-10-02-2.svg",
+    "demo/img/demo-movere-2026-10-02-3.svg"
+   ],
+   "status": "em_analise",
+   "changeRequested": true,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-23T14:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10-03",
+   "planningId": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "order": 3,
+   "ref": "3",
+   "date": "2026-10-09",
+   "type": "Post",
+   "title": "Aula experimental grátis",
+   "objective": "Conversão",
+   "description": "Oferta de aula experimental para novos alunos durante outubro.",
+   "caption": "Outubro é mês de começar. Agende sua aula experimental gratuita pelo link na bio. Vagas limitadas.",
+   "image": "demo/img/demo-movere-2026-10-03-1.svg",
+   "images": [],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-23T14:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10-04",
+   "planningId": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "order": 4,
+   "ref": "4",
+   "date": "2026-10-15",
+   "type": "Reel",
+   "title": "Conheça o estúdio",
+   "objective": "Humanização",
+   "description": "Tour pelo estúdio com as instrutoras se apresentando.",
+   "caption": "Vem conhecer o nosso espaço e quem vai cuidar de você. 💚",
+   "image": "demo/img/demo-movere-2026-10-04-1.svg",
+   "images": [],
+   "status": "aprovado",
+   "changeRequested": false,
+   "approvedAt": "2026-09-25T21:22:00.000Z",
+   "publishedAt": null,
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "updatedAt": "2026-09-25T21:22:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-23T14:00:00.000Z",
+     "by": "VA Mídia"
+    },
+    {
+     "status": "aprovado",
+     "at": "2026-09-25T21:22:00.000Z",
+     "by": "Cliente"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10-05",
+   "planningId": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "order": 5,
+   "ref": "5",
+   "date": "2026-10-22",
+   "type": "Post",
+   "title": "Outubro Rosa: movimento e cuidado",
+   "objective": "Posicionamento",
+   "description": "Post de conscientização do Outubro Rosa, com convite para a aula aberta do dia 25.",
+   "caption": "",
+   "image": "demo/img/demo-movere-2026-10-05-1.svg",
+   "images": [],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-23T14:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  },
+  {
+   "id": "demo-movere-2026-10-06",
+   "planningId": "demo-movere-2026-10",
+   "clientId": "demo-movere",
+   "order": 6,
+   "ref": "6",
+   "date": "2026-10-29",
+   "type": "Story",
+   "title": "Caixinha de perguntas",
+   "objective": "Engajamento",
+   "description": "Stories com caixinha de perguntas respondidas pela fisioterapeuta.",
+   "caption": "",
+   "image": "demo/img/demo-movere-2026-10-06-1.svg",
+   "images": [],
+   "status": "em_analise",
+   "changeRequested": false,
+   "approvedAt": null,
+   "publishedAt": null,
+   "createdAt": "2026-09-23T14:00:00.000Z",
+   "updatedAt": "2026-09-23T15:00:00.000Z",
+   "history": [
+    {
+     "status": "em_analise",
+     "at": "2026-09-23T14:00:00.000Z",
+     "by": "VA Mídia"
+    }
+   ],
+   "demo": true
+  }
+ ],
+ "comments": [
+  {
+   "id": "demo-cm-01",
+   "contentId": "demo-torra-2026-10-02",
+   "clientId": "demo-torra",
+   "planningId": "demo-torra-2026-10",
+   "authorRole": "client",
+   "authorName": "Marina",
+   "kind": "change_request",
+   "message": "Podemos trocar a foto da capa por uma do coador de pano? Combina mais com a nossa loja.",
+   "createdAt": "2026-09-25T13:17:00.000Z",
+   "demo": true
+  },
+  {
+   "id": "demo-cm-02",
+   "contentId": "demo-torra-2026-10-02",
+   "clientId": "demo-torra",
+   "planningId": "demo-torra-2026-10",
+   "authorRole": "agency",
+   "authorName": "VA Mídia",
+   "kind": "comment",
+   "message": "Boa! Vamos ajustar a capa e te avisamos por aqui.",
+   "createdAt": "2026-09-25T14:02:00.000Z",
+   "demo": true
+  },
+  {
+   "id": "demo-cm-03",
+   "contentId": "demo-torra-2026-10-01",
+   "clientId": "demo-torra",
+   "planningId": "demo-torra-2026-10",
+   "authorRole": "client",
+   "authorName": "Marina",
+   "kind": "comment",
+   "message": "Gostei bastante desse conteúdo.",
+   "createdAt": "2026-09-24T18:11:00.000Z",
+   "demo": true
+  },
+  {
+   "id": "demo-cm-04",
+   "contentId": "demo-movere-2026-10-02",
+   "clientId": "demo-movere",
+   "planningId": "demo-movere-2026-10",
+   "authorRole": "client",
+   "authorName": "Rafael",
+   "kind": "change_request",
+   "message": "Gostaria de alterar a primeira imagem.",
+   "createdAt": "2026-09-26T19:40:00.000Z",
+   "demo": true
+  },
+  {
+   "id": "demo-cm-05",
+   "contentId": "demo-movere-2026-10-03",
+   "clientId": "demo-movere",
+   "planningId": "demo-movere-2026-10",
+   "authorRole": "client",
+   "authorName": "Rafael",
+   "kind": "comment",
+   "message": "Podemos mudar a primeira frase? Prefiro algo como 'Outubro é o seu mês'.",
+   "createdAt": "2026-09-26T19:44:00.000Z",
+   "demo": true
+  }
+ ],
+ "notifications": [
+  {
+   "id": "demo-nt-01",
+   "clientId": "demo-torra",
+   "contentId": "demo-torra-2026-10-01",
+   "type": "approval",
+   "message": "Conteúdo aprovado",
+   "read": true,
+   "createdAt": "2026-09-24T18:12:00.000Z",
+   "clientName": "Torra Serena Cafés",
+   "contentTitle": "Da saca à xícara: bastidores da torra",
+   "demo": true
+  },
+  {
+   "id": "demo-nt-02",
+   "clientId": "demo-torra",
+   "contentId": "demo-torra-2026-10-02",
+   "type": "change_request",
+   "message": "Podemos trocar a foto da capa por uma do coador de pano? Combina mais com a nossa loja.",
+   "read": true,
+   "createdAt": "2026-09-25T13:17:00.000Z",
+   "clientName": "Torra Serena Cafés",
+   "contentTitle": "5 erros ao preparar café coado em casa",
+   "demo": true
+  },
+  {
+   "id": "demo-nt-03",
+   "clientId": "demo-movere",
+   "contentId": "demo-movere-2026-10-01",
+   "type": "approval",
+   "message": "Conteúdo aprovado",
+   "read": true,
+   "createdAt": "2026-09-25T21:20:00.000Z",
+   "clientName": "Movere Pilates Studio",
+   "contentTitle": "3 exercícios para aliviar a lombar",
+   "demo": true
+  },
+  {
+   "id": "demo-nt-04",
+   "clientId": "demo-movere",
+   "contentId": "demo-movere-2026-10-02",
+   "type": "change_request",
+   "message": "Gostaria de alterar a primeira imagem.",
+   "read": false,
+   "createdAt": "2026-09-26T19:40:00.000Z",
+   "clientName": "Movere Pilates Studio",
+   "contentTitle": "Pilates não é só alongamento",
+   "demo": true
+  },
+  {
+   "id": "demo-nt-05",
+   "clientId": "demo-movere",
+   "contentId": "demo-movere-2026-10-03",
+   "type": "comment",
+   "message": "Podemos mudar a primeira frase? Prefiro algo como 'Outubro é o seu mês'.",
+   "read": false,
+   "createdAt": "2026-09-26T19:44:00.000Z",
+   "clientName": "Movere Pilates Studio",
+   "contentTitle": "Aula experimental grátis",
+   "demo": true
+  }
+ ],
+ "demoCredentials": [
+  {
+   "company": "Torra Serena Cafés",
+   "email": "torraserena@example.com",
+   "code": "CAFE26"
+  },
+  {
+   "company": "Movere Pilates Studio",
+   "email": "movere@example.com",
+   "code": "MOVE26"
+  }
+ ]
+}
