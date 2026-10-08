@@ -11,8 +11,8 @@
 /* Configuração de produção. Vazio = usa o banco do Claude (ou demonstração local).
    Preencha com os dados do seu projeto Supabase para o modo servidor — veja producao/LEIAME.md. */
 window.VA_CONFIG = {
-  supabaseUrl: "",      // ex.: "https://abcd1234.supabase.co"
-  supabaseAnonKey: ""   // chave pública "anon" do projeto (Settings > API)
+  supabaseUrl: "https://psnhlfvgjvdclhdzoxlt.supabase.co",      // ex.: "https://abcd1234.supabase.co"
+  supabaseAnonKey: "sb_publishable_9ZDhc7-wAloFt7ns2zuqkg_n5WuJKd1"   // chave pública "anon" do projeto (Settings > API)
 };
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap">
@@ -1263,7 +1263,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         const m = String(error.message || "");
         const known = { invalid_login: "E-mail ou código não conferem. Confira os dados enviados pela VA Mídia.", too_many_attempts: "Muitas tentativas. Aguarde 15 minutos e tente de novo.", inactive: "Este acesso está pausado. Fale com a VA Mídia.", session_expired: "Sua sessão expirou. Entre novamente.", not_found: "Conteúdo não encontrado.", closed: "Este conteúdo já foi aprovado. Use os comentários para falar com a VA Mídia.", forbidden: "Acesso negado." };
         const code = Object.keys(known).find((k) => m.includes(k)) || "server";
-        throw new PortalError(code, known[code] || "Não foi possível falar com o servidor. Tente de novo.");
+        throw new PortalError(code, known[code] || ("Não foi possível falar com o servidor. Detalhe: " + (m || "sem resposta")));
       }
       return data;
     }
@@ -1320,8 +1320,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       return isAdmin ? { ok: true } : { ok: false, reason: "Esta conta não está cadastrada como equipe da VA Mídia." };
     }
     async adminLogin(email, password) {
-      const { error } = await this.sb.auth.signInWithPassword({ email, password });
-      if (error) throw new PortalError("admin_login", "E-mail ou senha da equipe não conferem.");
+      const { error } = await this.sb.auth.signInWithPassword({ email: String(email || "").trim(), password });
+      if (error) {
+        const m = String(error.message || "");
+        if (/invalid login credentials/i.test(m)) throw new PortalError("admin_login", "E-mail ou senha da equipe não conferem.");
+        if (/not confirmed/i.test(m)) throw new PortalError("admin_login", "Este e-mail ainda não foi confirmado no Supabase. Em Authentication > Users, confirme o usuário.");
+        if (/api key|apikey/i.test(m)) throw new PortalError("admin_login", "A chave do Supabase no site não foi aceita. Confira a chave publishable.");
+        throw new PortalError("admin_login", "Não foi possível entrar. Detalhe: " + (m || "sem resposta do servidor"));
+      }
       return this.adminAccess();
     }
     async adminLogout() { await this.sb.auth.signOut(); }
@@ -1396,7 +1402,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const cfg = root.VA_CONFIG || {};
     if (cfg.supabaseUrl && cfg.supabaseAnonKey) {
       onStatus && onStatus("Conectando ao servidor…");
-      if (!root.supabase) await new Promise((res, rej) => { const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"; s.onload = res; s.onerror = () => rej(new PortalError("sdk", "Não foi possível carregar o Supabase.")); document.head.appendChild(s); });
+      if (!root.supabase) await new Promise((res, rej) => { const s = document.createElement("script"); s.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"; s.onload = res; s.onerror = () => rej(new PortalError("sdk", "Não foi possível carregar o Supabase.")); document.head.appendChild(s); });
       const s = new SupabaseStore(cfg); await s.init(); return s;
     }
     if (root.claude && typeof root.claude.use === "function") {
