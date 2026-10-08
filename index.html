@@ -660,6 +660,73 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   .ctabs-row{margin-top:18px}
 }
 
+/* =========================================================
+   v3 · em execução, filtros, painel da semana, logo
+   ========================================================= */
+:root{--st-exec:#B9A3F5;--st-exec-bg:rgba(185,163,245,.13);--st-em_execucao:#B9A3F5}
+.status.em_execucao{color:var(--st-exec);background:var(--st-exec-bg)}
+.legend i.em_execucao,.cal-chip.em_execucao i,.ig-st.em_execucao{background:var(--st-exec)}
+.ring.em_execucao{background:var(--st-exec)}
+.state-card.em_execucao{border-color:rgba(185,163,245,.35);background:linear-gradient(180deg,rgba(185,163,245,.07),var(--surface) 70%)}
+.big-check .ok.exe{background:var(--st-exec);color:#140f24}
+.seg{grid-template-columns:repeat(4,1fr)}
+.seg button[aria-pressed="true"].em_execucao{background:var(--st-exec-bg);color:var(--st-exec)}
+.summary{grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line)}
+.summary .sum{margin:0!important}
+.sum.em_execucao .k i{background:var(--st-exec)}
+.kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid #0F0F11;display:block;background:#fff}
+.avatar.big img{border-width:3px}
+/* filtros por tipo */
+.fchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.fchips .chip{font-family:var(--f-body);font-size:13px;letter-spacing:0;text-transform:none;padding:7px 13px}
+.chip-n{font-family:var(--f-mono);font-size:11px;opacity:.6;margin-left:2px}
+.ig-grid.stories{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ig-tile.story-t{aspect-ratio:9/16;border-radius:12px}
+.ig-date{position:absolute;top:8px;left:8px;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;padding:3px 7px;border-radius:6px;background:rgba(11,11,12,.7);color:#fff}
+/* painel da semana */
+.dash-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.wseg{display:inline-grid;grid-auto-flow:column;gap:4px;padding:4px;border-radius:999px;background:var(--surface);border:1px solid var(--line-soft)}
+.wseg button{border:0;background:none;color:var(--text-2);padding:8px 14px;border-radius:999px;font-size:13.5px;min-height:38px;white-space:nowrap}
+.wseg button:hover{color:var(--text)}
+.wseg button[aria-pressed="true"]{background:var(--text);color:var(--bg);font-weight:600}
+.dash-range{font-family:var(--f-mono);font-size:12px}
+.dash-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
+.dk{background:var(--bg);padding:12px 16px;display:flex;flex-direction:column;gap:3px}
+.dk .v{font-family:var(--f-display);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.dk .k{display:flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dk .k i,.bcol h3 i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dk.em_analise i,.bcol.em_analise h3 i{background:var(--st-analise)}
+.dk.aprovado i,.bcol.aprovado h3 i{background:var(--st-aprovado)}
+.dk.em_execucao i,.bcol.em_execucao h3 i{background:var(--st-exec)}
+.dk.publicado i,.bcol.publicado h3 i{background:var(--st-publicado)}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+.bcol{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.bcol h3{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;padding:4px 4px 6px}
+.bcol h3 .muted{font-family:var(--f-mono);font-weight:400;font-size:12px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.dcard:hover{border-color:#3a3a40}
+.dcard-main{display:flex;flex-direction:column;gap:5px;width:100%;text-align:left;background:none;border:0;padding:11px 12px}
+.dc-top{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dc-top svg{width:13px;height:13px}
+.dcard-main b{font-size:13.5px;font-weight:600;line-height:1.3}
+.dcard-main b.none{color:var(--muted);font-style:italic;font-weight:400}
+.dc-cl{font-size:12px;color:var(--text-2)}
+.dcard-main .tag{align-self:flex-start}
+.dc-next{width:100%;border-radius:0;border:0;border-top:1px solid var(--line-soft);background:var(--bg-2);justify-content:space-between;min-height:38px}
+.dc-next:hover{background:var(--yellow-soft);color:var(--yellow)}
+@media (max-width:960px){ .board{grid-template-columns:repeat(2,minmax(0,1fr))} .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:720px){
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .summary .sum:first-child{grid-column:1/-1}
+  .board{grid-template-columns:1fr}
+  .dash-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ig-grid.stories{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .wseg{width:100%;grid-auto-columns:1fr}
+  .wseg button{padding:8px 6px;font-size:12.5px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
 </style>
 <div id="app" aria-live="polite"></div>
 <div id="modal"></div>
@@ -693,7 +760,24 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   };
   const ALIAS_TO_FIELD = {};
   Object.entries(FIELD_ALIASES).forEach(([f, arr]) => arr.forEach((a) => (ALIAS_TO_FIELD[a] = f)));
-  const fieldOf = (label) => ALIAS_TO_FIELD[norm(label).replace(/[:*]/g, "").trim()] || null;
+  // nome exato primeiro; depois por aproximação ("Data de postagem", "Legenda sugerida", "Tema do post"…)
+  const FUZZY = [
+    ["caption", /legenda|^copy|^texto/],
+    ["date", /^data\b|^dia\b|postagem|publicac|veiculac|^quando/],
+    ["type", /^tipo|^formato/],
+    ["objective", /^objetivo|^meta\b|^funil/],
+    ["description", /^descri|^roteiro|^briefing|^estrateg|^ideia|^conceito|^observ|^detalhe/],
+    ["image", /^imag|^arte|^foto|^midia|^refer|^arquivo|^capa/],
+    ["status", /^status|^situac/],
+    ["title", /^titulo|^tema|^pauta|^assunto|^nome|^headline|^chamada/],
+  ];
+  const fieldOf = (label) => {
+    const k = norm(label).replace(/[:*]/g, "").trim();
+    if (ALIAS_TO_FIELD[k]) return ALIAS_TO_FIELD[k];
+    if (!k || k.length > 40) return null;
+    for (const [f, re] of FUZZY) if (re.test(k)) return f;
+    return null;
+  };
 
   /* ---------------- normalizadores ---------------- */
   function normalizeType(v) {
@@ -710,6 +794,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const n = norm(v);
     if (!n) return "";
     if (/publicad/.test(n)) return "publicado";
+    if (/execuc|producao|produzindo/.test(n)) return "em_execucao";
     if (/aprovad/.test(n)) return "aprovado";
     if (/analise|pendente|aguardando|revis/.test(n)) return "em_analise";
     return "";
@@ -735,7 +820,9 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       if (y && y < 100) y += 2000;
       return valid(y, +m[2], +m[1]);
     }
-    m = norm(s).match(/(\d{1,2})\s*(?:de\s+)?([a-z]{3,})(?:\s*(?:de\s+)?(\d{4}))?/);
+    m = norm(s).match(/^(?:dia\s*)?(\d{1,2})$/);
+    if (m && ctx.month) return valid(ctx.year, ctx.month, +m[1]);
+    m = norm(s).match(/(\d{1,2})\s*[\/\-.]?\s*(?:de\s+)?([a-z]{3,})(?:\s*[\/\-.]?\s*(?:de\s+)?(\d{4}))?/);
     if (m) {
       const mo = monthFromName(m[2]);
       if (mo) return valid(m[3] ? +m[3] : ctx.year, mo, +m[1]);
@@ -1077,6 +1164,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const p = { status, updatedAt: at, history: (d.history || []).concat({ status, at, by: "VA Mídia" }) };
     if (status === "aprovado" && !d.approvedAt) p.approvedAt = at;
     if (status === "publicado") { p.publishedAt = at; if (!d.approvedAt) p.approvedAt = at; }
+    if (status === "em_execucao" && !d.approvedAt) p.approvedAt = at;
     if (status === "em_analise") { p.approvedAt = null; p.publishedAt = null; }
     if (status !== "publicado" && d.publishedAt && status !== "em_analise") p.publishedAt = null;
     return p;
@@ -1206,6 +1294,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       await this.db.collection("comments").add({ contentId, clientId: d.clientId, planningId: d.planningId, authorRole: "agency", authorName: "VA Mídia", kind: "comment", message: t, createdAt: nowISO() });
     }
     async markRead(ids) { for (const id of ids) await this.db.doc("notifications/" + id).update({ read: true }).catch(() => {}); }
+    async setContentDate(id, date) { await this.db.doc("contents/" + id).update({ date, updatedAt: nowISO() }); }
+    async setClientLogo(id, logo) { await this.db.doc("clients/" + id).update({ logo }); }
     async setContentImage(contentId, imageRef) { await this.db.doc("contents/" + contentId).update({ image: imageRef, images: [], updatedAt: nowISO() }); }
     async deleteContent(id) {
       const cm = await this.db.collection("comments").where("contentId", "==", id).get();
@@ -1232,6 +1322,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         name: String(data.name || "").trim(), company, handle: String(data.handle || "").trim().replace(/^@/, ""),
         status: data.status || "ativo", demo: !!(prevClient && prevClient.exists && prevClient.data().demo),
         createdAt: prevClient && prevClient.exists ? prevClient.data().createdAt : nowISO(),
+        logo: (prevClient && prevClient.exists && prevClient.data().logo) || "",
       });
       if (prevV) { const oh = await accessHash(prevV.email, prevV.code); if (prevV.email !== email || prevV.code !== code) await this.db.doc("access/" + oh).delete(); }
       await this.db.doc("vault/" + id).set({ email, code });
@@ -1358,6 +1449,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     async agencyComment(id, text) { const t = checkText(text); const c = this.d.contents.find((x) => x.id === id); this.d.comments = this.d.comments.concat({ id: uid("cm-"), contentId: id, clientId: c.clientId, planningId: c.planningId, authorRole: "agency", authorName: "VA Mídia", kind: "comment", message: t, createdAt: nowISO() }); this._emit(); }
     async markRead(ids) { this.d.notifications = this.d.notifications.map((n) => (ids.includes(n.id) ? Object.assign({}, n, { read: true }) : n)); this._emit(); }
     async setContentImage(id, ref) { this._replace(id, { image: ref, images: [] }); this._emit(); }
+    async setContentDate(id, date) { this._replace(id, { date }); this._emit(); }
+    async setClientLogo(id, logo) { this.d.clients = this.d.clients.map((c) => (c.id === id ? Object.assign({}, c, { logo }) : c)); this._emit(); }
     async deleteContent(id) { this.d.contents = this.d.contents.filter((c) => c.id !== id); this.d.comments = this.d.comments.filter((c) => c.contentId !== id); this.d.notifications = this.d.notifications.filter((c) => c.contentId !== id); this._emit(); }
     async saveClient(data) {
       const id = data.id || uid("cl-");
@@ -1369,7 +1462,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       const code = String(data.code || (prevV && prevV.code) || makeCode()).toUpperCase();
       if (code.length < 5) throw new PortalError("code", "Use um código com pelo menos 5 caracteres.");
       const prev = this.d.clients.find((c) => c.id === id);
-      const client = { id, name: String(data.name || "").trim(), company, handle: String(data.handle || "").replace(/^@/, "").trim(), status: data.status || "ativo", demo: !!(prev && prev.demo), createdAt: prev ? prev.createdAt : nowISO() };
+      const client = { id, name: String(data.name || "").trim(), company, handle: String(data.handle || "").replace(/^@/, "").trim(), status: data.status || "ativo", demo: !!(prev && prev.demo), createdAt: prev ? prev.createdAt : nowISO(), logo: (prev && prev.logo) || "" };
       this.d.clients = this.d.clients.filter((c) => c.id !== id).concat(client);
       if (prevV) { const oh = await accessHash(prevV.email, prevV.code); this.d.access = this.d.access.filter((a) => a.id !== oh); }
       this.d.vault = this.d.vault.filter((v) => v.id !== id).concat({ id, email, code });
@@ -1511,7 +1604,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       const q = (t, sel) => this.sb.from(t).select(sel || "*");
       const load = async () => {
         try {
-          const [cl, pl, co, cm, nt, rp, tf] = await Promise.all([q("clients", "id,name,company,handle,email,status,is_demo,created_at"), q("plannings"), q("contents"), q("comments"), q("notifications").order("created_at", { ascending: false }).limit(300), q("reports"), q("traffic_plans")]);
+          const [cl, pl, co, cm, nt, rp, tf] = await Promise.all([q("clients", "id,name,company,handle,email,status,is_demo,created_at,logo"), q("plannings"), q("contents"), q("comments"), q("notifications").order("created_at", { ascending: false }).limit(300), q("reports"), q("traffic_plans")]);
           const err = [cl, pl, co, cm, nt, rp, tf].find((r) => r.error);
           if (err) throw new PortalError("server", err.error.message);
           if (!alive) return;
@@ -1541,6 +1634,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     async agencyComment(id, text) { const t = checkText(text); const c = await this._getContent(id); const { error } = await this.sb.from("comments").insert({ content_id: id, client_id: c.clientId, planning_id: c.planningId, author_role: "agency", author_name: "VA Mídia", kind: "comment", message: t }); if (error) throw new PortalError("server", error.message); this._after(); }
     async markRead(ids) { if (!ids.length) return; await this.sb.from("notifications").update({ read: true }).in("id", ids); this._after(); }
     async setContentImage(id, ref) { await this._updContent(id, { image: ref, images: [], updatedAt: nowISO() }); this._after(); }
+    async setContentDate(id, date) { await this._updContent(id, { date: date || "", updatedAt: nowISO() }); this._after(); }
+    async setClientLogo(id, logo) { await this._rpc("admin_set_client_logo", { p_client_id: id, p_logo: logo || "" }); this._after(); }
     async deleteContent(id) { const { error } = await this.sb.from("contents").delete().eq("id", id); if (error) throw new PortalError("server", error.message); this._after(); }
     async saveClient(data) {
       const r = await this._rpc("admin_save_client", { p_id: data.id || null, p_name: data.name || "", p_company: data.company || "", p_handle: String(data.handle || "").replace(/^@/, ""), p_email: data.email || "", p_status: data.status || "ativo", p_code: data.code || null });
@@ -1620,7 +1715,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const MES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
   const MES3 = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-  const STATUS = { em_analise: "Em análise", aprovado: "Aprovado", publicado: "Publicado" };
+  const STATUS = { em_analise: "Em análise", aprovado: "Aprovado", em_execucao: "Em execução", publicado: "Publicado" };
+  const STATUS_ORDER = ["em_analise", "aprovado", "em_execucao", "publicado"];
   const TYPE_LABEL = (t) => (t ? String(t).toUpperCase() : "TIPO NÃO INFORMADO");
   const pad = (n) => String(n).padStart(2, "0");
   function day(date) {
@@ -1700,7 +1796,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     ui: {}, drafts: {}, busy: {},
     login: { email: "", code: "", error: "" },
     alogin: { email: "", password: "", error: "" },
-    imp: null, clientForm: null, pendingStatus: {}, ctab: "overview", rform: null, tform: null,
+    imp: null, clientForm: null, pendingStatus: {}, ctab: "overview", rform: null, tform: null, tf: {}, dweek: "this",
   };
   const resetUI = () => { S.ui = {}; S.slide = 0; };
 
@@ -1859,12 +1955,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     return withPending || list[0];
   }
   function counts(list) {
-    const c = { all: list.length, em_analise: 0, aprovado: 0, publicado: 0, change: 0 };
+    const c = { all: list.length, em_analise: 0, aprovado: 0, em_execucao: 0, publicado: 0, change: 0 };
     list.forEach((x) => { c[x.status] = (c[x.status] || 0) + 1; if (x.changeRequested && x.status === "em_analise") c.change++; });
     return c;
   }
   function summaryBar(c) {
-    const items = [["all", "Conteúdos", c.all], ["em_analise", "Em análise", c.em_analise], ["aprovado", "Aprovados", c.aprovado], ["publicado", "Publicados", c.publicado]];
+    const items = [["all", "Conteúdos", c.all], ["em_analise", "Em análise", c.em_analise], ["aprovado", "Aprovados", c.aprovado], ["em_execucao", "Em execução", c.em_execucao], ["publicado", "Publicados", c.publicado]];
     return `<div class="summary" role="group" aria-label="Resumo e filtros">${items.map(([k, lab, v]) => `<button class="sum ${k}" data-a="filter" data-f="${k}" aria-pressed="${S.filter === k}"><span class="v">${pad(v)}</span><span class="k"><i></i>${lab}</span></button>`).join("")}</div>`;
   }
   function monthChips(list, current, key) {
@@ -1924,15 +2020,67 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   const WD = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
   const handleOf = (client) => client.handle || String(client.company || "cliente").toLowerCase().replace(/[^a-z0-9]+/g, "");
   const safeUrl = (u) => (/^https?:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "");
-  function groupStatus(list) { if (list.some((c) => c.status === "em_analise")) return "em_analise"; if (list.some((c) => c.status === "aprovado")) return "aprovado"; return "publicado"; }
+  function groupStatus(list) { for (const st of STATUS_ORDER) if (list.some((c) => c.status === st)) return st; return "publicado"; }
   function mockHTML(c) {
     return `<span class="mock-art"><span class="mock-k">${esc(c.type || "Conteúdo")}</span><span class="mock-t">${esc(c.title || "Sem título")}</span><span class="mock-n">Prévia · arte em produção</span></span>`;
+  }
+
+  /* ---------------- central de conteúdos e painel ---------------- */
+  const TYPE_FILTERS = [["all", "Todos"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Story", "Stories"], ["Destaque", "Destaques"]];
+  const matchType = (c, f) => f === "all" || (f === "Story" ? kindOf(c) === "story" : f === "Destaque" ? kindOf(c) === "destaque" : f === "Post" ? kindOf(c) === "feed" && c.type !== "Reel" && c.type !== "Carrossel" : c.type === f);
+  function typeChips(key, list) {
+    const cur = S.tf[key] || "all";
+    return `<div class="fchips" role="group" aria-label="Tipo de conteúdo">${TYPE_FILTERS.map(([k, l]) => {
+      const n = list ? list.filter((c) => matchType(c, k)).length : null;
+      return `<button class="chip" data-a="tfilter" data-key="${esc(key)}" data-f="${k}" aria-pressed="${cur === k}">${l}${n !== null ? ` <span class="chip-n">${n}</span>` : ""}</button>`;
+    }).join("")}</div>`;
+  }
+  function avatarInner(client) {
+    return client && client.logo ? `<img src="${esc(imgSrc(client.logo))}" alt="" data-fallback>` : `<span>${esc(initials(client && client.company))}</span>`;
+  }
+  const WEEK_OPTS = [["last", "Última semana", -1], ["this", "Esta semana", 0], ["next", "Próxima semana", 1]];
+  const NEXT_STEP = { aprovado: ["em_execucao", "Iniciar execução"], em_execucao: ["publicado", "Marcar publicado"] };
+  function dashboardHTML(contents, opts) {
+    const w = S.dweek || "this";
+    const off = WEEK_OPTS.find((x) => x[0] === w)[2];
+    const mon = mondayOf(new Date()); mon.setDate(mon.getDate() + 7 * off);
+    const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+    const a = ymd(mon), b = ymd(sun);
+    const inWeek = contents.filter((c) => c.date && c.date >= a && c.date <= b);
+    const tf = S.tf[opts.key] || "all";
+    const list = inWeek.filter((c) => matchType(c, tf)).sort(byDate);
+    const cols = STATUS_ORDER.map((st) => ({ st, items: list.filter((c) => c.status === st) }));
+    const card = (c) => {
+      const d = c.date ? new Date(c.date + "T12:00:00") : null;
+      const nx = opts.isAdmin && NEXT_STEP[c.status];
+      const cl = opts.clients ? opts.clients[c.clientId] : null;
+      return `<div class="dcard">
+        <button class="dcard-main" data-a="open" data-id="${esc(c.id)}">
+          <span class="dc-top">${d ? `${WD[d.getDay()]} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}` : ""} · ${typeIcon(c.type)} ${esc(c.type || "")}</span>
+          <b class="${c.title ? "" : "none"}">${esc(c.title || "Título não informado")}</b>
+          ${cl ? `<span class="dc-cl">${esc(cl.company)}</span>` : ""}
+          ${c.changeRequested && c.status === "em_analise" ? '<span class="tag change">Ajuste pedido</span>' : ""}
+        </button>
+        ${nx ? `<button class="btn btn-sm dc-next" data-a="quick-status" data-id="${esc(c.id)}" data-s="${nx[0]}" ${S.busy["q-" + c.id] ? "disabled" : ""}>${nx[1]} ${I.arrow}</button>` : ""}
+      </div>`;
+    };
+    return `<div class="dash">
+      <div class="dash-bar">
+        <div class="wseg" role="group" aria-label="Semana">${WEEK_OPTS.map(([k, l]) => `<button data-a="dweek" data-w="${k}" aria-pressed="${w === k}">${l}</button>`).join("")}</div>
+        <span class="muted dash-range">${pad(mon.getDate())}/${pad(mon.getMonth() + 1)} – ${pad(sun.getDate())}/${pad(sun.getMonth() + 1)}</span>
+      </div>
+      ${typeChips(opts.key, inWeek)}
+      <div class="dash-kpis">${cols.map(({ st, items }) => `<div class="dk ${st}"><span class="v">${pad(items.length)}</span><span class="k"><i></i>${STATUS[st]}</span></div>`).join("")}</div>
+      ${list.length ? `<div class="board">${cols.map(({ st, items }) => `<section class="bcol ${st}"><h3><i></i>${STATUS[st]} <span class="muted">${items.length}</span></h3>${items.length ? items.map(card).join("") : `<p class="wk-empty">Nada aqui.</p>`}</section>`).join("")}</div>`
+        : `<div class="empty">${I.inbox}<b>Nada programado ${w === "last" ? "na última semana" : w === "next" ? "para a próxima semana" : "para esta semana"}</b><span>${tf === "all" ? "Escolha outra semana para ver os conteúdos." : "Nenhum conteúdo deste tipo na semana. Troque o filtro."}</span></div>`}
+      ${opts.isAdmin ? `<p class="hint" style="margin-top:14px">Depois que o cliente aprova, use “Iniciar execução” e “Marcar publicado” para atualizar o andamento. O cliente vê na hora.</p>` : ""}
+    </div>`;
   }
 
   /* ---------------- área do cliente (abas) ---------------- */
   function clientTabs() {
     const t = (k, l) => `<button class="ctab" data-a="ctab" data-t="${k}" ${S.ctab === k ? 'aria-current="page"' : ""}>${l}</button>`;
-    return `<nav class="ctabs" aria-label="Seções">${t("overview", "Visão geral")}${t("feed", "Feed")}${t("reports", "Relatórios")}${t("traffic", "Tráfego pago")}</nav>`;
+    return `<nav class="ctabs" aria-label="Seções">${t("overview", "Visão geral")}${t("feed", "Conteúdos")}${t("dash", "Painel da semana")}${t("reports", "Relatórios")}${t("traffic", "Tráfego pago")}</nav>`;
   }
   function clientWorkspace(data, client, isAdmin, key) {
     const plannings = planningsFor(data, client.id);
@@ -1941,8 +2089,9 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     let body;
     if (S.ctab === "reports") body = reportsView(data, client, isAdmin);
     else if (S.ctab === "traffic") body = trafficView(data, client, isAdmin);
+    else if (S.ctab === "dash") body = dashboardHTML(data.contents.filter((c) => c.clientId === client.id), { isAdmin, key: "dash-" + client.id });
     else if (!planning) body = `<div class="empty">${I.inbox}<b>${isAdmin ? "Nenhum planejamento para este cliente" : "Seu planejamento ainda não foi publicado"}</b><span>${isAdmin ? "Cole o planejamento do mês na aba Importar e o portal monta tudo." : "Quando a VA Mídia publicar o planejamento do mês, ele aparece aqui."}</span></div>`;
-    else if (S.ctab === "feed") body = feedTab(all, client);
+    else if (S.ctab === "feed") body = feedTab(all, client, key);
     else body = overviewTab(all, planning, isAdmin);
     const months = (S.ctab === "overview" || S.ctab === "feed") && planning ? monthChips(plannings, planning, key) : "";
     return { planning, html: `<div class="ctabs-row">${clientTabs()}${months}</div><div class="ctab-body">${body}</div>` };
@@ -1958,7 +2107,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     else if (!isAdmin && !changes.length) note = `<div class="slim calm"><span class="okdot">${I.check}</span><span class="slim-t"><b>Tudo em dia.</b> <span class="muted">Nenhum conteúdo aguardando você neste mês.</span></span></div>`;
     else if (isAdmin && c.change) note = `<div class="slim warn"><span class="okdot">${I.edit}</span><span class="slim-t"><b>${c.change === 1 ? "1 alteração pedida" : c.change + " alterações pedidas"} pelo cliente.</b> <span class="muted">Abra o conteúdo para ler e responder.</span></span></div>`;
     return `${note}${summaryBar(c)}
-      <section class="block"><div class="block-h"><h2>Calendário</h2><span class="legend"><i class="em_analise"></i>Em análise<i class="aprovado"></i>Aprovado<i class="publicado"></i>Publicado</span></div>${calendarHTML(planning, list)}</section>
+      <section class="block"><div class="block-h"><h2>Calendário</h2><span class="legend"><i class="em_analise"></i>Em análise<i class="aprovado"></i>Aprovado<i class="em_execucao"></i>Em execução<i class="publicado"></i>Publicado</span></div>${calendarHTML(planning, list)}</section>
       <section class="block"><div class="block-h"><h2>Semana a semana</h2></div>${weeksHTML(planning, list)}</section>`;
   }
 
@@ -2015,7 +2164,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     return `<button class="ring-btn" data-a="open" data-id="${esc(c.id)}" data-scope="${scope}" aria-label="${esc(label + ", " + STATUS[status])}">
       <span class="ring ${status}"><span class="ring-in">${inner}</span></span><span class="ring-l">${esc(label)}</span></button>`;
   }
-  function feedTab(all, client) {
+  function feedTab(allIn, client, wkey) {
+    const fkey = "feed-" + wkey;
+    const f = S.tf[fkey] || "all";
+    const chips = typeChips(fkey, allIn);
+    const all = allIn.filter((c) => matchType(c, f));
     const posts = all.filter((c) => kindOf(c) === "feed").sort((a, b) => byDate(b, a));
     const stories = all.filter((c) => kindOf(c) === "story");
     const hls = all.filter((c) => kindOf(c) === "destaque");
@@ -2035,11 +2188,20 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         ${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(c)}
         ${c.type === "Reel" || c.type === "Carrossel" ? `<span class="ig-fmt">${typeIcon(c.type)}</span>` : ""}<span class="ig-st ${esc(c.status)}" title="${STATUS[c.status]}"></span></button>`;
     }).join("");
-    return `<div class="ig">
-      <div class="ig-head"><span class="avatar big"><span>${esc(initials(client.company))}</span></span><div class="ig-id"><b>${esc(handleOf(client))}</b><span class="muted">${esc(client.company)}</span><span class="ig-count"><b>${posts.length}</b> posts <b>${stories.length}</b> stories <b>${hls.length}</b> destaques</span></div></div>
-      <div class="ig-sec"><div class="ig-label">Stories <span class="muted">· toque para ver</span></div>${storyRow ? `<div class="rings">${storyRow}</div>` : `<p class="wk-empty">Nenhum story neste mês.</p>`}</div>
-      <div class="ig-sec"><div class="ig-label">Destaques</div>${hlRow ? `<div class="rings">${hlRow}</div>` : `<p class="wk-empty">Nenhum destaque sugerido neste mês.</p>`}</div>
-      <div class="ig-sec"><div class="ig-label">Feed</div>${grid ? `<div class="ig-grid">${grid}</div>` : `<p class="wk-empty">Nenhum post de feed neste mês.</p>`}</div>
+    const storyCards = stories.map((c) => {
+      const img = imgSrc(imagesOf(c)[0]); const d = day(c.date);
+      return `<button class="ig-tile story-t" data-a="open" data-id="${esc(c.id)}" data-scope="story" aria-label="${esc("Story: " + (c.title || "") + ", " + STATUS[c.status])}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(c)}<span class="ig-date">${d ? d.short : "S/ DATA"}</span><span class="ig-st ${esc(c.status)}"></span></button>`;
+    }).join("");
+    const head = `<div class="ig-head"><span class="avatar big">${avatarInner(client)}</span>`;
+    const sec = (label, inner, empty) => `<div class="ig-sec"><div class="ig-label">${label}</div>${inner || `<p class="wk-empty">${empty}</p>`}</div>`;
+    let body;
+    if (f === "all") body = sec('Stories <span class="muted">· toque para ver</span>', storyRow && `<div class="rings">${storyRow}</div>`, "Nenhum story neste mês.") + sec("Destaques", hlRow && `<div class="rings">${hlRow}</div>`, "Nenhum destaque sugerido neste mês.") + sec("Feed", grid && `<div class="ig-grid">${grid}</div>`, "Nenhum post de feed neste mês.");
+    else if (f === "Story") body = sec("Stories", storyCards && `<div class="ig-grid stories">${storyCards}</div>`, "Nenhum story neste mês.");
+    else if (f === "Destaque") body = sec("Destaques", hlRow && `<div class="rings">${hlRow}</div>`, "Nenhum destaque sugerido neste mês.");
+    else body = sec(TYPE_FILTERS.find((x) => x[0] === f)[1], grid && `<div class="ig-grid">${grid}</div>`, "Nenhum conteúdo deste tipo neste mês.");
+    return `${chips}<div class="ig">
+      ${head}<div class="ig-id"><b>${esc(handleOf(client))}</b><span class="muted">${esc(client.company)}</span><span class="ig-count"><b>${posts.length}</b> posts <b>${stories.length}</b> stories <b>${hls.length}</b> destaques</span></div></div>
+      ${body}
     </div>`;
   }
 
@@ -2052,7 +2214,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     return `<div class="story-frame">
       ${src ? `<img src="${esc(src)}" alt="${esc(c.title || "")}" data-fallback>` : `<div class="story-mock"><span class="tag">Prévia · arte em produção</span><h3>${esc(c.title || "Story")}</h3>${c.description ? `<p>${esc(c.description)}</p>` : ""}</div>`}
       <div class="story-top"><div class="story-bars">${(imgs.length > 1 ? imgs : [0]).map((_, k) => `<i class="${k <= i ? "on" : ""}"></i>`).join("")}</div>
-        <div class="story-user"><span class="avatar sm"><span>${esc(initials(client.company))}</span></span><b>${esc(handleOf(client))}</b><small>${d ? d.short : ""}</small></div></div>
+        <div class="story-user"><span class="avatar sm">${avatarInner(client)}</span><b>${esc(handleOf(client))}</b><small>${d ? d.short : ""}</small></div></div>
       ${imgs.length > 1 ? `${i > 0 ? `<button class="nav prev" data-a="slide" data-d="-1" aria-label="Anterior">${I.left}</button>` : ""}${i < imgs.length - 1 ? `<button class="nav next" data-a="slide" data-d="1" aria-label="Próxima">${I.right}</button>` : ""}` : ""}
     </div>`;
   }
@@ -2171,7 +2333,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const shownCap = long && !S.ui.capOpen ? cap.slice(0, 220).replace(/\s+\S*$/, "") + "… " : cap;
     const d = day(c.date);
     return `<article class="post" aria-label="Pré-visualização da publicação">
-      <header class="post-head"><span class="avatar"><span>${esc(initials(client.company))}</span></span><span><b>${esc(handle)}</b><small>Pré-visualização · ${esc(c.type || "formato não informado")}</small></span></header>
+      <header class="post-head"><span class="avatar">${avatarInner(client)}</span><span><b>${esc(handle)}</b><small>Pré-visualização · ${esc(c.type || "formato não informado")}</small></span></header>
       <div class="post-media">${mediaHTML(imgSrc(imgs[i]), c.title)}
         ${c.type === "Reel" ? `<span class="reel">${I.reel}Reel</span>` : ""}
         ${imgs.length > 1 ? `<span class="count">${i + 1}/${imgs.length}</span>
@@ -2207,6 +2369,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     if (c.status === "aprovado") return `<div class="state-card aprovado"><div class="top">${num}<span class="status aprovado">Aprovado</span></div>
       <div class="big-check"><span class="ok">${I.check}</span><div class="msg"><b>Conteúdo aprovado</b><small>Aprovado em ${esc(dt(c.approvedAt)) || "data não registrada"}</small><small>A VA Mídia seguirá com a produção deste conteúdo.</small></div></div>
       ${u.flash === "approved" ? `<div class="success">${I.check}Aprovação registrada. Obrigado!</div>` : ""}</div>`;
+    if (c.status === "em_execucao") return `<div class="state-card em_execucao"><div class="top">${num}<span class="status em_execucao">Em execução</span></div>
+      <div class="big-check"><span class="ok exe">${I.edit}</span><div class="msg"><b>Em produção pela VA Mídia</b>${c.approvedAt ? `<small>Aprovado em ${esc(dt(c.approvedAt))}</small>` : ""}<small>O conteúdo está sendo gravado ou criado. Você vê aqui quando for publicado.</small></div></div></div>`;
     if (c.status === "publicado") return `<div class="state-card publicado"><div class="top">${num}<span class="status publicado">Publicado</span></div>
       <div class="big-check"><span class="ok pub">${I.check}</span><div class="msg"><b>Conteúdo publicado</b>${c.publishedAt ? `<small>Publicado em ${esc(dt(c.publishedAt))}</small>` : ""}</div></div></div>`;
     // em análise
@@ -2234,15 +2398,16 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       ${c.changeRequested && c.status === "em_analise" ? `<div class="pending-change">${I.edit}<span>O cliente pediu alteração. Veja o pedido nos comentários abaixo.</span></div>` : ""}
       <div class="field"><span class="label">Status do conteúdo</span>
         <div class="seg" role="group" aria-label="Status">${Object.keys(STATUS).map((k) => `<button class="${k}" data-a="pick-status" data-s="${k}" aria-pressed="${sel === k}">${STATUS[k]}</button>`).join("")}</div></div>
-      ${pend && pend !== c.status ? `<div class="confirm"><p>Mudar de <b>${STATUS[c.status]}</b> para <b>${STATUS[pend]}</b>?${pend === "em_analise" ? " A aprovação registrada será desfeita." : ""}${pend === "publicado" ? " A data de publicação será registrada agora." : ""}</p>
+      ${pend && pend !== c.status ? `<div class="confirm"><p>Mudar de <b>${STATUS[c.status]}</b> para <b>${STATUS[pend]}</b>?${pend === "em_analise" ? " A aprovação registrada será desfeita." : ""}${pend === "publicado" ? " A data de publicação será registrada agora." : ""}${pend === "em_execucao" ? " O cliente verá que o conteúdo está em produção." : ""}</p>
         <div class="actions"><button class="btn btn-primary btn-sm" data-a="save-status" ${S.busy.status ? "disabled" : ""}>Salvar status</button><button class="btn btn-ghost btn-sm" data-a="cancel-status">Cancelar</button></div></div>` : ""}
+      <div class="field"><label for="ad-date">Data de publicação</label><input class="input" type="date" id="ad-date" value="${esc(c.date || "")}" data-a-change="set-date" style="max-width:220px">${c.date ? "" : '<span class="hint">Sem data: o conteúdo aparece em "Sem data definida". Escolha uma data para ele entrar no calendário.</span>'}</div>
       <div class="row" style="flex-wrap:wrap;gap:8px">
         ${c.changeRequested && c.status === "em_analise" ? `<button class="btn btn-sm" data-a="resolve">${I.check}Marcar alteração como resolvida</button>` : ""}
         ${S.info.canUploadImages ? `<label class="btn btn-sm" for="img-swap">${I.upload}Trocar imagem</label><input type="file" id="img-swap" accept="image/*" class="sr" data-a-change="swap-image">` : ""}
         ${S.ui.del ? `<button class="btn btn-danger btn-sm" data-a="delete-yes">Confirmar exclusão</button><button class="btn btn-ghost btn-sm" data-a="delete-no">Cancelar</button>` : `<button class="btn btn-ghost btn-sm" data-a="delete">${I.trash}Excluir</button>`}
       </div>
       ${c.approvedAt ? `<p class="hint">Aprovado em ${esc(dt(c.approvedAt))}${c.publishedAt ? ` · Publicado em ${esc(dt(c.publishedAt))}` : ""}</p>` : ""}
-      ${hist.length ? `<div class="history"><span class="label">Histórico</span>${hist.map((h) => `<span><i style="background:var(--st-${h.status === "em_analise" ? "analise" : h.status})"></i>${STATUS[h.status] || esc(h.status)} · ${esc(dt(h.at))}${h.by ? " · " + esc(h.by) : ""}</span>`).join("")}</div>` : ""}
+      ${hist.length ? `<div class="history"><span class="label">Histórico</span>${hist.map((h) => `<span><i style="background:var(--st-${h.status === "em_analise" ? "analise" : h.status === "em_execucao" ? "exec" : h.status})"></i>${STATUS[h.status] || esc(h.status)} · ${esc(dt(h.at))}${h.by ? " · " + esc(h.by) : ""}</span>`).join("")}</div>` : ""}
     </div>`;
   }
 
@@ -2315,7 +2480,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       return `<tr class="click" data-a="aclient" data-id="${esc(cl.id)}" tabindex="0">
         <td class="cname"><b>${esc(cl.company)}</b><small>${cl.handle ? "@" + esc(cl.handle) : ""}${cl.demo ? ' · <span class="tag demo" style="padding:1px 6px">Demo</span>' : ""}${cl.status === "inativo" ? ' · <span class="tag">Pausado</span>' : ""}</small></td>
         <td>${p ? monthName(p.month, p.year) : '<span class="muted">Sem planejamento</span>'}</td>
-        <td class="n">${pad(k.all)}</td><td class="n">${pad(k.em_analise)}</td><td class="n">${pad(k.aprovado)}</td><td class="n">${pad(k.publicado)}</td>
+        <td class="n">${pad(k.all)}</td><td class="n">${pad(k.em_analise)}</td><td class="n">${pad(k.aprovado)}</td><td class="n">${pad(k.em_execucao)}</td><td class="n">${pad(k.publicado)}</td>
         <td class="n ${k.change ? "hl" : ""}">${pad(k.change)}</td>
         <td class="muted" style="white-space:nowrap">${last[cl.id] ? esc(ago(last[cl.id])) : "—"}</td>
         <td><span class="btn btn-sm">Abrir</span></td></tr>`;
@@ -2328,13 +2493,16 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         <div class="kpi"><span class="v">${pad(activeClients.length)}</span><span class="k">Clientes ativos</span></div>
         <div class="kpi"><span class="v">${pad(c.em_analise)}</span><span class="k"><i style="background:var(--st-analise)"></i>Em análise</span></div>
         <div class="kpi"><span class="v">${pad(c.aprovado)}</span><span class="k"><i style="background:var(--st-aprovado)"></i>Aprovados</span></div>
+        <div class="kpi"><span class="v">${pad(c.em_execucao)}</span><span class="k"><i style="background:var(--st-exec)"></i>Em execução</span></div>
         <div class="kpi"><span class="v">${pad(c.publicado)}</span><span class="k"><i style="background:var(--st-publicado)"></i>Publicados</span></div>
         <div class="kpi"><span class="v" style="${c.change ? "color:var(--danger)" : ""}">${pad(c.change)}</span><span class="k"><i style="background:var(--danger)"></i>Alterações pedidas</span></div>
       </div>
+      <div class="section-title"><h2>Painel da semana</h2><span class="muted">Todos os clientes</span></div>
+      ${dashboardHTML(a.contents.filter((x) => { const cl = a.clients.find((y) => y.id === x.clientId); return cl && cl.status !== "inativo"; }), { isAdmin: true, key: "dash-all", clients: Object.fromEntries(a.clients.map((x) => [x.id, x])) })}
       <div class="section-title"><h2>${unread.length ? `${unread.length === 1 ? "1 novidade" : unread.length + " novidades"} para a equipe` : "Novidades"}</h2>${unread.length > 1 ? `<button class="btn btn-ghost btn-sm" data-a="read-all">Marcar todas como lidas</button>` : ""}</div>
       ${unread.length ? `<div class="notes">${unread.map(noteCard).join("")}</div>` : `<div class="empty">${I.check}<b>Tudo lido</b><span>Quando um cliente aprovar, comentar ou pedir alteração, aparece aqui.</span></div>`}
       <div class="section-title"><h2>Clientes</h2><span class="muted">Mês em destaque: o planejamento mais recente com pendências</span></div>
-      ${a.clients.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Cliente</th><th>Planejamento</th><th>Conteúdos</th><th>Em análise</th><th>Aprovados</th><th>Publicados</th><th>Alterações</th><th>Última interação</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+      ${a.clients.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Cliente</th><th>Planejamento</th><th>Conteúdos</th><th>Em análise</th><th>Aprovados</th><th>Em execução</th><th>Publicados</th><th>Alterações</th><th>Última interação</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
         : `<div class="empty">${I.inbox}<b>Nenhum cliente cadastrado</b><span>Cadastre o primeiro cliente na aba Clientes.</span><button class="btn btn-primary btn-sm" data-a="atab" data-t="clients">Cadastrar cliente</button></div>`}
       <div class="section-title"><h2>Últimas interações</h2></div>
       ${recent.length ? `<div class="activity">${recent.map((n) => `<button class="act" data-a="note-open" data-id="${esc(n.id)}">
@@ -2352,7 +2520,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const ws = clientWorkspace(a, cl, true, "admin-" + cl.id);
     return `<button class="btn btn-ghost btn-sm" data-a="aback">${I.back}Todos os clientes</button>
       <div class="greet" style="margin-top:14px"><div><h1>${esc(cl.company)}</h1><p class="sub">${cl.handle ? "@" + esc(cl.handle) + " · " : ""}${ws.planning ? "Planejamento · <b style=\"color:var(--text)\">" + monthName(ws.planning.month, ws.planning.year) + "</b>" : "Sem planejamento"}${cl.demo ? ' <span class="tag demo">Demonstração</span>' : ""}</p></div>
-      <button class="btn btn-primary btn-sm" data-a="import-for" data-id="${esc(cl.id)}">${I.upload}Importar planejamento</button></div>
+      <div class="row" style="flex-wrap:wrap"><span class="avatar">${avatarInner(cl)}</span>${S.info.canUploadImages ? `<label class="btn btn-sm" for="cl-logo">${I.image}${cl.logo ? "Trocar logo" : "Logo do cliente"}</label><input id="cl-logo" type="file" accept="image/*" class="sr" data-a-change="client-logo" data-id="${esc(cl.id)}">` : ""}${cl.logo ? `<button class="btn btn-ghost btn-sm" data-a="client-logo-rm" data-id="${esc(cl.id)}">Remover logo</button>` : ""}<button class="btn btn-primary btn-sm" data-a="import-for" data-id="${esc(cl.id)}">${I.upload}Importar planejamento</button></div></div>
       ${ws.html}`;
   }
 
@@ -2440,7 +2608,10 @@ Imagem:`;
     const im = S.imp;
     if (!im.parsed) return;
     const ex = impExisting(im);
-    im.parsed.items.forEach((it, i) => { it._attached = resolveItemImages(i, it).files.length > 0; });
+    im.parsed.items.forEach((it, i) => {
+      it._attached = resolveItemImages(i, it).files.length > 0;
+      if (!it.date && it.dateRaw && !it._manualDate) { const d = P.parseDate(it.dateRaw, { year: im.year, month: im.month }); if (d) { it.date = d; it.warnings = it.warnings.filter((w) => !/^Data/.test(w)); } }
+    });
     const m = P.planMerge(im.parsed.items, ex.contents);
     im.rows = m.rows; im.untouched = m.untouched;
   }
@@ -2517,6 +2688,7 @@ Imagem:`;
         ${it.caption ? `<span class="cap">${esc(it.caption)}</span>` : ""}
         ${r.action === "update" ? `<span class="ln">Campos alterados: ${r.changes.map((x) => P.FIELD_LABELS[x]).join(", ")}. Status, aprovação e comentários são preservados.</span>` : ""}
         ${warns.length ? `<span class="warns">${warns.join("")}</span>` : ""}
+        ${!it.date && r.action !== "same" ? `<span class="ln"><label for="pv-d-${i}">Definir data:</label><input class="input" style="min-height:36px;padding:6px 10px;width:auto" type="date" id="pv-d-${i}" data-a-change="imp-date" data-i="${i}"></span>` : ""}
         ${choice}
       </div>
       <div class="ops"><span class="act-tag ${r.action}">${labels[r.action]}</span>
@@ -2578,6 +2750,14 @@ Imagem:`;
     planning: (el) => { S.planningId[el.dataset.key] = el.dataset.id; S.filter = "all"; render(); },
     open: (el) => openContent(el.dataset.id, S.view === "admin" ? "admin" : "client", el.dataset.scope),
     ctab: (el) => { S.ctab = el.dataset.t; S.filter = "all"; render(); },
+    tfilter: (el) => { S.tf[el.dataset.key] = el.dataset.f; render(); },
+    dweek: (el) => { S.dweek = el.dataset.w; render(); },
+    "quick-status": async (el) => {
+      const id = el.dataset.id, st = el.dataset.s; S.busy["q-" + id] = true; render();
+      try { await S.store.setStatus(id, st); toast(`Status atualizado para ${STATUS[st]}.`); } catch (e) { toast(dbErr(e), "err"); }
+      S.busy["q-" + id] = false; render();
+    },
+    "client-logo-rm": async (el) => { try { await S.store.setClientLogo(el.dataset.id, ""); toast("Logo removido."); } catch (e) { toast(errMsg(e), "err"); } },
     "rp-new": (el) => { const now = new Date(); S.rform = { clientId: el.dataset.id, month: now.getMonth() + 1, year: now.getFullYear(), title: "", summary: "", url: "", file: null, error: "" }; render(); },
     "rp-cancel": () => { S.rform = null; render(); },
     "rp-del": (el) => { S.ui["rpdel-" + el.dataset.id] = true; render(); },
@@ -2766,7 +2946,7 @@ ${im.text.slice(0, 50000)}
       await S.store.applyImport(plan);
       toast(`Planejamento publicado: ${tally.create} novos, ${tally.update} atualizados, ${tally.keep} mantidos.`);
       S.planningId["admin-" + im.clientId] = planningId;
-      S.adminClientId = im.clientId; S.adminTab = "overview"; S.filter = "all";
+      S.adminClientId = im.clientId; S.adminTab = "overview"; S.filter = "all"; S.ctab = "overview";
       S.imp = newImport();
       render(); scrollTo(0, 0);
     } catch (e) { im.busy = false; im.error = errMsg(e); toast(errMsg(e), "err"); render(); }
@@ -2811,6 +2991,9 @@ ${im.text.slice(0, 50000)}
     if (a === "imp-files") { S.imp.files = S.imp.files.concat(Array.from(t.files || [])); recomputeMerge(); render(); }
     if (a === "imp-item-file") { const i = +t.dataset.i; const fs = Array.from(t.files || []); S.imp.itemFiles[i] = fs; S.imp.parsed.items[i]._files = fs; recomputeMerge(); render(); }
     if (a === "imp-choice") { S.imp.choices[+t.dataset.i] = t.value; }
+    if (a === "imp-date" && t.value) { const it = S.imp.parsed.items[+t.dataset.i]; it.date = t.value; it._manualDate = true; it.warnings = it.warnings.filter((w) => !/^Data/.test(w)); recomputeMerge(); render(); }
+    if (a === "set-date") { try { await S.store.setContentDate(S.open.id, t.value || ""); toast(t.value ? "Data atualizada." : "Data removida."); } catch (e) { toast(errMsg(e), "err"); } }
+    if (a === "client-logo" && t.files[0]) { try { const ref = await S.store.uploadImage(t.files[0]); await S.store.setClientLogo(t.dataset.id, ref); toast("Logo do cliente atualizado."); } catch (e) { toast(errMsg(e), "err"); } }
     if (a === "rp-file" && S.rform) { S.rform.file = t.files[0] || null; render(); }
     if (a === "swap-image" && t.files[0]) {
       try { const ref = await S.store.uploadImage(t.files[0]); await S.store.setContentImage(S.open.id, ref); toast("Imagem atualizada."); } catch (e) { toast(errMsg(e), "err"); }
