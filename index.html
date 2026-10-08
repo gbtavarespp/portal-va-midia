@@ -836,6 +836,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 }
 @media (prefers-reduced-motion:reduce){ .rv.pre{opacity:1;transform:none} .ring.em_analise{animation:none} .ccard{transform:none} }
 
+.img-rep{margin:10px 0 0;font-size:13px;display:flex;gap:6px;align-items:flex-start;line-height:1.45;text-align:left}.img-rep svg{width:16px;height:16px;flex:none;margin-top:1px}.img-rep.ok{color:#7fd6a4}.img-rep.warn{color:var(--y,#f5c518)}.img-rep code{font-family:var(--f-mono);font-size:12px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:5px}
+
 </style>
 <div id="app" aria-live="polite"></div>
 <div id="modal"></div>
@@ -2895,9 +2897,11 @@ Imagem:`;
     const m = P.planMerge(im.parsed.items, ex.contents);
     im.rows = m.rows; im.untouched = m.untouched;
   }
+  // nome "solto": sem pasta, sem extensão, sem " (1)"/" - cópia", espaços/_/- iguais
+  const looseName = (x) => P.norm(String(x)).replace(/^.*[\\/]/, "").replace(/\.(jpe?g|png|webp|gif|heic|heif|svg|avif)$/i, "").replace(/\s*\(\d+\)$/, "").replace(/\s*-?\s*(copia|copy)(\s*\d+)?$/, "").replace(/[\s_.-]+/g, "-").replace(/^-|-$/g, "");
   function fileFor(name) {
     const n = P.norm(name).replace(/^.*[\\/]/, "");
-    return S.imp.files.find((f) => P.norm(f.name) === n) || S.imp.files.find((f) => P.norm(f.name).replace(/\.[a-z0-9]+$/, "") === n.replace(/\.[a-z0-9]+$/, ""));
+    return S.imp.files.find((f) => P.norm(f.name) === n) || S.imp.files.find((f) => looseName(f.name) === looseName(n));
   }
   const isUrlish = (s) => /^(https?:|data:|blob:|asset:|demo\/)/i.test(s);
   function resolveItemImages(idx, item) {
@@ -2906,6 +2910,14 @@ Imagem:`;
     const files = [], urls = [], missing = [];
     item.images.forEach((x) => { if (isUrlish(x)) urls.push(x); else { const f = fileFor(x); if (f) files.push(f); else missing.push(x); } });
     return { files, urls, missing };
+  }
+  function imgReport(im) {
+    if (!im.parsed || !im.parsed.items) return "";
+    let cited = 0; const miss = [];
+    im.parsed.items.forEach((it, i) => { const r = resolveItemImages(i, it); cited += r.files.length + r.missing.length; miss.push(...r.missing); });
+    if (!cited) return "";
+    if (!miss.length) return `<p class="img-rep ok">${I.check} ${cited === 1 ? "A imagem citada no texto foi encontrada" : `As ${cited} imagens citadas no texto foram encontradas`}.</p>`;
+    return `<p class="img-rep warn">${I.alert} ${cited - miss.length} de ${cited} imagens encontradas. Faltam: ${miss.slice(0, 6).map((m) => `<code>${esc(m)}</code>`).join(", ")}${miss.length > 6 ? ` e mais ${miss.length - 6}` : ""}. Selecione esses arquivos ou use o botão “Imagem” no conteúdo, na prévia abaixo.</p>`;
   }
   function viewImport() {
     const a = S.adata, im = S.imp;
@@ -2917,7 +2929,7 @@ Imagem:`;
         <textarea class="textarea" id="imp-text" data-bind="imp.text" style="min-height:280px;font-family:var(--f-mono);font-size:13px" placeholder="CLIENTE:\nEmpresa X\n\nMÊS:\nOutubro de 2026\n\n1.\nData: 03/10\nTipo: Reel\nTítulo: …">${esc(im.text)}</textarea>
         <div class="drop" id="imp-drop" data-drop="imp">${I.upload}<span>Arraste as imagens do planejamento aqui ou <label for="imp-files" class="linkish" style="cursor:pointer">escolha os arquivos</label>.<br><span class="hint">O nome do arquivo liga a imagem ao conteúdo (ex.: “Imagem: capa.jpg”).</span></span>
           <input id="imp-files" type="file" accept="image/*" multiple class="sr" data-a-change="imp-files">
-          ${im.files.length ? `<div class="files">${im.files.map((f) => `<span title="${esc(f.name)}">${esc(f.name)}</span>`).join("")}</div><button class="btn btn-ghost btn-sm" data-a="imp-clear-files">Limpar arquivos</button>` : ""}</div>
+          ${im.files.length ? `<div class="files">${im.files.map((f) => `<span title="${esc(f.name)}">${esc(f.name)}</span>`).join("")}</div><button class="btn btn-ghost btn-sm" data-a="imp-clear-files">Limpar arquivos</button>` : ""}${imgReport(im)}</div>
         ${im.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(im.error)}</span></div>` : ""}
         <div class="row" style="flex-wrap:wrap"><button class="btn btn-primary" data-a="imp-parse">Interpretar planejamento</button>
           ${S.info.canUseAI ? `<button class="btn btn-outline" data-a="imp-ai" ${im.ai ? "disabled" : ""}>${I.spark}${im.ai ? "Interpretando com IA…" : "Interpretar com IA"}</button>` : ""}</div>
