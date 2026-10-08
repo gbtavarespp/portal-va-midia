@@ -727,6 +727,115 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
+.cal-cell.other{background:var(--bg-2)}
+.cal-cell.other .cal-d{opacity:.8}
+
+/* =========================================================
+   v4 · menu no topo, páginas por semana, toque tecnológico
+   ========================================================= */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(520px circle at var(--mx,70%) var(--my,-10%),rgba(244,197,66,.07),transparent 62%),
+    linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px) 0 0/44px 44px,
+    linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px) 0 0/44px 44px;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,rgba(0,0,0,.55) 55%,rgba(0,0,0,.25));mask-image:linear-gradient(180deg,#000 0,rgba(0,0,0,.55) 55%,rgba(0,0,0,.25))}
+#app,#modal,.toasts{position:relative;z-index:1}
+#modal{z-index:50}
+.toasts{position:fixed}
+/* menu superior */
+.topnav{position:sticky;top:calc(64px + env(safe-area-inset-top,0px));z-index:18;background:rgba(11,11,12,.78);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid var(--line-soft)}
+.page .topnav{margin:22px 0 0;border:1px solid var(--line-soft);border-radius:16px;top:calc(72px + env(safe-area-inset-top,0px))}
+.topnav-in{position:relative;display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none;max-width:1180px;margin:0 auto;padding:8px clamp(16px,4vw,40px)}
+.page .topnav-in{padding:6px}
+.topnav-in::-webkit-scrollbar{display:none}
+.nbtn{position:relative;z-index:1;background:none;border:0;color:var(--text-2);font-size:13.5px;font-weight:500;padding:9px 14px;border-radius:999px;white-space:nowrap;min-height:40px;transition:color .25s var(--ease)}
+.nbtn:hover{color:var(--text)}
+.nbtn[aria-current="page"]{color:var(--yellow-ink);font-weight:600}
+.nav-pill{position:absolute;left:0;top:50%;height:40px;margin-top:-20px;border-radius:999px;background:var(--yellow);box-shadow:0 6px 22px -8px rgba(244,197,66,.55);transition:transform .45s cubic-bezier(.3,1.3,.5,1),width .45s cubic-bezier(.3,1.3,.5,1);pointer-events:none;z-index:0}
+.nav-sep{width:1px;height:20px;background:var(--line);margin:0 8px;flex:none}
+.months-row{display:flex;justify-content:flex-end;margin-top:18px}
+.ctab-body{padding-top:18px}
+/* revelar ao rolar */
+.rv{transition:opacity .7s var(--ease),transform .7s var(--ease);transition-delay:var(--d,0ms)}
+.rv.pre{opacity:0;transform:translateY(22px) scale(.985)}
+/* cabeçalho de página */
+.page-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:6px 0 18px}
+.page-h h2{font-family:var(--f-display);font-size:clamp(20px,2.4vw,26px);font-weight:600;letter-spacing:-.01em}
+.page-h b{color:var(--text);font-family:var(--f-mono)}
+/* filtros da central */
+.fbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.fbtn{display:inline-flex;align-items:center;gap:10px;padding:9px 10px 9px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--text-2);font-weight:600;font-size:14px;min-height:46px;transition:all .25s var(--ease)}
+.fbtn:hover{border-color:#3d3d44;color:var(--text);transform:translateY(-1px)}
+.fbtn b{font-family:var(--f-mono);font-size:12px;min-width:28px;height:26px;padding:0 8px;border-radius:999px;display:inline-grid;place-items:center;background:var(--surface-3);color:var(--text)}
+.fbtn[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+.fbtn[aria-pressed="true"] b{background:var(--yellow);color:var(--yellow-ink)}
+/* semana */
+.wsec{margin-bottom:26px}
+.wsec.past{opacity:.72}
+.wkh{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(110deg,rgba(244,197,66,.07),rgba(20,20,22,.6) 45%);margin-bottom:14px;position:relative;overflow:hidden}
+.wkh::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.05) 50%,transparent 70%);transform:translateX(-100%);transition:transform 1.1s var(--ease);pointer-events:none}
+.wkh:hover::after{transform:translateX(100%)}
+.wkh > div:first-child{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.wkh-k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow);font-weight:600}
+.wkh-n{display:flex;align-items:baseline;gap:10px;padding-left:18px;border-left:1px solid var(--line)}
+.wkh-n b{font-family:var(--f-display);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1}
+.wkh-n span{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.cgrid.hl{margin-top:22px}
+/* cartão de conteúdo */
+.ccard{position:relative;display:flex;flex-direction:column;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:18px;overflow:hidden;padding:0;transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0));transition:transform .35s var(--ease),border-color .3s,box-shadow .35s,opacity .7s var(--ease);will-change:transform}
+.ccard.rv.pre{transform:translateY(22px) scale(.985)}
+.ccard::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(260px circle at var(--gx,50%) var(--gy,0%),rgba(244,197,66,.14),transparent 55%);opacity:0;transition:opacity .3s}
+.ccard.tilting{transition:transform .08s linear,border-color .3s,box-shadow .35s}
+.ccard:hover{border-color:var(--yellow-line);box-shadow:0 24px 50px -28px rgba(0,0,0,.9),0 0 0 1px rgba(244,197,66,.12)}
+.ccard:hover::after{opacity:1}
+.cc-media{position:relative;display:block;aspect-ratio:4/5;background:var(--surface-2);overflow:hidden}
+.ccard.is-story .cc-media{aspect-ratio:9/14}
+.cc-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s var(--ease)}
+.ccard:hover .cc-media img{transform:scale(1.04)}
+.cc-st{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:5px 9px;border-radius:999px;background:rgba(11,11,12,.72);backdrop-filter:blur(6px);color:#fff}
+.cc-st i{width:7px;height:7px;border-radius:50%}
+.cc-st.em_analise i{background:var(--st-analise);box-shadow:0 0 0 3px rgba(233,190,69,.25)}
+.cc-st.aprovado i{background:var(--st-aprovado)}
+.cc-st.em_execucao i{background:var(--st-exec)}
+.cc-st.publicado i{background:var(--st-publicado)}
+.cc-body{display:flex;flex-direction:column;gap:7px;padding:13px 14px 15px}
+.cc-top{display:flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
+.cc-top svg{width:14px;height:14px;flex:none}
+.cc-date{margin-left:auto;color:var(--muted)}
+.cc-body b{font-size:14.5px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cc-body b.none{color:var(--muted);font-style:italic;font-weight:400}
+.cc-body .tag{align-self:flex-start}
+/* feed da visão geral */
+.ig.home{margin-top:22px}
+.ig-tile{transition:transform .35s var(--ease),opacity .7s var(--ease)}
+.ig-tile.rv.pre{transform:translateY(18px)}
+.ig-hover{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;padding:12px;background:linear-gradient(0deg,rgba(11,11,12,.85),transparent 60%);opacity:0;transition:opacity .3s var(--ease);text-align:left}
+.ig-hover b{font-size:13px;line-height:1.25;color:#fff}
+.ig-hover span{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow)}
+.ig-tile:hover .ig-hover,.ig-tile:focus-visible .ig-hover{opacity:1}
+.rings.big{gap:20px;padding:6px 2px 14px}
+.rings.big .ring{width:84px;height:84px}
+.rings.big .ring-btn{width:90px}
+.ring.em_analise{animation:ringspin 6s linear infinite;background:conic-gradient(from var(--a,0deg),var(--yellow),#9b7616,var(--yellow-hi),var(--yellow))}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes ringspin{to{--a:360deg}}
+.hl-page .ig-head{padding-bottom:10px}
+@media (max-width:720px){
+  .topnav{top:calc(64px + env(safe-area-inset-top,0px))}
+  .page .topnav{top:calc(70px + env(safe-area-inset-top,0px));margin-top:16px}
+  .cgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .wkh{padding:14px 16px}
+  .wkh-n{padding-left:0;border-left:0}
+  .wkh-n b{font-size:24px}
+  .fbtn{padding:7px 8px 7px 12px;font-size:13px;min-height:42px}
+  .cc-body{padding:10px 11px 12px}
+  .cc-body b{font-size:13px}
+  .cc-date{display:none}
+  .ig-hover{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .rv.pre{opacity:1;transform:none} .ring.em_analise{animation:none} .ccard{transform:none} }
+
 </style>
 <div id="app" aria-live="polite"></div>
 <div id="modal"></div>
@@ -787,6 +896,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     if (/carross|carousel|carrocel|carosel/.test(n)) return "Carrossel";
     if (/^stor(y|ies)|^storie/.test(n)) return "Story";
     if (/^destaq|^highlight/.test(n)) return "Destaque";
+    if (/publi|influenc|parceria|collab|ugc/.test(n)) return "Publi";
     if (/^post|estatic|^feed|^imagem unica|^foto/.test(n)) return "Post";
     return String(v).trim().replace(/^\w/, (c) => c.toUpperCase());
   }
@@ -1001,7 +1111,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         }
         continue;
       }
-      if (cur && curField) { cur[curField] = (cur[curField] ? cur[curField] + (cur[curField].endsWith("\n") ? "" : "\n") : "") + line.trim(); continue; }
+      if (cur && curField) { cur[curField] = (cur[curField] ? cur[curField] + "\n" : "") + line.trim(); continue; }
     }
     push();
     rows.forEach((r) => Object.keys(r).forEach((k) => { if (typeof r[k] === "string") r[k] = r[k].replace(/\n{3,}/g, "\n\n").trim(); }));
@@ -1054,20 +1164,31 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   function planMerge(items, existing) {
     existing = existing || [];
     const byId = new Map(existing.map((c) => [c.id, c]));
-    const byTitle = new Map();
-    existing.forEach((c) => { const k = titleKey(c.title); if (!k) return; byTitle.set(k, (byTitle.get(k) || []).concat(c)); });
+    const byTitle = new Map(), byTD = new Map();
+    existing.forEach((c) => {
+      const k = titleKey(c.title); if (!k) return;
+      byTitle.set(k, (byTitle.get(k) || []).concat(c));
+      const kd = k + "|" + (c.date || ""); byTD.set(kd, (byTD.get(kd) || []).concat(c));
+    });
+    const importTitles = {}; items.forEach((it) => { const k = titleKey(it.title); if (k) importTitles[k] = (importTitles[k] || 0) + 1; });
     const used = new Set();
-    const seenTitles = new Map();
+    const seen = new Set();
     const rows = items.map((it) => {
       let match = null, reason = "";
+      const tk = titleKey(it.title), kd = tk + "|" + (it.date || "");
+      if (tk) { if (seen.has(kd)) return { item: it, action: "ambiguous", match: null, changes: [], reason: "Mesmo título e mesma data repetidos nesta importação." }; seen.add(kd); }
       if (it.id && byId.has(it.id)) match = byId.get(it.id);
-      else if (titleKey(it.title)) {
-        const cands = (byTitle.get(titleKey(it.title)) || []).filter((c) => !used.has(c.id));
-        if (cands.length > 1) return { item: it, action: "ambiguous", match: null, changes: [], reason: `${cands.length} conteúdos existentes com o mesmo título. Não vou adivinhar qual atualizar.` };
-        if (cands.length === 1) match = cands[0];
+      else if (tk) {
+        const sameDay = (byTD.get(kd) || []).filter((c) => !used.has(c.id));
+        if (sameDay.length > 1) return { item: it, action: "ambiguous", match: null, changes: [], reason: `${sameDay.length} conteúdos existentes com o mesmo título e data. Não vou adivinhar qual atualizar.` };
+        if (sameDay.length === 1) match = sameDay[0];
+        else if (importTitles[tk] === 1) {
+          // título único: aceita a mudança de data
+          const cands = (byTitle.get(tk) || []).filter((c) => !used.has(c.id));
+          if (cands.length === 1) match = cands[0];
+          else if (cands.length > 1) return { item: it, action: "ambiguous", match: null, changes: [], reason: `${cands.length} conteúdos existentes com o mesmo título. Não vou adivinhar qual atualizar.` };
+        }
       }
-      const tk = titleKey(it.title);
-      if (tk) { if (seenTitles.has(tk)) return { item: it, action: "ambiguous", match: null, changes: [], reason: "Título repetido dentro desta importação." }; seenTitles.set(tk, true); }
       if (!match) return { item: it, action: "create", match: null, changes: [], reason: "" };
       used.add(match.id);
       const changes = [];
@@ -1780,10 +1901,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     inbox: svg('<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>'),
     trash: svg('<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>'),
     key: svg('<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M15 8l2 2"/>'),
+    megaphone: svg('<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/>'),
     highlight: svg('<circle cx="12" cy="12" r="9"/><path d="m12 7.5 1.4 2.9 3.1.4-2.3 2.2.6 3.1-2.8-1.5-2.8 1.5.6-3.1-2.3-2.2 3.1-.4z"/>'),
     db: svg('<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'),
   });
-  const typeIcon = (t) => ({ Reel: I.reel, Carrossel: I.carousel, Story: I.story, Destaque: I.highlight }[t] || I.post);
+  const typeIcon = (t) => ({ Reel: I.reel, Carrossel: I.carousel, Story: I.story, Destaque: I.highlight, Publi: I.megaphone }[t] || I.post);
 
   /* ---------------- estado ---------------- */
   const S = {
@@ -1796,7 +1918,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     ui: {}, drafts: {}, busy: {},
     login: { email: "", code: "", error: "" },
     alogin: { email: "", password: "", error: "" },
-    imp: null, clientForm: null, pendingStatus: {}, ctab: "overview", rform: null, tform: null, tf: {}, dweek: "this",
+    imp: null, clientForm: null, pendingStatus: {}, ctab: "home", rform: null, tform: null, tf: {}, dweek: "this",
   };
   const resetUI = () => { S.ui = {}; S.slide = 0; };
 
@@ -1849,6 +1971,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     document.body.style.overflow = S.open ? "hidden" : "";
 
     const ov2 = $(".overlay"); if (ov2 && ovTop) ov2.scrollTop = ovTop;
+    try { motion(); } catch (e) {}
     if (focusId) { const el = document.getElementById(focusId); if (el) { el.focus({ preventScroll: true }); if (sel && "setSelectionRange" in el) try { el.setSelectionRange(sel[0], sel[1]); } catch (e) {} } }
   }
 
@@ -2007,7 +2130,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       <button class="btn btn-ghost btn-sm" data-a="logout">${I.out}<span>Sair</span></button></div></header>`;
     if (!d) return top + `<div class="wrap page">${viewBoot()}</div>`;
     const ws = clientWorkspace(d, client, false, "client");
-    return top + `<main class="wrap page">
+    return top + ws.nav + `<main class="wrap page">
       <div class="greet"><div><h1>Olá, ${esc(client.name || client.company)}</h1><p class="sub"><span>${ws.planning ? `Planejamento de conteúdo · <b style="color:var(--text)">${monthName(ws.planning.month, ws.planning.year)}</b>` : "Planejamento de conteúdo"}</span>${client.demo ? '<span class="tag demo">Demonstração</span>' : ""}</p></div></div>
       ${ws.html}
     </main>`;
@@ -2026,12 +2149,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   }
 
   /* ---------------- central de conteúdos e painel ---------------- */
-  const TYPE_FILTERS = [["all", "Todos"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Story", "Stories"], ["Destaque", "Destaques"]];
-  const matchType = (c, f) => f === "all" || (f === "Story" ? kindOf(c) === "story" : f === "Destaque" ? kindOf(c) === "destaque" : f === "Post" ? kindOf(c) === "feed" && c.type !== "Reel" && c.type !== "Carrossel" : c.type === f);
+  const TYPE_FILTERS = [["all", "Todos"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Publi", "Publis"], ["Story", "Stories"], ["Destaque", "Destaques"]];
+  const matchType = (c, f) => f === "all" || (f === "Story" ? kindOf(c) === "story" : f === "Destaque" ? kindOf(c) === "destaque" : f === "Post" ? kindOf(c) === "feed" && c.type !== "Reel" && c.type !== "Carrossel" && c.type !== "Publi" : c.type === f);
   function typeChips(key, list) {
     const cur = S.tf[key] || "all";
     return `<div class="fchips" role="group" aria-label="Tipo de conteúdo">${TYPE_FILTERS.map(([k, l]) => {
       const n = list ? list.filter((c) => matchType(c, k)).length : null;
+      if (k === "Publi" && n === 0 && cur !== k) return "";
       return `<button class="chip" data-a="tfilter" data-key="${esc(key)}" data-f="${k}" aria-pressed="${cur === k}">${l}${n !== null ? ` <span class="chip-n">${n}</span>` : ""}</button>`;
     }).join("")}</div>`;
   }
@@ -2077,6 +2201,146 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     </div>`;
   }
 
+  /* ---------------- v4 · páginas: visão geral (feed), stories, destaques, central ---------------- */
+  const TYPE_NAME = (t) => (t === "Publi" ? "Influenciador" : t || "Conteúdo");
+  const NAV = [["home", "Visão geral"], ["stories", "Stories"], ["destaques", "Destaques"], ["central", "Central de conteúdos"], ["cal", "Calendário"], ["dash", "Painel da semana"], ["reports", "Relatórios"], ["traffic", "Tráfego pago"]];
+  function navHTML() {
+    return `<nav class="topnav" aria-label="Navegação do portal"><div class="topnav-in" id="topnav">${NAV.map(([k, l], i) => `${i === 4 ? '<span class="nav-sep" aria-hidden="true"></span>' : ""}<button class="nbtn" data-a="ctab" data-t="${k}" ${S.ctab === k ? 'aria-current="page"' : ""}>${l}</button>`).join("")}<span class="nav-pill" aria-hidden="true"></span></div></nav>`;
+  }
+  function weekGroups(list, planning) {
+    const [ra, rb] = planRange(planning, list);
+    const thisMon = mondayOf(new Date()).getTime(), nextMon = thisMon + 7 * 864e5;
+    const out = []; let n = 0;
+    for (let mon = mondayOf(ra); mon <= rb; mon = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 7)) {
+      n++;
+      const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+      const a = ymd(mon), b = ymd(sun);
+      const items = list.filter((c) => c.date && c.date >= a && c.date <= b);
+      if (!items.length) continue;
+      const t = mon.getTime();
+      out.push({ n, mon, sun, items, tag: t === thisMon ? "Esta semana" : t === nextMon ? "Próxima semana" : "", past: sun.getTime() < thisMon });
+    }
+    return out;
+  }
+  const rangeLabel = (a, b) => `${pad(a.getDate())}${a.getMonth() !== b.getMonth() ? " " + MES3[a.getMonth()] : ""} a ${pad(b.getDate())} ${MES3[b.getMonth()]}`;
+  function weekHead(g) {
+    const pend = g.items.filter((c) => c.status === "em_analise").length;
+    return `<header class="wkh rv"><div><span class="wkh-k">Semana ${g.n} · ${rangeLabel(g.mon, g.sun)}</span>${g.tag ? `<span class="wk-tag ${g.tag === "Esta semana" ? "now" : "next"}">${g.tag}</span>` : ""}</div>
+      <div class="wkh-n"><b data-count="${g.items.length}">${pad(g.items.length)}</b><span>${g.items.length === 1 ? "conteúdo" : "conteúdos"}${pend ? ` · ${pend} em análise` : ""}</span></div></header>`;
+  }
+  function ccard(c, scope, i) {
+    const img = imgSrc(imagesOf(c)[0]);
+    const d = c.date ? new Date(c.date + "T12:00:00") : null;
+    const story = kindOf(c) === "story";
+    return `<button class="ccard rv tilt${story ? " is-story" : ""}" data-a="open" data-id="${esc(c.id)}" ${scope ? `data-scope="${scope}"` : ""} style="--d:${Math.min(i, 8) * 45}ms" aria-label="${esc(TYPE_NAME(c.type) + ": " + (c.title || "sem título") + ", " + STATUS[c.status])}">
+      <span class="cc-media">${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(c)}<span class="cc-st ${esc(c.status)}"><i></i>${STATUS[c.status]}</span></span>
+      <span class="cc-body"><span class="cc-top">${typeIcon(c.type)}<span>${esc(TYPE_NAME(c.type))}</span><span class="cc-date">${d ? `${WD[d.getDay()]} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}` : "Sem data"}</span></span>
+      <b class="${c.title ? "" : "none"}">${esc(c.title || "Título não informado")}</b>
+      ${c.changeRequested && c.status === "em_analise" ? '<span class="tag change">Ajuste pedido</span>' : ""}</span>
+    </button>`;
+  }
+  function weeksCards(list, planning, scope) {
+    const groups = weekGroups(list, planning);
+    const undated = list.filter((c) => !c.date);
+    let html = groups.map((g) => `<section class="wsec${g.past ? " past" : ""}">${weekHead(g)}<div class="cgrid">${g.items.map((c, i) => ccard(c, scope, i)).join("")}</div></section>`).join("");
+    if (undated.length) html += `<section class="wsec"><header class="wkh rv"><div><span class="wkh-k">${undated.every((c) => kindOf(c) === "destaque") ? "Destaques do perfil" : "Sem data definida"}</span></div><div class="wkh-n"><b>${pad(undated.length)}</b><span>${undated.length === 1 ? "conteúdo" : "conteúdos"}</span></div></header><div class="cgrid">${undated.map((c, i) => ccard(c, scope, i)).join("")}</div></section>`;
+    return html || `<div class="empty">${I.inbox}<b>Nada por aqui</b><span>Nenhum conteúdo para mostrar com este filtro.</span></div>`;
+  }
+  function profileHead(client, all) {
+    const posts = all.filter((c) => kindOf(c) === "feed").length, st = all.filter((c) => kindOf(c) === "story").length, hl = all.filter((c) => kindOf(c) === "destaque").length;
+    return `<div class="ig-head rv"><span class="avatar big">${avatarInner(client)}</span><div class="ig-id"><b>${esc(handleOf(client))}</b><span class="muted">${esc(client.company)}</span><span class="ig-count"><b data-count="${posts}">${posts}</b> posts <b data-count="${st}">${st}</b> stories <b data-count="${hl}">${hl}</b> destaques</span></div></div>`;
+  }
+  function homeTab(all, client, isAdmin) {
+    const c = counts(all);
+    const pending = all.filter((x) => x.status === "em_analise" && !x.changeRequested);
+    const changes = all.filter((x) => x.status === "em_analise" && x.changeRequested);
+    let note = "";
+    if (!isAdmin && pending.length) note = `<div class="slim rv"><span class="pulse"></span><span class="slim-t"><b>${pending.length === 1 ? "1 conteúdo aguarda" : pending.length + " conteúdos aguardam"} sua aprovação.</b>${changes.length ? ` <span class="muted">${changes.length === 1 ? "1 ajuste está" : changes.length + " ajustes estão"} com a VA Mídia.</span>` : ""}</span><button class="btn btn-primary btn-sm" data-a="open" data-id="${esc(pending[0].id)}">Revisar</button></div>`;
+    else if (isAdmin && c.change) note = `<div class="slim warn rv"><span class="okdot">${I.edit}</span><span class="slim-t"><b>${c.change === 1 ? "1 alteração pedida" : c.change + " alterações pedidas"} pelo cliente.</b></span></div>`;
+    const feed = all.filter((x) => kindOf(x) === "feed" && (S.filter === "all" || x.status === S.filter)).sort((a, b) => byDate(b, a));
+    const grid = feed.map((x, i) => {
+      const img = imgSrc(imagesOf(x)[0]);
+      return `<button class="ig-tile rv" style="--d:${Math.min(i, 9) * 35}ms" data-a="open" data-id="${esc(x.id)}" data-scope="feed" aria-label="${esc(TYPE_NAME(x.type) + ": " + (x.title || "") + ", " + STATUS[x.status])}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(x)}${x.type === "Reel" || x.type === "Carrossel" || x.type === "Publi" ? `<span class="ig-fmt">${typeIcon(x.type)}</span>` : ""}<span class="ig-st ${esc(x.status)}" title="${STATUS[x.status]}"></span><span class="ig-hover"><b>${esc(x.title || "")}</b><span>${STATUS[x.status]}</span></span></button>`;
+    }).join("");
+    return `${note}${summaryBar(c)}<div class="ig home">${profileHead(client, all)}
+      <div class="ig-sec"><div class="ig-label">Feed <span class="muted">· posts, reels, carrosséis e influenciadores · toque para avaliar</span></div>${grid ? `<div class="ig-grid">${grid}</div>` : `<p class="wk-empty">Nenhum post de feed${S.filter !== "all" ? " com este status" : ""} neste mês.</p>`}</div></div>`;
+  }
+  function storiesTab(all, planning) {
+    const stories = all.filter((c) => kindOf(c) === "story");
+    const groups = {}; stories.forEach((c) => { const k = c.date || "~"; (groups[k] = groups[k] || []).push(c); });
+    const rings = Object.keys(groups).sort().map((k) => {
+      const g = groups[k], d = day(g[0].date), img = imgSrc(imagesOf(g[0])[0]);
+      return ringHTML(g[0], groupStatus(g), (d ? d.short : "Sem data") + (g.length > 1 ? ` · ${g.length}` : ""), "story", img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : `<span class="ring-txt">${d ? `<b>${d.short.slice(0, 2)}</b>${d.short.slice(3)}` : "—"}</span>`);
+    }).join("");
+    if (!stories.length) return `<div class="empty">${I.story}<b>Nenhum story neste planejamento</b></div>`;
+    return `<div class="page-h rv"><h2>Stories</h2><span class="muted"><b data-count="${stories.length}">${stories.length}</b> stories em ${Object.keys(groups).length} dias</span></div>
+      <div class="rings big rv">${rings}</div>${weeksCards(stories, planning, "story")}`;
+  }
+  function destaquesTab(all, client) {
+    const hls = all.filter((c) => kindOf(c) === "destaque");
+    if (!hls.length) return `<div class="empty">${I.highlight}<b>Nenhum destaque neste planejamento</b></div>`;
+    return `<div class="page-h rv"><h2>Destaques do perfil</h2><span class="muted"><b data-count="${hls.length}">${hls.length}</b> destaques sugeridos</span></div>
+      <div class="ig hl-page">${profileHead(client, all)}<div class="rings big rv">${hls.map((c) => { const img = imgSrc(imagesOf(c)[0]); return ringHTML(c, c.status, c.title || "Destaque", "destaque", img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : `<span class="ring-ic">${I.highlight}</span>`); }).join("")}</div></div>
+      <div class="cgrid hl">${hls.map((c, i) => ccard(c, "destaque", i)).join("")}</div>`;
+  }
+  const CENTRAL_FILTERS = [["all", "Todos"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Publi", "Influenciador"], ["Story", "Stories"], ["Destaque", "Destaques"]];
+  function centralTab(all, planning, key) {
+    const fkey = "central-" + key, cur = S.tf[fkey] || "all";
+    const chips = CENTRAL_FILTERS.map(([k, l]) => { const n = all.filter((c) => matchType(c, k)).length; if (!n && k !== "all" && cur !== k) return ""; return `<button class="fbtn" data-a="tfilter" data-key="${esc(fkey)}" data-f="${k}" aria-pressed="${cur === k}"><span>${l}</span><b data-count="${n}">${n}</b></button>`; }).join("");
+    const list = all.filter((c) => matchType(c, cur));
+    return `<div class="fbar rv" role="group" aria-label="Tipo de conteúdo">${chips}</div>${weeksCards(list, planning, null)}`;
+  }
+
+  /* ---------------- movimento: revelar ao rolar, contadores, inclinação, brilho ---------------- */
+  const reduce = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let revealObs = null;
+  function motion() {
+    if (reduce()) return;
+    if (!revealObs && "IntersectionObserver" in window) revealObs = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.remove("pre"); revealObs.unobserve(e.target); } }), { rootMargin: "0px 0px -6% 0px" });
+    const vh = innerHeight;
+    document.querySelectorAll("#app .rv:not(.seen)").forEach((el) => {
+      el.classList.add("seen");
+      const r = el.getBoundingClientRect();
+      if (revealObs && r.top > vh * 0.92) { el.classList.add("pre"); revealObs.observe(el); }
+    });
+    // contadores (só na primeira vez que a página aparece)
+    const key = S.view + "|" + S.ctab + "|" + (S.adminClientId || "");
+    if (key !== S.countKey) {
+      S.countKey = key;
+      document.querySelectorAll("#app [data-count]").forEach((el) => {
+        const to = +el.dataset.count; if (!(to > 1)) return;
+        const padded = el.textContent.length === 2 && to < 10 || /^0/.test(el.textContent);
+        const t0 = performance.now(), dur = 700;
+        const step = (t) => { const k = Math.min(1, (t - t0) / dur), v = Math.round(to * (1 - Math.pow(1 - k, 3))); el.textContent = padded ? pad(v) : v; if (k < 1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      });
+    }
+    // indicador deslizante do menu
+    const nav = document.getElementById("topnav");
+    if (nav) {
+      const act = nav.querySelector('[aria-current="page"]'), pill = nav.querySelector(".nav-pill");
+      if (act && pill) {
+        if (S.pillPos) { pill.style.transition = "none"; pill.style.transform = `translateX(${S.pillPos[0]}px)`; pill.style.width = S.pillPos[1] + "px"; pill.offsetWidth; pill.style.transition = ""; }
+        pill.style.transform = `translateX(${act.offsetLeft}px)`; pill.style.width = act.offsetWidth + "px";
+        S.pillPos = [act.offsetLeft, act.offsetWidth];
+        if (act.offsetLeft < nav.scrollLeft || act.offsetLeft + act.offsetWidth > nav.scrollLeft + nav.clientWidth) nav.scrollLeft = act.offsetLeft - 16;
+      }
+    }
+  }
+  let rafP = 0;
+  document.addEventListener("pointermove", (e) => {
+    if (reduce() || e.pointerType === "touch") return;
+    if (rafP) return;
+    rafP = requestAnimationFrame(() => {
+      rafP = 0;
+      document.documentElement.style.setProperty("--mx", e.clientX + "px");
+      document.documentElement.style.setProperty("--my", e.clientY + "px");
+      const t = e.target.closest && e.target.closest(".tilt");
+      document.querySelectorAll(".tilt.tilting").forEach((x) => { if (x !== t) { x.classList.remove("tilting"); x.style.removeProperty("--rx"); x.style.removeProperty("--ry"); } });
+      if (t) { const r = t.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5; t.classList.add("tilting"); t.style.setProperty("--rx", (-py * 6).toFixed(2) + "deg"); t.style.setProperty("--ry", (px * 8).toFixed(2) + "deg"); t.style.setProperty("--gx", ((px + 0.5) * 100).toFixed(1) + "%"); t.style.setProperty("--gy", ((py + 0.5) * 100).toFixed(1) + "%"); }
+    });
+  }, { passive: true });
+
   /* ---------------- área do cliente (abas) ---------------- */
   function clientTabs() {
     const t = (k, l) => `<button class="ctab" data-a="ctab" data-t="${k}" ${S.ctab === k ? 'aria-current="page"' : ""}>${l}</button>`;
@@ -2086,15 +2350,19 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const plannings = planningsFor(data, client.id);
     const planning = pickPlanning(data, client.id, key);
     const all = planning ? data.contents.filter((c) => c.planningId === planning.id).sort(byDate) : [];
+    if (!NAV.some(([k]) => k === S.ctab)) S.ctab = "home";
     let body;
     if (S.ctab === "reports") body = reportsView(data, client, isAdmin);
     else if (S.ctab === "traffic") body = trafficView(data, client, isAdmin);
     else if (S.ctab === "dash") body = dashboardHTML(data.contents.filter((c) => c.clientId === client.id), { isAdmin, key: "dash-" + client.id });
     else if (!planning) body = `<div class="empty">${I.inbox}<b>${isAdmin ? "Nenhum planejamento para este cliente" : "Seu planejamento ainda não foi publicado"}</b><span>${isAdmin ? "Cole o planejamento do mês na aba Importar e o portal monta tudo." : "Quando a VA Mídia publicar o planejamento do mês, ele aparece aqui."}</span></div>`;
-    else if (S.ctab === "feed") body = feedTab(all, client, key);
-    else body = overviewTab(all, planning, isAdmin);
-    const months = (S.ctab === "overview" || S.ctab === "feed") && planning ? monthChips(plannings, planning, key) : "";
-    return { planning, html: `<div class="ctabs-row">${clientTabs()}${months}</div><div class="ctab-body">${body}</div>` };
+    else if (S.ctab === "stories") body = storiesTab(all, planning);
+    else if (S.ctab === "destaques") body = destaquesTab(all, client);
+    else if (S.ctab === "central") body = centralTab(all, planning, key);
+    else if (S.ctab === "cal") body = overviewTab(all, planning, isAdmin);
+    else body = homeTab(all, client, isAdmin);
+    const months = !["reports", "traffic", "dash"].includes(S.ctab) && planning ? monthChips(plannings, planning, key) : "";
+    return { planning, nav: navHTML(), html: `${months ? `<div class="months-row">${months}</div>` : ""}<div class="ctab-body">${body}</div>` };
   }
 
   function overviewTab(all, planning, isAdmin) {
@@ -2111,21 +2379,32 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       <section class="block"><div class="block-h"><h2>Semana a semana</h2></div>${weeksHTML(planning, list)}</section>`;
   }
 
+  // período do planejamento: o mês inteiro + datas que passam dele (ex.: 12/10 a 08/11)
+  function planRange(planning, list) {
+    let a = new Date(planning.year, planning.month - 1, 1), b = new Date(planning.year, planning.month, 0);
+    list.forEach((c) => { if (!c.date) return; const d = new Date(c.date + "T12:00:00"); if (d < a) a = new Date(d.getFullYear(), d.getMonth(), d.getDate()); if (d > b) b = new Date(d.getFullYear(), d.getMonth(), d.getDate()); });
+    return [a, b];
+  }
+  const undatedOf = (list) => list.filter((c) => !c.date && kindOf(c) !== "destaque");
   function calendarHTML(planning, list) {
-    const y = planning.year, m = planning.month;
-    const first = new Date(y, m - 1, 1), days = new Date(y, m, 0).getDate(), lead = (first.getDay() + 6) % 7, today = ymd(new Date());
+    const [ra, rb] = planRange(planning, list);
+    const today = ymd(new Date());
     const byDay = {}; list.forEach((c) => { if (c.date) (byDay[c.date] = byDay[c.date] || []).push(c); });
     let cells = "";
-    for (let i = 0; i < lead; i++) cells += `<div class="cal-cell out"></div>`;
-    for (let d = 1; d <= days; d++) {
-      const k = `${y}-${pad(m)}-${pad(d)}`, items = byDay[k] || [];
-      cells += `<div class="cal-cell${k === today ? " today" : ""}${items.length ? " has" : ""}"><span class="cal-d">${d}</span>${items.map((c) => `<button class="cal-chip ${esc(c.status)}" data-a="open" data-id="${esc(c.id)}" title="${esc((c.type || "Conteúdo") + " · " + (c.title || "") + " · " + STATUS[c.status])}" aria-label="${esc((c.type || "Conteúdo") + ": " + (c.title || "sem título") + ", " + STATUS[c.status])}"><i></i>${typeIcon(c.type)}<span>${esc(c.title || c.type || "Conteúdo")}</span></button>`).join("")}</div>`;
+    const startD = mondayOf(ra), endD = new Date(rb.getFullYear(), rb.getMonth(), rb.getDate() + ((7 - ((rb.getDay() + 6) % 7)) % 7) + 0);
+    const lastSun = new Date(mondayOf(rb).getFullYear(), mondayOf(rb).getMonth(), mondayOf(rb).getDate() + 6);
+    for (let d = new Date(startD); d <= lastSun; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)) {
+      const k = ymd(d), items = byDay[k] || [];
+      const inMonth = d.getMonth() === planning.month - 1 && d.getFullYear() === planning.year;
+      const label = d.getDate() === 1 || +d === +startD ? `${d.getDate()} ${MES3[d.getMonth()].toLowerCase()}` : d.getDate();
+      cells += `<div class="cal-cell${inMonth ? "" : " other"}${k === today ? " today" : ""}${items.length ? " has" : ""}"><span class="cal-d">${label}</span>${items.map((c) => `<button class="cal-chip ${esc(c.status)}" data-a="open" data-id="${esc(c.id)}" title="${esc((c.type || "Conteúdo") + " · " + (c.title || "") + " · " + STATUS[c.status])}" aria-label="${esc((c.type || "Conteúdo") + ": " + (c.title || "sem título") + ", " + STATUS[c.status])}"><i></i>${typeIcon(c.type)}<span>${esc(c.title || c.type || "Conteúdo")}</span></button>`).join("")}</div>`;
     }
-    const tail = (7 - ((lead + days) % 7)) % 7;
-    for (let i = 0; i < tail; i++) cells += `<div class="cal-cell out"></div>`;
-    const undated = list.filter((c) => !c.date).length;
+    void endD;
+    const undated = undatedOf(list).length;
+    const hls = list.filter((c) => !c.date && kindOf(c) === "destaque").length;
     return `<div class="cal"><div class="cal-head">${["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"].map((w) => `<span>${w}</span>`).join("")}</div><div class="cal-grid">${cells}</div></div>
-      ${undated ? `<p class="hint" style="margin-top:10px">${undated === 1 ? "1 conteúdo sem data definida" : undated + " conteúdos sem data definida"}: veja na lista semana a semana.</p>` : ""}`;
+      ${undated ? `<p class="hint" style="margin-top:10px">${undated === 1 ? "1 conteúdo sem data definida" : undated + " conteúdos sem data definida"}: veja na lista semana a semana.</p>` : ""}
+      ${hls ? `<p class="hint" style="margin-top:6px">${hls === 1 ? "1 destaque do perfil" : hls + " destaques do perfil"} (sem data de postagem): veja no fim da lista e na aba Conteúdos.</p>` : ""}`;
   }
 
   function weekRow(c) {
@@ -2137,8 +2416,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       <span class="status ${esc(c.status)}">${STATUS[c.status]}</span></button>`;
   }
   function weeksHTML(planning, list) {
-    const y = planning.year, m = planning.month;
-    const first = new Date(y, m - 1, 1), last = new Date(y, m, 0);
+    const [first, last] = planRange(planning, list);
     const thisMon = mondayOf(new Date()).getTime(), nextMon = thisMon + 7 * 864e5;
     let out = "", n = 0;
     for (let mon = mondayOf(first); mon <= last; mon = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 7)) {
@@ -2155,8 +2433,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         ${items.length ? `<div class="wk-list">${items.map(weekRow).join("")}</div>` : `<p class="wk-empty">Nada programado.</p>`}
       </div>`;
     }
-    const undated = list.filter((c) => !c.date);
+    const undated = undatedOf(list);
     if (undated.length) out += `<div class="wk"><div class="wk-h"><b>Sem data definida</b></div><div class="wk-list">${undated.map(weekRow).join("")}</div></div>`;
+    const hls = list.filter((c) => !c.date && kindOf(c) === "destaque");
+    if (hls.length) out += `<div class="wk"><div class="wk-h"><b>Destaques do perfil</b><span class="muted">ficam fixos no perfil, sem data de postagem</span></div><div class="wk-list">${hls.map(weekRow).join("")}</div></div>`;
     return `<div class="weeks">${out}</div>`;
   }
 
@@ -2521,7 +2801,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     return `<button class="btn btn-ghost btn-sm" data-a="aback">${I.back}Todos os clientes</button>
       <div class="greet" style="margin-top:14px"><div><h1>${esc(cl.company)}</h1><p class="sub">${cl.handle ? "@" + esc(cl.handle) + " · " : ""}${ws.planning ? "Planejamento · <b style=\"color:var(--text)\">" + monthName(ws.planning.month, ws.planning.year) + "</b>" : "Sem planejamento"}${cl.demo ? ' <span class="tag demo">Demonstração</span>' : ""}</p></div>
       <div class="row" style="flex-wrap:wrap"><span class="avatar">${avatarInner(cl)}</span>${S.info.canUploadImages ? `<label class="btn btn-sm" for="cl-logo">${I.image}${cl.logo ? "Trocar logo" : "Logo do cliente"}</label><input id="cl-logo" type="file" accept="image/*" class="sr" data-a-change="client-logo" data-id="${esc(cl.id)}">` : ""}${cl.logo ? `<button class="btn btn-ghost btn-sm" data-a="client-logo-rm" data-id="${esc(cl.id)}">Remover logo</button>` : ""}<button class="btn btn-primary btn-sm" data-a="import-for" data-id="${esc(cl.id)}">${I.upload}Importar planejamento</button></div></div>
-      ${ws.html}`;
+      ${ws.nav}${ws.html}`;
   }
 
   /* ---------------- clientes ---------------- */
@@ -2656,7 +2936,10 @@ Imagem:`;
       im.rows.forEach((r) => n[r.action]++);
       preview = `<div class="section-title"><h2>3. Confira antes de publicar</h2><span class="muted">${esc(im.parsed.format)} · ${im.rows.length} conteúdos · ${n.create} novos · ${n.update} atualizados · ${n.same} sem mudança${n.conflict + n.ambiguous ? ` · <b style="color:var(--danger)">${n.conflict + n.ambiguous} precisam de decisão</b>` : ""}</span></div>
         <div class="pv-list">${im.rows.map((r, i) => previewRow(r, i)).join("")}</div>
-        ${im.untouched.length ? `<p class="hint" style="margin-top:12px">${im.untouched.length} conteúdo(s) já existentes não aparecem nesta importação e serão mantidos como estão: ${im.untouched.map((c) => "“" + esc(c.title || "sem título") + "”").join(", ")}.</p>` : ""}
+        ${im.untouched.length ? `<div class="card" style="margin-top:12px;gap:10px"><b>${im.untouched.length === 1 ? "1 conteúdo do portal não está nesta versão" : im.untouched.length + " conteúdos do portal não estão nesta versão"}</b>
+          <span class="hint">${im.untouched.map((c) => "“" + esc(c.title || "sem título") + "”" + (c.date ? " (" + day(c.date).short + ")" : "")).join(", ")}</span>
+          <label class="row" style="gap:10px;cursor:pointer"><input type="checkbox" id="imp-rm" data-a-change="imp-rm" ${im.removeOld ? "checked" : ""}> <span>Substituir o planejamento: <b>remover estes conteúdos</b> do portal (comentários deles também saem)</span></label>
+          ${im.removeOld ? "" : '<span class="hint">Sem marcar, eles continuam no portal como estão.</span>'}</div>` : ""}
         <div class="row" style="margin-top:18px;flex-wrap:wrap"><button class="btn btn-primary" data-a="imp-apply" ${im.busy || !im.clientId || !im.month || !im.year ? "disabled" : ""}>${im.busy ? "Publicando…" : "Publicar planejamento"}</button>
           ${!im.clientId || !im.month ? '<span class="hint">Escolha o cliente e o mês para publicar.</span>' : ""}</div>`;
     }
@@ -2721,7 +3004,7 @@ Imagem:`;
     return errMsg(e);
   }
   function openClient(session) {
-    S.session = session; S.view = "client"; S.filter = "all"; S.ctab = "overview"; S.cdata = null; resetUI();
+    S.session = session; S.view = "client"; S.filter = "all"; S.ctab = "home"; S.cdata = null; resetUI();
     if (S.cunsub) S.cunsub();
     S.cunsub = S.store.watchClient(session, (d) => { S.cdata = d; if (d.client && d.client.status === "inativo") { logout("Este acesso foi pausado pela VA Mídia."); return; } render(); }, (e) => toast(dbErr(e), "err"));
     render();
@@ -2749,7 +3032,7 @@ Imagem:`;
     filter: (el) => { S.filter = el.dataset.f; render(); },
     planning: (el) => { S.planningId[el.dataset.key] = el.dataset.id; S.filter = "all"; render(); },
     open: (el) => openContent(el.dataset.id, S.view === "admin" ? "admin" : "client", el.dataset.scope),
-    ctab: (el) => { S.ctab = el.dataset.t; S.filter = "all"; render(); },
+    ctab: (el) => { S.ctab = el.dataset.t; S.filter = "all"; render(); const n = document.querySelector(".topnav"); if (n && scrollY > n.offsetTop) scrollTo({ top: n.offsetTop - 8, behavior: reduce() ? "auto" : "smooth" }); },
     tfilter: (el) => { S.tf[el.dataset.key] = el.dataset.f; render(); },
     dweek: (el) => { S.dweek = el.dataset.w; render(); },
     "quick-status": async (el) => {
@@ -2805,7 +3088,7 @@ Imagem:`;
     // admin
     atab: (el) => { S.adminTab = el.dataset.t; if (el.dataset.t === "overview") S.adminClientId = null; S.filter = "all"; render(); scrollTo(0, 0); },
     "admin-exit": async () => { if (S.aunsub) S.aunsub(); S.aunsub = null; S.adata = null; if (S.store.adminLogout) await S.store.adminLogout(); S.view = "home"; render(); },
-    aclient: (el) => { S.adminClientId = el.dataset.id; S.adminTab = "overview"; S.filter = "all"; S.ctab = "overview"; S.rform = null; S.tform = null; render(); scrollTo(0, 0); },
+    aclient: (el) => { S.adminClientId = el.dataset.id; S.adminTab = "overview"; S.filter = "all"; S.ctab = "home"; S.rform = null; S.tform = null; render(); scrollTo(0, 0); },
     aback: () => { S.adminClientId = null; S.filter = "all"; render(); },
     "note-open": async (el) => {
       const n = S.adata.notifications.find((x) => x.id === el.dataset.id); if (!n) return;
@@ -2944,9 +3227,11 @@ ${im.text.slice(0, 50000)}
         }
       }
       await S.store.applyImport(plan);
-      toast(`Planejamento publicado: ${tally.create} novos, ${tally.update} atualizados, ${tally.keep} mantidos.`);
+      let removed = 0;
+      if (im.removeOld && ex.planning) for (const c of im.untouched) { await S.store.deleteContent(c.id); removed++; }
+      toast(`Planejamento publicado: ${tally.create} novos, ${tally.update} atualizados, ${tally.keep} mantidos${removed ? `, ${removed} removidos` : ""}.`);
       S.planningId["admin-" + im.clientId] = planningId;
-      S.adminClientId = im.clientId; S.adminTab = "overview"; S.filter = "all"; S.ctab = "overview";
+      S.adminClientId = im.clientId; S.adminTab = "overview"; S.filter = "all"; S.ctab = "cal";
       S.imp = newImport();
       render(); scrollTo(0, 0);
     } catch (e) { im.busy = false; im.error = errMsg(e); toast(errMsg(e), "err"); render(); }
@@ -2991,6 +3276,7 @@ ${im.text.slice(0, 50000)}
     if (a === "imp-files") { S.imp.files = S.imp.files.concat(Array.from(t.files || [])); recomputeMerge(); render(); }
     if (a === "imp-item-file") { const i = +t.dataset.i; const fs = Array.from(t.files || []); S.imp.itemFiles[i] = fs; S.imp.parsed.items[i]._files = fs; recomputeMerge(); render(); }
     if (a === "imp-choice") { S.imp.choices[+t.dataset.i] = t.value; }
+    if (a === "imp-rm") { S.imp.removeOld = t.checked; render(); }
     if (a === "imp-date" && t.value) { const it = S.imp.parsed.items[+t.dataset.i]; it.date = t.value; it._manualDate = true; it.warnings = it.warnings.filter((w) => !/^Data/.test(w)); recomputeMerge(); render(); }
     if (a === "set-date") { try { await S.store.setContentDate(S.open.id, t.value || ""); toast(t.value ? "Data atualizada." : "Data removida."); } catch (e) { toast(errMsg(e), "err"); } }
     if (a === "client-logo" && t.files[0]) { try { const ref = await S.store.uploadImage(t.files[0]); await S.store.setClientLogo(t.dataset.id, ref); toast("Logo do cliente atualizado."); } catch (e) { toast(errMsg(e), "err"); } }
