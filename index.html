@@ -502,6 +502,164 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 
+/* =========================================================
+   v2 · abas do cliente, calendário, semanas, feed, relatórios
+   ========================================================= */
+.ctabs-row{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-top:24px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
+.ctabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.ctabs::-webkit-scrollbar{display:none}
+.ctab{background:none;border:0;padding:9px 14px;border-radius:999px;color:var(--text-2);font-weight:500;font-size:14px;white-space:nowrap;min-height:40px;transition:all .2s var(--ease)}
+.ctab:hover{color:var(--text);background:var(--surface)}
+.ctab[aria-current="page"]{background:var(--text);color:var(--bg)}
+.ctab-body{padding-top:22px;animation:fade .25s var(--ease)}
+.slim{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:14px;border:1px solid var(--yellow-line);background:rgba(244,197,66,.06);font-size:14px;margin-bottom:16px;flex-wrap:wrap}
+.slim.calm{border-color:var(--line);background:var(--surface)}
+.slim.warn{border-color:rgba(232,131,111,.4);background:var(--danger-bg)}
+.slim .slim-t{flex:1;min-width:200px}
+.slim .pulse{width:9px;height:9px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 4px rgba(244,197,66,.18);flex:none}
+.slim .okdot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--st-aprovado-bg);color:var(--st-aprovado);flex:none}
+.slim.warn .okdot{background:rgba(232,131,111,.18);color:var(--danger)}
+.slim .okdot svg{width:13px;height:13px}
+.summary{margin-top:0}
+.sum{padding:12px 16px 11px}
+.sum .v{font-size:clamp(19px,2vw,24px)}
+.block{margin-top:28px}
+.block-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.block-h h2{font-size:12px;font-family:var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.legend{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-2);flex-wrap:wrap}
+.legend i{width:8px;height:8px;border-radius:50%;margin-left:8px}
+.legend i:first-child{margin-left:0}
+.legend i.em_analise,.cal-chip.em_analise i,.ig-st.em_analise{background:var(--st-analise)}
+.legend i.aprovado,.cal-chip.aprovado i,.ig-st.aprovado{background:var(--st-aprovado)}
+.legend i.publicado,.cal-chip.publicado i,.ig-st.publicado{background:var(--st-publicado)}
+/* calendário */
+.cal{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--line-soft)}
+.cal-head,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:1px}
+.cal-head span{background:var(--bg-2);font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:9px 10px}
+.cal-cell{background:var(--bg);min-height:104px;padding:7px 6px 8px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.cal-cell.out{background:var(--bg-2)}
+.cal-d{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);padding:1px 4px;align-self:flex-start;border-radius:6px}
+.cal-cell.has .cal-d{color:var(--text)}
+.cal-cell.today .cal-d{background:var(--yellow);color:var(--yellow-ink);font-weight:700}
+.cal-chip{display:flex;align-items:center;gap:5px;width:100%;min-width:0;border:1px solid var(--line-soft);background:var(--surface);border-radius:8px;padding:5px 6px;font-size:12px;text-align:left;line-height:1.25;transition:border-color .2s,background .2s}
+.cal-chip:hover{border-color:var(--yellow-line);background:var(--surface-2)}
+.cal-chip i{width:7px;height:7px;border-radius:50%;flex:none}
+.cal-chip svg{width:13px;height:13px;flex:none;color:var(--text-2)}
+.cal-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+/* semanas */
+.weeks{display:flex;flex-direction:column;gap:10px}
+.wk{border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);overflow:hidden}
+.wk.hot{border-color:var(--yellow-line)}
+.wk.past{opacity:.6}
+.wk-h{display:flex;align-items:center;gap:10px;padding:12px 16px;flex-wrap:wrap;font-size:14px;border-bottom:1px solid var(--line-soft)}
+.wk-h .muted{font-size:12.5px}
+.wk-tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:999px}
+.wk-tag.now{background:var(--yellow);color:var(--yellow-ink);font-weight:700}
+.wk-tag.next{background:var(--yellow-soft);color:var(--yellow)}
+.wk-list{display:flex;flex-direction:column}
+.wk-row{display:grid;grid-template-columns:52px 120px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 16px;background:none;border:0;border-top:1px solid var(--line-soft);text-align:left;width:100%;font-size:14px;transition:background .15s}
+.wk-row:first-child{border-top:0}
+.wk-row:hover{background:var(--surface)}
+.wk-d{display:flex;flex-direction:column;line-height:1.1;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.wk-d b{font-size:17px;color:var(--text);font-family:var(--f-display);letter-spacing:0}
+.wk-type{display:flex;align-items:center;gap:7px;color:var(--text-2);font-size:13px}
+.wk-type svg{width:15px;height:15px;flex:none}
+.wk-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk-title.none{color:var(--muted);font-style:italic}
+.wk-empty{padding:12px 16px;color:var(--muted);font-size:13px}
+.wk-c{font-size:12.5px}
+/* feed estilo perfil */
+.ig{max-width:760px;margin:0 auto}
+.ig-head{display:flex;align-items:center;gap:20px;padding:6px 0 20px}
+.avatar.big{width:84px;height:84px;padding:3px}
+.avatar.big span{font-size:22px;border-width:3px}
+.avatar.sm{width:28px;height:28px}
+.avatar.sm span{font-size:9px}
+.ig-id{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ig-id b{font-size:18px}
+.ig-count{font-size:13px;color:var(--text-2);display:flex;gap:6px 14px;flex-wrap:wrap;margin-top:4px}
+.ig-count b{font-size:14px;color:var(--text)}
+.ig-sec{border-top:1px solid var(--line-soft);padding:16px 0}
+.ig-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2);margin-bottom:14px}
+.ig-label .muted{letter-spacing:.04em;text-transform:none;font-family:var(--f-body);font-size:12px}
+.rings{display:flex;gap:16px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:thin}
+.ring-btn{background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:7px;width:78px;flex:none}
+.ring{width:72px;height:72px;border-radius:50%;padding:3px;background:var(--line);display:block;transition:transform .2s var(--ease)}
+.ring.em_analise{background:conic-gradient(from 200deg,var(--yellow),#9b7616,var(--yellow-hi),var(--yellow))}
+.ring.aprovado{background:var(--st-aprovado)}
+.ring.publicado{background:var(--st-publicado)}
+.ring.lg{width:96px;height:96px}
+.ring-btn:hover .ring{transform:scale(1.05)}
+.ring-in{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:var(--surface-2);border:3px solid var(--bg);overflow:hidden}
+.ring-in img{width:100%;height:100%;object-fit:cover}
+.ring-txt{display:flex;flex-direction:column;align-items:center;line-height:1;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;color:var(--text-2)}
+.ring-txt b{font-family:var(--f-display);font-size:19px;color:var(--text);letter-spacing:0;margin-bottom:2px}
+.ring-ic svg{width:26px;height:26px;color:var(--text-2)}
+.ring-l{font-size:11.5px;color:var(--text-2);max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.ig-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+.ig-tile{position:relative;aspect-ratio:4/5;border:0;padding:0;background:var(--surface-2);overflow:hidden;display:block}
+.ig-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease),opacity .3s}
+.ig-tile:hover img{transform:scale(1.03);opacity:.9}
+.ig-fmt{position:absolute;top:8px;right:8px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.ig-fmt svg{width:18px;height:18px}
+.ig-st{position:absolute;left:8px;bottom:8px;width:10px;height:10px;border-radius:50%;box-shadow:0 0 0 2px rgba(11,11,12,.75)}
+.mock-art{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;padding:12%;background:radial-gradient(120% 80% at 20% 0%,#2a2414,transparent 60%),linear-gradient(160deg,#1d1d21,#121214);text-align:left}
+.mock-k{font-family:var(--f-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--yellow)}
+.mock-t{font-family:var(--f-display);font-weight:600;font-size:clamp(12px,1.6vw,17px);line-height:1.15;color:var(--text);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.mock-n{font-size:10px;color:var(--muted)}
+.noimg + .mock-art{display:none}
+/* prévia de story / destaque */
+.story{max-width:340px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px;align-self:start;position:sticky;top:80px}
+.story-frame{position:relative;aspect-ratio:9/16;border-radius:18px;overflow:hidden;background:#121214;border:1px solid var(--line)}
+.story-frame > img{width:100%;height:100%;object-fit:cover;display:block}
+.story-mock{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:16% 12%;background:radial-gradient(120% 70% at 30% 10%,rgba(244,197,66,.18),transparent 60%),linear-gradient(180deg,#1c1c20,#0f0f11)}
+.story-mock h3{font-family:var(--f-display);font-size:24px;line-height:1.15;font-weight:600}
+.story-mock p{color:var(--text-2);font-size:14px;white-space:pre-wrap}
+.story-mock .tag{align-self:flex-start}
+.story-top{position:absolute;left:0;right:0;top:0;padding:10px 12px;background:linear-gradient(180deg,rgba(0,0,0,.55),transparent);display:flex;flex-direction:column;gap:10px}
+.story-bars{display:flex;gap:3px}
+.story-bars i{flex:1;height:2.5px;border-radius:2px;background:rgba(255,255,255,.35)}
+.story-bars i.on{background:#fff}
+.story-user{display:flex;align-items:center;gap:8px;font-size:13px;color:#fff}
+.story-user small{opacity:.75;font-size:11.5px}
+.story-frame .nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;border:0;background:rgba(245,243,236,.9);color:#111;display:grid;place-items:center}
+.story-frame .nav svg{width:16px;height:16px}
+.story-frame .nav.prev{left:8px}.story-frame .nav.next{right:8px}
+.story-cap{font-size:14px;white-space:pre-wrap;display:flex;flex-direction:column;gap:6px;color:var(--text)}
+.hl-top{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding-top:6px}
+.hl-top b{font-size:15px}
+/* relatórios e tráfego */
+.form-card{margin-bottom:18px;max-width:760px}
+.rep-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.rep{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:18px;display:flex;flex-direction:column;gap:12px}
+.rep-h{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:32px}
+.rep h3{font-size:17px;font-weight:600}
+.rep-s{color:var(--text-2);font-size:14px;white-space:pre-wrap}
+.tf{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+.tf > div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.tf > div.full{grid-column:1/-1}
+.tf dt{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tf dd{margin:0;font-size:14.5px;white-space:pre-wrap;word-wrap:break-word}
+@media (max-width:960px){ .story{position:static} }
+@media (max-width:720px){
+  .cal-cell{min-height:58px;padding:5px 3px;gap:3px}
+  .cal-chip{padding:3px;justify-content:center;border-radius:6px}
+  .cal-chip span,.cal-chip svg{display:none}
+  .cal-chip i{width:9px;height:9px}
+  .cal-head span{padding:7px 4px;font-size:9.5px;letter-spacing:.06em;text-align:center}
+  .cal-d{align-self:center;font-size:11px}
+  .wk-row{grid-template-columns:40px 18px minmax(0,1fr) auto;gap:8px;padding:10px 12px}
+  .wk-type span{display:none}
+  .wk-h{padding:11px 12px}
+  .ig-head{gap:14px}
+  .avatar.big{width:68px;height:68px}
+  .ring{width:64px;height:64px}
+  .ring-btn{width:70px}
+  .rep-list{grid-template-columns:1fr}
+  .tf{grid-template-columns:1fr}
+  .ctabs-row{margin-top:18px}
+}
+
 </style>
 <div id="app" aria-live="polite"></div>
 <div id="modal"></div>
@@ -544,6 +702,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     if (/^reels?\b|video|^vídeo/.test(n)) return "Reel";
     if (/carross|carousel|carrocel|carosel/.test(n)) return "Carrossel";
     if (/^stor(y|ies)|^storie/.test(n)) return "Story";
+    if (/^destaq|^highlight/.test(n)) return "Destaque";
     if (/^post|estatic|^feed|^imagem unica|^foto/.test(n)) return "Post";
     return String(v).trim().replace(/^\w/, (c) => c.toUpperCase());
   }
@@ -979,13 +1138,15 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
 
     watchClient(session, cb, onErr) {
       const id = session.clientId;
-      const st = { client: session.client, plannings: null, contents: null, comments: null };
-      const emit = () => { if (st.plannings && st.contents && st.comments) cb(Object.assign({}, st)); };
+      const st = { client: session.client, plannings: null, contents: null, comments: null, reports: null, traffic: null };
+      const emit = () => { if (st.plannings && st.contents && st.comments && st.reports && st.traffic) cb(Object.assign({}, st)); };
       const subs = [
         this.db.doc("clients/" + id).onSnapshot((s) => { if (s.exists) { st.client = Object.assign({ id }, s.data()); emit(); } }, onErr),
         this._sub(this.db.collection("plannings").where("clientId", "==", id), (s) => { st.plannings = this._docs(s); emit(); }, onErr),
         this._sub(this.db.collection("contents").where("clientId", "==", id), (s) => { st.contents = this._docs(s); emit(); }, onErr),
         this._sub(this.db.collection("comments").where("clientId", "==", id), (s) => { st.comments = this._docs(s); emit(); }, onErr),
+        this._sub(this.db.collection("reports").where("clientId", "==", id), (s) => { st.reports = this._docs(s); emit(); }, onErr),
+        this._sub(this.db.collection("traffic").where("clientId", "==", id), (s) => { st.traffic = this._docs(s); emit(); }, onErr),
       ];
       return () => subs.forEach((u) => u());
     }
@@ -1024,7 +1185,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       return { ok: false, reason: "A área da VA Mídia é liberada para quem tem acesso de edição a este portal no Claude." };
     }
     watchAdmin(cb, onErr) {
-      const names = ["clients", "vault", "plannings", "contents", "comments", "notifications"];
+      const names = ["clients", "vault", "plannings", "contents", "comments", "notifications", "reports", "traffic"];
       const st = {};
       const emit = () => { if (names.every((n) => st[n])) cb(Object.assign({}, st)); };
       const subs = names.map((n) => this._sub(this.db.collection(n), (s) => { st[n] = this._docs(s); emit(); }, onErr));
@@ -1096,6 +1257,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       }
     }
     async saveBrand(brand) { await this.db.doc("settings/brand").set(brand || {}); }
+    async saveReport(r) { const id = r.id || uid("rp-"); const x = Object.assign({}, r, { createdAt: r.createdAt || nowISO() }); delete x.id; await this.db.doc("reports/" + id).set(x); }
+    async deleteReport(id) { await this.db.doc("reports/" + id).delete(); }
+    async saveTraffic(t) {
+      let id = t.id;
+      if (!id) { const ex = await this.db.collection("traffic").where("clientId", "==", t.clientId).get(); const same = ex.docs.find((d) => d.data().month === t.month && d.data().year === t.year); id = same ? same.id : uid("tf-"); }
+      const x = Object.assign({}, t, { updatedAt: nowISO() }); delete x.id; delete x.error; await this.db.doc("traffic/" + id).set(x);
+    }
 
     /** plan = {clientId, planning:{id, create, month, year, title}, ops:[{kind:'create'|'update', id?, data}]} */
     async applyImport(plan) {
@@ -1134,7 +1302,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
   class LocalStore {
     constructor() {
       this.info = { mode: "local", label: "Demonstração local", persistent: false, serverIsolation: false, codesVisible: true, canUploadImages: true, canUseAI: false };
-      this.d = { clients: [], vault: [], access: [], plannings: [], contents: [], comments: [], notifications: [], brand: null, demoCredentials: [] };
+      this.d = { clients: [], vault: [], access: [], plannings: [], contents: [], comments: [], notifications: [], reports: [], traffic: [], brand: null, demoCredentials: [] };
       this.listeners = new Set();
     }
     async init() {}
@@ -1157,7 +1325,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     watchClient(session, cb) {
       return this._on(() => {
         const id = session.clientId;
-        cb({ client: this.d.clients.find((c) => c.id === id) || session.client, plannings: this.d.plannings.filter((p) => p.clientId === id), contents: this.d.contents.filter((c) => c.clientId === id), comments: this.d.comments.filter((c) => c.clientId === id) });
+        cb({ client: this.d.clients.find((c) => c.id === id) || session.client, plannings: this.d.plannings.filter((p) => p.clientId === id), contents: this.d.contents.filter((c) => c.clientId === id), comments: this.d.comments.filter((c) => c.clientId === id), reports: this.d.reports.filter((r) => r.clientId === id), traffic: this.d.traffic.filter((t) => t.clientId === id) });
       });
     }
     _own(session, id) {
@@ -1184,7 +1352,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       this._emit();
     }
     async adminAccess() { return { ok: true }; }
-    watchAdmin(cb) { return this._on(() => cb({ clients: this.d.clients, vault: this.d.vault, plannings: this.d.plannings, contents: this.d.contents, comments: this.d.comments, notifications: this.d.notifications })); }
+    watchAdmin(cb) { return this._on(() => cb({ clients: this.d.clients, vault: this.d.vault, plannings: this.d.plannings, contents: this.d.contents, comments: this.d.comments, notifications: this.d.notifications, reports: this.d.reports, traffic: this.d.traffic })); }
     async setStatus(id, status) { const c = this.d.contents.find((x) => x.id === id); if (!c || c.status === status) return; this._replace(id, statusPatch(c, status)); this._emit(); }
     async resolveChange(id) { this._replace(id, { changeRequested: false }); this._emit(); }
     async agencyComment(id, text) { const t = checkText(text); const c = this.d.contents.find((x) => x.id === id); this.d.comments = this.d.comments.concat({ id: uid("cm-"), contentId: id, clientId: c.clientId, planningId: c.planningId, authorRole: "agency", authorName: "VA Mídia", kind: "comment", message: t, createdAt: nowISO() }); this._emit(); }
@@ -1211,6 +1379,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     async regenerateCode(clientId) { const v = this.d.vault.find((x) => x.id === clientId); const c = this.d.clients.find((x) => x.id === clientId); return this.saveClient(Object.assign({}, c, { email: v.email, code: makeCode() })); }
     async uploadImage(file) { return URL.createObjectURL(file); }
     async saveBrand(b) { this.d.brand = b; this._emit(); }
+    async saveReport(r) { this.d.reports = this.d.reports.concat(Object.assign({ id: uid("rp-"), createdAt: nowISO() }, r)); this._emit(); }
+    async deleteReport(id) { this.d.reports = this.d.reports.filter((r) => r.id !== id); this._emit(); }
+    async saveTraffic(t) {
+      const same = this.d.traffic.find((x) => x.id === t.id || (!t.id && x.clientId === t.clientId && x.month === t.month && x.year === t.year));
+      const row = Object.assign({}, same || {}, t, { id: (same && same.id) || t.id || uid("tf-"), updatedAt: nowISO() }); delete row.error;
+      this.d.traffic = this.d.traffic.filter((x) => x.id !== row.id).concat(row); this._emit();
+    }
     async applyImport(plan) {
       if (plan.planning.create) this.d.plannings = this.d.plannings.concat({ id: plan.planning.id, clientId: plan.clientId, month: plan.planning.month, year: plan.planning.year, title: plan.planning.title, createdAt: nowISO() });
       for (const op of plan.ops) {
@@ -1302,7 +1477,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
         try {
           const p = await this._rpc("client_portal", { p_token: session.token });
           if (!alive) return;
-          cb({ client: toCamel(p.client), plannings: (p.plannings || []).map(toCamel), contents: (p.contents || []).map((r) => this._mapContent(r)), comments: (p.comments || []).map(toCamel) });
+          cb({ client: toCamel(p.client), plannings: (p.plannings || []).map(toCamel), contents: (p.contents || []).map((r) => this._mapContent(r)), comments: (p.comments || []).map(toCamel), reports: (p.reports || []).map(toCamel), traffic: (p.traffic || []).map(toCamel) });
         } catch (e) { onErr && onErr(e); }
         if (alive) timer = setTimeout(load, 20000);
       };
@@ -1336,8 +1511,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       const q = (t, sel) => this.sb.from(t).select(sel || "*");
       const load = async () => {
         try {
-          const [cl, pl, co, cm, nt] = await Promise.all([q("clients", "id,name,company,handle,email,status,is_demo,created_at"), q("plannings"), q("contents"), q("comments"), q("notifications").order("created_at", { ascending: false }).limit(300)]);
-          const err = [cl, pl, co, cm, nt].find((r) => r.error);
+          const [cl, pl, co, cm, nt, rp, tf] = await Promise.all([q("clients", "id,name,company,handle,email,status,is_demo,created_at"), q("plannings"), q("contents"), q("comments"), q("notifications").order("created_at", { ascending: false }).limit(300), q("reports"), q("traffic_plans")]);
+          const err = [cl, pl, co, cm, nt, rp, tf].find((r) => r.error);
           if (err) throw new PortalError("server", err.error.message);
           if (!alive) return;
           const clients = cl.data.map((r) => Object.assign(toCamel(r), { demo: r.is_demo }));
@@ -1345,6 +1520,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
             clients, vault: cl.data.map((r) => ({ id: r.id, email: r.email, code: null })),
             plannings: pl.data.map((r) => Object.assign(toCamel(r), { demo: r.is_demo })), contents: co.data.map((r) => this._mapContent(r)),
             comments: cm.data.map(toCamel), notifications: nt.data.map((r) => Object.assign(toCamel(r), { demo: r.is_demo })),
+            reports: rp.data.map(toCamel), traffic: tf.data.map(toCamel),
           });
         } catch (e) { onErr && onErr(e); }
         if (alive) timer = setTimeout(load, 15000);
@@ -1379,6 +1555,16 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       return this.sb.storage.from("content-images").getPublicUrl(path).data.publicUrl;
     }
     async saveBrand(brand) { const { error } = await this.sb.from("settings").upsert({ key: "brand", value: brand || {} }); if (error) throw new PortalError("server", error.message); }
+    async saveReport(r) {
+      const { error } = await this.sb.from("reports").insert({ client_id: r.clientId, month: r.month, year: r.year, title: r.title || "", summary: r.summary || "", url: r.url || "", file_url: r.fileUrl || "" });
+      if (error) throw new PortalError("server", "Não foi possível salvar o relatório: " + error.message); this._after();
+    }
+    async deleteReport(id) { const { error } = await this.sb.from("reports").delete().eq("id", id); if (error) throw new PortalError("server", error.message); this._after(); }
+    async saveTraffic(t) {
+      const row = { client_id: t.clientId, month: t.month, year: t.year, budget: t.budget || "", period: t.period || "", objective: t.objective || "", audience: t.audience || "", campaigns: t.campaigns || "", notes: t.notes || "", updated_at: nowISO() };
+      const { error } = t.id ? await this.sb.from("traffic_plans").update(row).eq("id", t.id) : await this.sb.from("traffic_plans").upsert(row, { onConflict: "client_id,year,month" });
+      if (error) throw new PortalError("server", "Não foi possível salvar o plano: " + error.message); this._after();
+    }
     async applyImport(plan) {
       if (plan.planning.create) {
         const { error } = await this.sb.from("plannings").insert({ id: plan.planning.id, client_id: plan.clientId, month: plan.planning.month, year: plan.planning.year, title: plan.planning.title });
@@ -1498,9 +1684,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     inbox: svg('<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>'),
     trash: svg('<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>'),
     key: svg('<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M15 8l2 2"/>'),
+    highlight: svg('<circle cx="12" cy="12" r="9"/><path d="m12 7.5 1.4 2.9 3.1.4-2.3 2.2.6 3.1-2.8-1.5-2.8 1.5.6-3.1-2.3-2.2 3.1-.4z"/>'),
     db: svg('<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>'),
   });
-  const typeIcon = (t) => ({ Reel: I.reel, Carrossel: I.carousel, Story: I.story }[t] || I.post);
+  const typeIcon = (t) => ({ Reel: I.reel, Carrossel: I.carousel, Story: I.story, Destaque: I.highlight }[t] || I.post);
 
   /* ---------------- estado ---------------- */
   const S = {
@@ -1513,7 +1700,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     ui: {}, drafts: {}, busy: {},
     login: { email: "", code: "", error: "" },
     alogin: { email: "", password: "", error: "" },
-    imp: null, clientForm: null, pendingStatus: {},
+    imp: null, clientForm: null, pendingStatus: {}, ctab: "overview", rform: null, tform: null,
   };
   const resetUI = () => { S.ui = {}; S.slide = 0; };
 
@@ -1723,28 +1910,216 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
       <span class="who"><b>${esc(client.company)}</b><small>${client.handle ? "@" + esc(client.handle) : ""}</small></span>
       <button class="btn btn-ghost btn-sm" data-a="logout">${I.out}<span>Sair</span></button></div></header>`;
     if (!d) return top + `<div class="wrap page">${viewBoot()}</div>`;
-    const planning = pickPlanning(d, client.id, "client");
-    const hello = `<h1>Olá, ${esc(client.name || client.company)}</h1>`;
-    if (!planning) return top + `<main class="wrap page"><div class="greet"><div>${hello}<p class="sub">Planejamento de conteúdo</p></div></div>
-      <div class="empty" style="margin-top:30px">${I.inbox}<b>Seu planejamento ainda não foi publicado</b><span>Quando a VA Mídia publicar o planejamento do mês, ele aparece aqui.</span></div></main>`;
-    const all = d.contents.filter((c) => c.planningId === planning.id).sort(byDate);
-    const c = counts(all);
-    const shown = S.filter === "all" ? all : all.filter((x) => x.status === S.filter);
-    const pending = all.filter((x) => x.status === "em_analise" && !x.changeRequested);
-    const changes = all.filter((x) => x.status === "em_analise" && x.changeRequested);
-    let callout;
-    if (pending.length) callout = `<div class="callout"><span class="ic">${I.bell}</span><span class="tx"><b>${pending.length === 1 ? "1 conteúdo aguardando sua aprovação" : pending.length + " conteúdos aguardando sua aprovação"}</b><span>Abra cada um, confira a arte e a legenda, e aprove ou peça um ajuste.${changes.length ? ` ${changes.length === 1 ? "1 alteração pedida por você está" : changes.length + " alterações pedidas por você estão"} com a VA Mídia.` : ""}</span></span><button class="btn btn-primary" data-a="open" data-id="${esc(pending[0].id)}">Revisar agora ${I.arrow}</button></div>`;
-    else if (changes.length) callout = `<div class="callout calm"><span class="ic" style="background:var(--danger-bg);color:var(--danger)">${I.edit}</span><span class="tx"><b>${changes.length === 1 ? "1 alteração em andamento" : changes.length + " alterações em andamento"}</b><span>A VA Mídia está ajustando o que você pediu. Os demais conteúdos já foram revisados.</span></span></div>`;
-    else callout = `<div class="callout calm"><span class="ic">${I.check}</span><span class="tx"><b>Tudo em dia</b><span>Nenhum conteúdo aguardando você neste mês.</span></span></div>`;
+    const ws = clientWorkspace(d, client, false, "client");
     return top + `<main class="wrap page">
-      <div class="greet"><div>${hello}<p class="sub"><span>Planejamento de conteúdo · <b style="color:var(--text)">${monthName(planning.month, planning.year)}</b></span>${client.demo ? '<span class="tag demo">Demonstração</span>' : ""}</p></div>
-      ${monthChips(planningsFor(d, client.id), planning, "client")}</div>
-      ${callout}
-      ${summaryBar(c)}
-      <div class="feed-head"><h2>${S.filter === "all" ? "Feed do mês" : STATUS[S.filter]} · ${shown.length}</h2><span class="hint">Toque em um conteúdo para ver os detalhes</span></div>
-      ${feedHTML(shown, d.comments, EMPTY[S.filter])}
+      <div class="greet"><div><h1>Olá, ${esc(client.name || client.company)}</h1><p class="sub"><span>${ws.planning ? `Planejamento de conteúdo · <b style="color:var(--text)">${monthName(ws.planning.month, ws.planning.year)}</b>` : "Planejamento de conteúdo"}</span>${client.demo ? '<span class="tag demo">Demonstração</span>' : ""}</p></div></div>
+      ${ws.html}
     </main>`;
   }
+
+  /* ---------------- tipos de conteúdo ---------------- */
+  const kindOf = (c) => { const t = P.norm(c.type); if (/^stor/.test(t)) return "story"; if (/^destaq|^highlight/.test(t)) return "destaque"; return "feed"; };
+  const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  function mondayOf(d) { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; }
+  const WD = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+  const handleOf = (client) => client.handle || String(client.company || "cliente").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const safeUrl = (u) => (/^https?:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "");
+  function groupStatus(list) { if (list.some((c) => c.status === "em_analise")) return "em_analise"; if (list.some((c) => c.status === "aprovado")) return "aprovado"; return "publicado"; }
+  function mockHTML(c) {
+    return `<span class="mock-art"><span class="mock-k">${esc(c.type || "Conteúdo")}</span><span class="mock-t">${esc(c.title || "Sem título")}</span><span class="mock-n">Prévia · arte em produção</span></span>`;
+  }
+
+  /* ---------------- área do cliente (abas) ---------------- */
+  function clientTabs() {
+    const t = (k, l) => `<button class="ctab" data-a="ctab" data-t="${k}" ${S.ctab === k ? 'aria-current="page"' : ""}>${l}</button>`;
+    return `<nav class="ctabs" aria-label="Seções">${t("overview", "Visão geral")}${t("feed", "Feed")}${t("reports", "Relatórios")}${t("traffic", "Tráfego pago")}</nav>`;
+  }
+  function clientWorkspace(data, client, isAdmin, key) {
+    const plannings = planningsFor(data, client.id);
+    const planning = pickPlanning(data, client.id, key);
+    const all = planning ? data.contents.filter((c) => c.planningId === planning.id).sort(byDate) : [];
+    let body;
+    if (S.ctab === "reports") body = reportsView(data, client, isAdmin);
+    else if (S.ctab === "traffic") body = trafficView(data, client, isAdmin);
+    else if (!planning) body = `<div class="empty">${I.inbox}<b>${isAdmin ? "Nenhum planejamento para este cliente" : "Seu planejamento ainda não foi publicado"}</b><span>${isAdmin ? "Cole o planejamento do mês na aba Importar e o portal monta tudo." : "Quando a VA Mídia publicar o planejamento do mês, ele aparece aqui."}</span></div>`;
+    else if (S.ctab === "feed") body = feedTab(all, client);
+    else body = overviewTab(all, planning, isAdmin);
+    const months = (S.ctab === "overview" || S.ctab === "feed") && planning ? monthChips(plannings, planning, key) : "";
+    return { planning, html: `<div class="ctabs-row">${clientTabs()}${months}</div><div class="ctab-body">${body}</div>` };
+  }
+
+  function overviewTab(all, planning, isAdmin) {
+    const c = counts(all);
+    const list = S.filter === "all" ? all : all.filter((x) => x.status === S.filter);
+    const pending = all.filter((x) => x.status === "em_analise" && !x.changeRequested);
+    const changes = all.filter((x) => x.status === "em_analise" && x.changeRequested);
+    let note = "";
+    if (!isAdmin && pending.length) note = `<div class="slim"><span class="pulse"></span><span class="slim-t"><b>${pending.length === 1 ? "1 conteúdo aguarda" : pending.length + " conteúdos aguardam"} sua aprovação.</b>${changes.length ? ` <span class="muted">${changes.length === 1 ? "1 ajuste está" : changes.length + " ajustes estão"} com a VA Mídia.</span>` : ""}</span><button class="btn btn-primary btn-sm" data-a="open" data-id="${esc(pending[0].id)}">Revisar</button></div>`;
+    else if (!isAdmin && !changes.length) note = `<div class="slim calm"><span class="okdot">${I.check}</span><span class="slim-t"><b>Tudo em dia.</b> <span class="muted">Nenhum conteúdo aguardando você neste mês.</span></span></div>`;
+    else if (isAdmin && c.change) note = `<div class="slim warn"><span class="okdot">${I.edit}</span><span class="slim-t"><b>${c.change === 1 ? "1 alteração pedida" : c.change + " alterações pedidas"} pelo cliente.</b> <span class="muted">Abra o conteúdo para ler e responder.</span></span></div>`;
+    return `${note}${summaryBar(c)}
+      <section class="block"><div class="block-h"><h2>Calendário</h2><span class="legend"><i class="em_analise"></i>Em análise<i class="aprovado"></i>Aprovado<i class="publicado"></i>Publicado</span></div>${calendarHTML(planning, list)}</section>
+      <section class="block"><div class="block-h"><h2>Semana a semana</h2></div>${weeksHTML(planning, list)}</section>`;
+  }
+
+  function calendarHTML(planning, list) {
+    const y = planning.year, m = planning.month;
+    const first = new Date(y, m - 1, 1), days = new Date(y, m, 0).getDate(), lead = (first.getDay() + 6) % 7, today = ymd(new Date());
+    const byDay = {}; list.forEach((c) => { if (c.date) (byDay[c.date] = byDay[c.date] || []).push(c); });
+    let cells = "";
+    for (let i = 0; i < lead; i++) cells += `<div class="cal-cell out"></div>`;
+    for (let d = 1; d <= days; d++) {
+      const k = `${y}-${pad(m)}-${pad(d)}`, items = byDay[k] || [];
+      cells += `<div class="cal-cell${k === today ? " today" : ""}${items.length ? " has" : ""}"><span class="cal-d">${d}</span>${items.map((c) => `<button class="cal-chip ${esc(c.status)}" data-a="open" data-id="${esc(c.id)}" title="${esc((c.type || "Conteúdo") + " · " + (c.title || "") + " · " + STATUS[c.status])}" aria-label="${esc((c.type || "Conteúdo") + ": " + (c.title || "sem título") + ", " + STATUS[c.status])}"><i></i>${typeIcon(c.type)}<span>${esc(c.title || c.type || "Conteúdo")}</span></button>`).join("")}</div>`;
+    }
+    const tail = (7 - ((lead + days) % 7)) % 7;
+    for (let i = 0; i < tail; i++) cells += `<div class="cal-cell out"></div>`;
+    const undated = list.filter((c) => !c.date).length;
+    return `<div class="cal"><div class="cal-head">${["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"].map((w) => `<span>${w}</span>`).join("")}</div><div class="cal-grid">${cells}</div></div>
+      ${undated ? `<p class="hint" style="margin-top:10px">${undated === 1 ? "1 conteúdo sem data definida" : undated + " conteúdos sem data definida"}: veja na lista semana a semana.</p>` : ""}`;
+  }
+
+  function weekRow(c) {
+    const d = c.date ? new Date(c.date + "T12:00:00") : null;
+    return `<button class="wk-row" data-a="open" data-id="${esc(c.id)}">
+      <span class="wk-d">${d ? `<b>${pad(d.getDate())}</b>${WD[d.getDay()]}` : "<b>—</b>s/ data"}</span>
+      <span class="wk-type">${typeIcon(c.type)}<span>${esc(c.type || "Tipo?")}</span></span>
+      <span class="wk-title${c.title ? "" : " none"}">${esc(c.title || "Título não informado")}${c.changeRequested && c.status === "em_analise" ? ' <span class="tag change">Ajuste pedido</span>' : ""}</span>
+      <span class="status ${esc(c.status)}">${STATUS[c.status]}</span></button>`;
+  }
+  function weeksHTML(planning, list) {
+    const y = planning.year, m = planning.month;
+    const first = new Date(y, m - 1, 1), last = new Date(y, m, 0);
+    const thisMon = mondayOf(new Date()).getTime(), nextMon = thisMon + 7 * 864e5;
+    let out = "", n = 0;
+    for (let mon = mondayOf(first); mon <= last; mon = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 7)) {
+      n++;
+      const sun = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + 6);
+      const a = ymd(mon), b = ymd(sun);
+      const items = list.filter((c) => c.date && c.date >= a && c.date <= b);
+      const t = mon.getTime();
+      const tag = t === thisMon ? '<span class="wk-tag now">Esta semana</span>' : t === nextMon ? '<span class="wk-tag next">Próxima semana</span>' : "";
+      const past = sun.getTime() < thisMon;
+      const pend = items.filter((c) => c.status === "em_analise").length;
+      out += `<div class="wk${past ? " past" : ""}${t === thisMon || t === nextMon ? " hot" : ""}">
+        <div class="wk-h"><b>Semana ${n}</b><span class="muted">${pad(mon.getDate())}/${pad(mon.getMonth() + 1)} – ${pad(sun.getDate())}/${pad(sun.getMonth() + 1)}</span>${tag}<span class="spacer"></span><span class="muted wk-c">${items.length ? `${items.length} ${items.length === 1 ? "conteúdo" : "conteúdos"}${pend ? ` · ${pend} em análise` : ""}` : ""}</span></div>
+        ${items.length ? `<div class="wk-list">${items.map(weekRow).join("")}</div>` : `<p class="wk-empty">Nada programado.</p>`}
+      </div>`;
+    }
+    const undated = list.filter((c) => !c.date);
+    if (undated.length) out += `<div class="wk"><div class="wk-h"><b>Sem data definida</b></div><div class="wk-list">${undated.map(weekRow).join("")}</div></div>`;
+    return `<div class="weeks">${out}</div>`;
+  }
+
+  function ringHTML(c, status, label, scope, inner) {
+    return `<button class="ring-btn" data-a="open" data-id="${esc(c.id)}" data-scope="${scope}" aria-label="${esc(label + ", " + STATUS[status])}">
+      <span class="ring ${status}"><span class="ring-in">${inner}</span></span><span class="ring-l">${esc(label)}</span></button>`;
+  }
+  function feedTab(all, client) {
+    const posts = all.filter((c) => kindOf(c) === "feed").sort((a, b) => byDate(b, a));
+    const stories = all.filter((c) => kindOf(c) === "story");
+    const hls = all.filter((c) => kindOf(c) === "destaque");
+    const groups = {}; stories.forEach((c) => { const k = c.date || "sem-data"; (groups[k] = groups[k] || []).push(c); });
+    const storyRow = Object.keys(groups).sort().map((k) => {
+      const g = groups[k], d = day(g[0].date), img = imgSrc(imagesOf(g[0])[0]);
+      const inner = img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : `<span class="ring-txt">${d ? `<b>${d.short.slice(0, 2)}</b>${d.short.slice(3)}` : "—"}</span>`;
+      return ringHTML(g[0], groupStatus(g), (d ? d.short : "Sem data") + (g.length > 1 ? ` · ${g.length}` : ""), "story", inner);
+    }).join("");
+    const hlRow = hls.map((c) => {
+      const img = imgSrc(imagesOf(c)[0]);
+      return ringHTML(c, c.status, c.title || "Destaque", "destaque", img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : `<span class="ring-ic">${I.story}</span>`);
+    }).join("");
+    const grid = posts.map((c) => {
+      const img = imgSrc(imagesOf(c)[0]);
+      return `<button class="ig-tile" data-a="open" data-id="${esc(c.id)}" data-scope="feed" aria-label="${esc((c.type || "Post") + ": " + (c.title || "") + ", " + STATUS[c.status])}">
+        ${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(c)}
+        ${c.type === "Reel" || c.type === "Carrossel" ? `<span class="ig-fmt">${typeIcon(c.type)}</span>` : ""}<span class="ig-st ${esc(c.status)}" title="${STATUS[c.status]}"></span></button>`;
+    }).join("");
+    return `<div class="ig">
+      <div class="ig-head"><span class="avatar big"><span>${esc(initials(client.company))}</span></span><div class="ig-id"><b>${esc(handleOf(client))}</b><span class="muted">${esc(client.company)}</span><span class="ig-count"><b>${posts.length}</b> posts <b>${stories.length}</b> stories <b>${hls.length}</b> destaques</span></div></div>
+      <div class="ig-sec"><div class="ig-label">Stories <span class="muted">· toque para ver</span></div>${storyRow ? `<div class="rings">${storyRow}</div>` : `<p class="wk-empty">Nenhum story neste mês.</p>`}</div>
+      <div class="ig-sec"><div class="ig-label">Destaques</div>${hlRow ? `<div class="rings">${hlRow}</div>` : `<p class="wk-empty">Nenhum destaque sugerido neste mês.</p>`}</div>
+      <div class="ig-sec"><div class="ig-label">Feed</div>${grid ? `<div class="ig-grid">${grid}</div>` : `<p class="wk-empty">Nenhum post de feed neste mês.</p>`}</div>
+    </div>`;
+  }
+
+  /* ---------------- prévias de story e destaque ---------------- */
+  function storyFrame(c, client) {
+    const imgs = imagesOf(c);
+    const i = Math.min(S.slide, Math.max(0, imgs.length - 1));
+    const src = imgSrc(imgs[i]);
+    const d = day(c.date);
+    return `<div class="story-frame">
+      ${src ? `<img src="${esc(src)}" alt="${esc(c.title || "")}" data-fallback>` : `<div class="story-mock"><span class="tag">Prévia · arte em produção</span><h3>${esc(c.title || "Story")}</h3>${c.description ? `<p>${esc(c.description)}</p>` : ""}</div>`}
+      <div class="story-top"><div class="story-bars">${(imgs.length > 1 ? imgs : [0]).map((_, k) => `<i class="${k <= i ? "on" : ""}"></i>`).join("")}</div>
+        <div class="story-user"><span class="avatar sm"><span>${esc(initials(client.company))}</span></span><b>${esc(handleOf(client))}</b><small>${d ? d.short : ""}</small></div></div>
+      ${imgs.length > 1 ? `${i > 0 ? `<button class="nav prev" data-a="slide" data-d="-1" aria-label="Anterior">${I.left}</button>` : ""}${i < imgs.length - 1 ? `<button class="nav next" data-a="slide" data-d="1" aria-label="Próxima">${I.right}</button>` : ""}` : ""}
+    </div>`;
+  }
+  function storyPreview(c, client) {
+    return `<article class="story" aria-label="Pré-visualização do story">${storyFrame(c, client)}
+      ${c.caption ? `<p class="story-cap"><span class="label">Texto do story</span>${esc(c.caption)}</p>` : ""}</article>`;
+  }
+  function highlightPreview(c, client) {
+    const img = imgSrc(imagesOf(c)[0]);
+    return `<article class="story" aria-label="Pré-visualização do destaque">
+      <div class="hl-top"><span class="ring ${esc(c.status)} lg"><span class="ring-in">${img ? `<img src="${esc(img)}" alt="" data-fallback>` : `<span class="ring-ic">${I.story}</span>`}</span></span><b>${esc(c.title || "Destaque")}</b><small class="muted">Destaque sugerido no perfil</small></div>
+      ${storyFrame(c, client)}</article>`;
+  }
+
+  /* ---------------- relatórios ---------------- */
+  function monthOptions(sel) { return MES.map((m, i) => `<option value="${i + 1}" ${sel === i + 1 ? "selected" : ""}>${m.replace(/^\w/, (x) => x.toUpperCase())}</option>`).join(""); }
+  function reportsView(data, client, isAdmin) {
+    const list = (data.reports || []).filter((r) => r.clientId === client.id).sort((a, b) => b.year - a.year || b.month - a.month || String(b.createdAt).localeCompare(String(a.createdAt)));
+    let form = "";
+    if (isAdmin) {
+      const f = S.rform;
+      form = f && f.clientId === client.id ? `<form class="card form-card" data-form="report" novalidate><h3>Novo relatório</h3>
+        <div class="grid2"><div class="field"><label for="rp-month">Mês</label><select class="select" id="rp-month" data-bind="rform.month" data-num>${monthOptions(f.month)}</select></div>
+        <div class="field"><label for="rp-year">Ano</label><input class="input" id="rp-year" type="number" data-bind="rform.year" data-num value="${esc(f.year)}"></div></div>
+        <div class="field"><label for="rp-title">Título</label><input class="input" id="rp-title" data-bind="rform.title" value="${esc(f.title)}" placeholder="Relatório de resultados · Outubro"></div>
+        <div class="field"><label for="rp-sum">Resumo para o cliente</label><textarea class="textarea" id="rp-sum" data-bind="rform.summary" placeholder="Principais números e destaques do mês.">${esc(f.summary)}</textarea></div>
+        <div class="field"><label for="rp-url">Link do relatório (Canva, Drive, Looker…)</label><input class="input" id="rp-url" type="url" data-bind="rform.url" value="${esc(f.url)}" placeholder="https://"></div>
+        ${S.info.canUploadImages ? `<div class="field"><span class="label">Ou envie o arquivo (PDF)</span><div class="row"><label class="btn btn-sm" for="rp-file">${I.upload}Escolher arquivo</label><input id="rp-file" type="file" accept="application/pdf,image/*" class="sr" data-a-change="rp-file"><span class="hint">${f.file ? esc(f.file.name) : "Nenhum arquivo"}</span></div></div>` : ""}
+        ${f.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(f.error)}</span></div>` : ""}
+        <div class="row"><button class="btn btn-primary" type="submit" ${S.busy.report ? "disabled" : ""}>${S.busy.report ? "Publicando…" : "Publicar relatório"}</button><button type="button" class="btn btn-ghost" data-a="rp-cancel">Cancelar</button></div></form>`
+        : `<div class="row" style="margin-bottom:16px"><button class="btn btn-primary btn-sm" data-a="rp-new" data-id="${esc(client.id)}">Adicionar relatório</button></div>`;
+    }
+    const cards = list.length ? `<div class="rep-list">${list.map((r) => `<article class="rep">
+        <div class="rep-h"><span class="label">${monthName(r.month, r.year)}</span>${isAdmin ? (S.ui["rpdel-" + r.id] ? `<span class="row"><button class="btn btn-danger btn-sm" data-a="rp-del-yes" data-id="${esc(r.id)}">Excluir</button><button class="btn btn-ghost btn-sm" data-a="rp-del-no" data-id="${esc(r.id)}">Cancelar</button></span>` : `<button class="btn btn-ghost btn-sm" data-a="rp-del" data-id="${esc(r.id)}">${I.trash}</button>`) : ""}</div>
+        <h3>${esc(r.title || "Relatório do mês")}</h3>${r.summary ? `<p class="rep-s">${esc(r.summary)}</p>` : ""}
+        <div class="row" style="flex-wrap:wrap">${safeUrl(r.url) ? `<a class="btn btn-primary btn-sm" href="${esc(safeUrl(r.url))}" target="_blank" rel="noopener">Abrir relatório ${I.arrow}</a>` : ""}${r.fileUrl ? `<a class="btn btn-sm" href="${esc(imgSrc(r.fileUrl))}" target="_blank" rel="noopener">Ver arquivo</a>` : ""}</div>
+      </article>`).join("")}</div>` : `<div class="empty">${I.inbox}<b>Nenhum relatório ainda</b><span>${isAdmin ? "Adicione o primeiro relatório deste cliente." : "Quando a VA Mídia publicar o relatório do mês, ele aparece aqui."}</span></div>`;
+    return form + cards;
+  }
+
+  /* ---------------- tráfego pago ---------------- */
+  const TRAFFIC_FIELDS = [["budget", "Verba"], ["period", "Período"], ["objective", "Objetivo"], ["audience", "Público"], ["campaigns", "Campanhas previstas"], ["notes", "Observações"]];
+  function trafficView(data, client, isAdmin) {
+    const list = (data.traffic || []).filter((t) => t.clientId === client.id).sort((a, b) => b.year - a.year || b.month - a.month);
+    let form = "";
+    if (isAdmin) {
+      const f = S.tform;
+      form = f && f.clientId === client.id ? `<form class="card form-card" data-form="traffic" novalidate><h3>${f.id ? "Editar plano de tráfego" : "Plano de tráfego do mês"}</h3>
+        <div class="grid2"><div class="field"><label for="tf-month">Mês</label><select class="select" id="tf-month" data-bind="tform.month" data-num>${monthOptions(f.month)}</select></div>
+        <div class="field"><label for="tf-year">Ano</label><input class="input" id="tf-year" type="number" data-bind="tform.year" data-num value="${esc(f.year)}"></div>
+        <div class="field"><label for="tf-budget">Verba</label><input class="input" id="tf-budget" data-bind="tform.budget" value="${esc(f.budget)}" placeholder="R$ 1.500 no mês"></div>
+        <div class="field"><label for="tf-period">Período</label><input class="input" id="tf-period" data-bind="tform.period" value="${esc(f.period)}" placeholder="01/11 a 30/11"></div></div>
+        <div class="field"><label for="tf-objective">Objetivo</label><input class="input" id="tf-objective" data-bind="tform.objective" value="${esc(f.objective)}" placeholder="Mensagens no WhatsApp"></div>
+        <div class="field"><label for="tf-audience">Público</label><textarea class="textarea" id="tf-audience" data-bind="tform.audience" style="min-height:70px">${esc(f.audience)}</textarea></div>
+        <div class="field"><label for="tf-campaigns">Campanhas previstas</label><textarea class="textarea" id="tf-campaigns" data-bind="tform.campaigns">${esc(f.campaigns)}</textarea></div>
+        <div class="field"><label for="tf-notes">Observações</label><textarea class="textarea" id="tf-notes" data-bind="tform.notes" style="min-height:70px">${esc(f.notes)}</textarea></div>
+        ${f.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(f.error)}</span></div>` : ""}
+        <div class="row"><button class="btn btn-primary" type="submit" ${S.busy.traffic ? "disabled" : ""}>${S.busy.traffic ? "Salvando…" : "Publicar plano"}</button><button type="button" class="btn btn-ghost" data-a="tf-cancel">Cancelar</button></div></form>`
+        : `<div class="row" style="margin-bottom:16px"><button class="btn btn-primary btn-sm" data-a="tf-new" data-id="${esc(client.id)}">Novo plano do mês</button></div>`;
+    }
+    const cards = list.length ? `<div class="rep-list">${list.map((t) => `<article class="rep">
+        <div class="rep-h"><span class="label">Tráfego pago · ${monthName(t.month, t.year)}</span>${isAdmin ? `<button class="btn btn-ghost btn-sm" data-a="tf-edit" data-id="${esc(t.id)}">${I.edit}Editar</button>` : ""}</div>
+        <dl class="tf">${TRAFFIC_FIELDS.filter(([k]) => String(t[k] || "").trim()).map(([k, l]) => `<div class="${k === "campaigns" || k === "notes" || k === "audience" ? "full" : ""}"><dt>${l}</dt><dd>${esc(t[k])}</dd></div>`).join("")}</dl>
+      </article>`).join("")}</div>` : `<div class="empty">${I.inbox}<b>Nenhum plano de tráfego ainda</b><span>${isAdmin ? "Crie o plano do mês para o cliente acompanhar." : "Quando a VA Mídia publicar o plano de tráfego do mês, ele aparece aqui."}</span></div>`;
+    return form + cards;
+  }
+
 
   /* ---------------- detalhe do conteúdo ---------------- */
   function currentContext() {
@@ -1755,7 +2130,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const c = data.contents.find((x) => x.id === S.open.id);
     if (!c) return null;
     const client = isAdmin ? (data.clients.find((x) => x.id === c.clientId) || { company: "", handle: "" }) : (data.client || S.session.client);
-    const siblings = data.contents.filter((x) => x.planningId === c.planningId).sort(byDate);
+    let siblings = data.contents.filter((x) => x.planningId === c.planningId).sort(byDate);
+    if (S.open.scope) { const sc = siblings.filter((x) => kindOf(x) === S.open.scope); if (sc.some((x) => x.id === c.id)) siblings = S.open.scope === "feed" ? sc.sort((a, b) => byDate(b, a)) : sc; }
     const filtered = S.open.filter && S.open.filter !== "all" ? siblings.filter((x) => x.status === S.open.filter) : siblings;
     const nav = filtered.some((x) => x.id === c.id) ? filtered : siblings;
     const comments = (data.comments || []).filter((m) => m.contentId === c.id).sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
@@ -1770,13 +2146,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const prev = nav[idx - 1], next = nav[idx + 1];
     return `<div class="overlay" data-a="overlay"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dt-title">
       <div class="sheet-head">
-        <button class="btn btn-ghost btn-sm" data-a="close" id="dt-close">${I.back}<span>Voltar ao planejamento</span></button>
+        <button class="btn btn-ghost btn-sm" data-a="close" id="dt-close">${I.back}<span>Voltar</span></button>
         <span class="t">Conteúdo #${pad(c.order || idx + 1)} · ${d ? d.full : "Data não informada"}${isAdmin ? " · " + esc(client.company) : ""}</span>
         <button class="icon-btn" data-a="nav" data-id="${prev ? esc(prev.id) : ""}" ${prev ? "" : "disabled style=\"opacity:.35\""} aria-label="Conteúdo anterior">${I.left}</button>
         <button class="icon-btn" data-a="nav" data-id="${next ? esc(next.id) : ""}" ${next ? "" : "disabled style=\"opacity:.35\""} aria-label="Próximo conteúdo">${I.right}</button>
       </div>
       <div class="sheet-body">
-        <div>${postPreview(c, client)}</div>
+        <div>${kindOf(c) === "story" ? storyPreview(c, client) : kindOf(c) === "destaque" ? highlightPreview(c, client) : postPreview(c, client)}</div>
         <div class="side">
           <h2 id="dt-title" class="${c.title ? "" : "none"}">${esc(c.title || "Título não informado")}</h2>
           ${isAdmin ? adminStatePanel(ctx) : clientStateCard(ctx)}
@@ -1973,19 +2349,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:760px}
     const a = S.adata;
     const cl = a.clients.find((x) => x.id === S.adminClientId);
     if (!cl) { S.adminClientId = null; return viewOverview(); }
-    const key = "admin-" + cl.id;
-    const p = pickPlanning(a, cl.id, key);
-    const head = `<button class="btn btn-ghost btn-sm" data-a="aback">${I.back}Todos os clientes</button>
-      <div class="greet" style="margin-top:14px"><div><h1>${esc(cl.company)}</h1><p class="sub">${cl.handle ? "@" + esc(cl.handle) + " · " : ""}${p ? "Planejamento · <b style=\"color:var(--text)\">" + monthName(p.month, p.year) + "</b>" : "Sem planejamento"}${cl.demo ? ' <span class="tag demo">Demonstração</span>' : ""}</p></div>
-      <div class="row" style="flex-wrap:wrap">${p ? monthChips(planningsFor(a, cl.id), p, key) : ""}<button class="btn btn-primary btn-sm" data-a="import-for" data-id="${esc(cl.id)}">${I.upload}Importar planejamento</button></div></div>`;
-    if (!p) return head + `<div class="empty" style="margin-top:24px">${I.inbox}<b>Nenhum planejamento para este cliente</b><span>Cole o planejamento do mês na aba Importar e o portal monta o feed.</span></div>`;
-    const all = a.contents.filter((x) => x.planningId === p.id).sort(byDate);
-    const shown = S.filter === "all" ? all : all.filter((x) => x.status === S.filter);
-    const k = counts(all);
-    return head + `${k.change ? `<div class="callout" style="border-color:rgba(232,131,111,.45);background:linear-gradient(90deg,rgba(232,131,111,.1),transparent 70%)"><span class="ic" style="background:var(--danger);color:#1a0d09">${I.edit}</span><span class="tx"><b>${k.change === 1 ? "1 alteração pedida pelo cliente" : k.change + " alterações pedidas pelo cliente"}</b><span>Abra o conteúdo para ler o pedido e responder.</span></span></div>` : ""}
-      ${summaryBar(k)}
-      <div class="feed-head"><h2>${S.filter === "all" ? "Feed do mês" : STATUS[S.filter]} · ${shown.length}</h2></div>
-      ${feedHTML(shown, a.comments.filter((m) => m.clientId === cl.id), EMPTY[S.filter])}`;
+    const ws = clientWorkspace(a, cl, true, "admin-" + cl.id);
+    return `<button class="btn btn-ghost btn-sm" data-a="aback">${I.back}Todos os clientes</button>
+      <div class="greet" style="margin-top:14px"><div><h1>${esc(cl.company)}</h1><p class="sub">${cl.handle ? "@" + esc(cl.handle) + " · " : ""}${ws.planning ? "Planejamento · <b style=\"color:var(--text)\">" + monthName(ws.planning.month, ws.planning.year) + "</b>" : "Sem planejamento"}${cl.demo ? ' <span class="tag demo">Demonstração</span>' : ""}</p></div>
+      <button class="btn btn-primary btn-sm" data-a="import-for" data-id="${esc(cl.id)}">${I.upload}Importar planejamento</button></div>
+      ${ws.html}`;
   }
 
   /* ---------------- clientes ---------------- */
@@ -2181,7 +2549,7 @@ Imagem:`;
     return errMsg(e);
   }
   function openClient(session) {
-    S.session = session; S.view = "client"; S.filter = "all"; S.cdata = null; resetUI();
+    S.session = session; S.view = "client"; S.filter = "all"; S.ctab = "overview"; S.cdata = null; resetUI();
     if (S.cunsub) S.cunsub();
     S.cunsub = S.store.watchClient(session, (d) => { S.cdata = d; if (d.client && d.client.status === "inativo") { logout("Este acesso foi pausado pela VA Mídia."); return; } render(); }, (e) => toast(dbErr(e), "err"));
     render();
@@ -2191,13 +2559,13 @@ Imagem:`;
     S.store.clientLogout(); S.session = null; S.cdata = null; S.open = null;
     S.login = { email: "", code: "", error: msg || "" }; S.view = "login"; render();
   }
-  function openContent(id, from) {
-    S.open = { id, from, filter: S.filter, returnFocus: id }; resetUI(); render();
+  function openContent(id, from, scope) {
+    S.open = { id, from, filter: S.ctab === "overview" ? S.filter : "all", scope: scope || null, returnFocus: id }; resetUI(); render();
     const b = $("#dt-close"); if (b) b.focus({ preventScroll: true });
   }
   function closeContent() {
     const back = S.open && S.open.returnFocus; S.open = null; resetUI(); render();
-    if (back) { const t = document.querySelector(`.tile[data-id="${CSS.escape(back)}"]`); if (t) t.focus({ preventScroll: true }); }
+    if (back) { const t = document.querySelector(`[data-a="open"][data-id="${CSS.escape(back)}"]`); if (t) t.focus({ preventScroll: true }); }
   }
 
   const actions = {
@@ -2208,7 +2576,16 @@ Imagem:`;
     logout: () => logout(),
     filter: (el) => { S.filter = el.dataset.f; render(); },
     planning: (el) => { S.planningId[el.dataset.key] = el.dataset.id; S.filter = "all"; render(); },
-    open: (el) => openContent(el.dataset.id, S.view === "admin" ? "admin" : "client"),
+    open: (el) => openContent(el.dataset.id, S.view === "admin" ? "admin" : "client", el.dataset.scope),
+    ctab: (el) => { S.ctab = el.dataset.t; S.filter = "all"; render(); },
+    "rp-new": (el) => { const now = new Date(); S.rform = { clientId: el.dataset.id, month: now.getMonth() + 1, year: now.getFullYear(), title: "", summary: "", url: "", file: null, error: "" }; render(); },
+    "rp-cancel": () => { S.rform = null; render(); },
+    "rp-del": (el) => { S.ui["rpdel-" + el.dataset.id] = true; render(); },
+    "rp-del-no": (el) => { S.ui["rpdel-" + el.dataset.id] = false; render(); },
+    "rp-del-yes": async (el) => { try { await S.store.deleteReport(el.dataset.id); toast("Relatório excluído."); } catch (e) { toast(errMsg(e), "err"); } },
+    "tf-new": (el) => { const now = new Date(); S.tform = { clientId: el.dataset.id, month: now.getMonth() + 1, year: now.getFullYear(), budget: "", period: "", objective: "", audience: "", campaigns: "", notes: "", error: "" }; render(); },
+    "tf-edit": (el) => { const t = S.adata.traffic.find((x) => x.id === el.dataset.id); S.tform = Object.assign({ error: "" }, t); render(); scrollTo(0, 0); },
+    "tf-cancel": () => { S.tform = null; render(); },
     close: () => closeContent(),
     overlay: (el, ev) => { if (ev.target === el) closeContent(); },
     nav: (el) => { if (!el.dataset.id) return; S.open.id = el.dataset.id; resetUI(); render(); const ov = $(".overlay"); if (ov) ov.scrollTop = 0; },
@@ -2248,7 +2625,7 @@ Imagem:`;
     // admin
     atab: (el) => { S.adminTab = el.dataset.t; if (el.dataset.t === "overview") S.adminClientId = null; S.filter = "all"; render(); scrollTo(0, 0); },
     "admin-exit": async () => { if (S.aunsub) S.aunsub(); S.aunsub = null; S.adata = null; if (S.store.adminLogout) await S.store.adminLogout(); S.view = "home"; render(); },
-    aclient: (el) => { S.adminClientId = el.dataset.id; S.adminTab = "overview"; S.filter = "all"; render(); scrollTo(0, 0); },
+    aclient: (el) => { S.adminClientId = el.dataset.id; S.adminTab = "overview"; S.filter = "all"; S.ctab = "overview"; S.rform = null; S.tform = null; render(); scrollTo(0, 0); },
     aback: () => { S.adminClientId = null; S.filter = "all"; render(); },
     "note-open": async (el) => {
       const n = S.adata.notifications.find((x) => x.id === el.dataset.id); if (!n) return;
@@ -2434,6 +2811,7 @@ ${im.text.slice(0, 50000)}
     if (a === "imp-files") { S.imp.files = S.imp.files.concat(Array.from(t.files || [])); recomputeMerge(); render(); }
     if (a === "imp-item-file") { const i = +t.dataset.i; const fs = Array.from(t.files || []); S.imp.itemFiles[i] = fs; S.imp.parsed.items[i]._files = fs; recomputeMerge(); render(); }
     if (a === "imp-choice") { S.imp.choices[+t.dataset.i] = t.value; }
+    if (a === "rp-file" && S.rform) { S.rform.file = t.files[0] || null; render(); }
     if (a === "swap-image" && t.files[0]) {
       try { const ref = await S.store.uploadImage(t.files[0]); await S.store.setContentImage(S.open.id, ref); toast("Imagem atualizada."); } catch (e) { toast(errMsg(e), "err"); }
     }
@@ -2453,6 +2831,31 @@ ${im.text.slice(0, 50000)}
       S.busy.alogin = true; S.alogin.error = ""; render();
       try { const acc = await S.store.adminLogin(S.alogin.email, S.alogin.password); S.busy.alogin = false; S.alogin = { email: "", password: "", error: "" }; S.adminAccess = acc; if (acc.ok) enterAdmin(); else { S.view = "denied"; render(); } }
       catch (e) { S.busy.alogin = false; S.alogin.error = errMsg(e); render(); }
+    }
+    if (f === "report") {
+      const r = S.rform;
+      if (!String(r.title || "").trim() && !String(r.summary || "").trim()) { r.error = "Dê um título ou escreva um resumo."; render(); return; }
+      if (r.url && !/^https?:\/\//i.test(r.url.trim())) { r.error = "O link precisa começar com https://"; render(); return; }
+      if (!r.url && !r.file && !String(r.summary || "").trim()) { r.error = "Inclua um link, um arquivo ou um resumo."; render(); return; }
+      S.busy.report = true; r.error = ""; render();
+      try {
+        const fileUrl = r.file ? await S.store.uploadImage(r.file) : "";
+        await S.store.saveReport({ clientId: r.clientId, month: r.month, year: r.year, title: r.title.trim(), summary: r.summary.trim(), url: (r.url || "").trim(), fileUrl });
+        S.rform = null; toast("Relatório publicado para o cliente.");
+      } catch (e) { r.error = errMsg(e); }
+      S.busy.report = false; render();
+    }
+    if (f === "traffic") {
+      const t = S.tform;
+      S.busy.traffic = true; t.error = ""; render();
+      try {
+        const data = { id: t.id, clientId: t.clientId, month: t.month, year: t.year };
+        TRAFFIC_FIELDS.forEach(([k]) => (data[k] = String(t[k] || "").trim()));
+        if (!TRAFFIC_FIELDS.some(([k]) => data[k])) throw new ST.PortalError("empty", "Preencha pelo menos um campo do plano.");
+        await S.store.saveTraffic(data);
+        S.tform = null; toast("Plano de tráfego publicado.");
+      } catch (e) { t.error = errMsg(e); }
+      S.busy.traffic = false; render();
     }
     if (f === "client") {
       S.busy.client = true; S.clientForm.error = ""; render();
