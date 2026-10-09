@@ -2909,15 +2909,24 @@ Imagem:`;
     if (own && own.length) return { files: own, urls: [], missing: [] };
     const files = [], urls = [], missing = [];
     item.images.forEach((x) => { if (isUrlish(x)) urls.push(x); else { const f = fileFor(x); if (f) files.push(f); else missing.push(x); } });
+    // "Imagem:" vazio -> liga pelo número do conteúdo no nome do arquivo (ex.: 01.jpg, boxfrux-01-ref-2.jpg, 1 - capa.png)
+    if (!item.images.length && /^\d+$/.test(String(item.ref || ""))) {
+      const n = +item.ref;
+      S.imp.files.forEach((f) => { const m = looseName(f.name).match(/\d+/); if (m && +m[0] === n) files.push(f); });
+      files.sort((a, b) => a.name.localeCompare(b.name, "pt", { numeric: true }));
+      if (files.length) return { files, urls, missing, byNumber: true };
+    }
     return { files, urls, missing };
   }
   function imgReport(im) {
     if (!im.parsed || !im.parsed.items) return "";
-    let cited = 0; const miss = [];
-    im.parsed.items.forEach((it, i) => { const r = resolveItemImages(i, it); cited += r.files.length + r.missing.length; miss.push(...r.missing); });
-    if (!cited) return im.files.length ? `<p class="img-rep warn">${I.alert} O texto não cita nenhuma imagem, então as fotos não foram ligadas aos conteúdos. Use o botão “Imagem” em cada conteúdo da prévia, ou acrescente no texto a linha “Imagem: nome-do-arquivo.jpg”.</p>` : "";
-    if (!miss.length) return `<p class="img-rep ok">${I.check} ${cited === 1 ? "A imagem citada no texto foi encontrada" : `As ${cited} imagens citadas no texto foram encontradas`}.</p>`;
-    return `<p class="img-rep warn">${I.alert} ${cited - miss.length} de ${cited} imagens encontradas. Faltam: ${miss.slice(0, 6).map((m) => `<code>${esc(m)}</code>`).join(", ")}${miss.length > 6 ? ` e mais ${miss.length - 6}` : ""}. Selecione esses arquivos ou use o botão “Imagem” no conteúdo, na prévia abaixo.</p>`;
+    let cited = 0, byNum = 0; const miss = [];
+    im.parsed.items.forEach((it, i) => { const r = resolveItemImages(i, it); if (r.byNumber) { byNum++; return; } cited += r.files.length + r.missing.length; miss.push(...r.missing); });
+    const numNote = byNum ? `<p class="img-rep ok">${I.check} ${byNum === 1 ? "1 conteúdo recebeu imagem" : byNum + " conteúdos receberam imagem"} pelo número no nome do arquivo (ex.: 01.jpg → conteúdo 1). Confira as miniaturas na prévia.</p>` : "";
+    if (byNum && !cited) return numNote;
+    if (!cited) return im.files.length ? `<p class="img-rep warn">${I.alert} O texto não cita nenhuma imagem, então as fotos não foram ligadas aos conteúdos. Use o botão “Imagem” em cada conteúdo da prévia, ou acrescente no texto a linha “Imagem: nome-do-arquivo.jpg”, ou comece o nome de cada arquivo com o número do conteúdo (01.jpg, 02.jpg…).</p>` : "";
+    if (!miss.length) return numNote + `<p class="img-rep ok">${I.check} ${cited === 1 ? "A imagem citada no texto foi encontrada" : `As ${cited} imagens citadas no texto foram encontradas`}.</p>`;
+    return numNote + `<p class="img-rep warn">${I.alert} ${cited - miss.length} de ${cited} imagens encontradas. Faltam: ${miss.slice(0, 6).map((m) => `<code>${esc(m)}</code>`).join(", ")}${miss.length > 6 ? ` e mais ${miss.length - 6}` : ""}. Selecione esses arquivos ou use o botão “Imagem” no conteúdo, na prévia abaixo.</p>`;
   }
   /* ---------- arquivos da importação: imagens, pastas e .zip (texto + imagens) ---------- */
   const IMG_RE = /\.(jpe?g|png|webp|gif|svg|avif)$/i, TXT_RE = /\.(txt|md|csv|tsv|json)$/i;
