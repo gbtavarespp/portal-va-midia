@@ -2915,9 +2915,60 @@ Imagem:`;
     if (!im.parsed || !im.parsed.items) return "";
     let cited = 0; const miss = [];
     im.parsed.items.forEach((it, i) => { const r = resolveItemImages(i, it); cited += r.files.length + r.missing.length; miss.push(...r.missing); });
-    if (!cited) return "";
+    if (!cited) return im.files.length ? `<p class="img-rep warn">${I.alert} O texto não cita nenhuma imagem, então as fotos não foram ligadas aos conteúdos. Use o botão “Imagem” em cada conteúdo da prévia, ou acrescente no texto a linha “Imagem: nome-do-arquivo.jpg”.</p>` : "";
     if (!miss.length) return `<p class="img-rep ok">${I.check} ${cited === 1 ? "A imagem citada no texto foi encontrada" : `As ${cited} imagens citadas no texto foram encontradas`}.</p>`;
     return `<p class="img-rep warn">${I.alert} ${cited - miss.length} de ${cited} imagens encontradas. Faltam: ${miss.slice(0, 6).map((m) => `<code>${esc(m)}</code>`).join(", ")}${miss.length > 6 ? ` e mais ${miss.length - 6}` : ""}. Selecione esses arquivos ou use o botão “Imagem” no conteúdo, na prévia abaixo.</p>`;
+  }
+  /* ---------- arquivos da importação: imagens, pastas e .zip (texto + imagens) ---------- */
+  const IMG_RE = /\.(jpe?g|png|webp|gif|svg|avif)$/i, TXT_RE = /\.(txt|md|csv|tsv|json)$/i;
+  const MIME = { jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp", gif: "image/gif", svg: "image/svg+xml", avif: "image/avif" };
+  async function readEntries(entries) {
+    const out = [];
+    const walk = async (e) => {
+      if (e.isFile) { out.push(await new Promise((res, rej) => e.file(res, rej))); return; }
+      if (e.isDirectory) { const r = e.createReader(); let batch; do { batch = await new Promise((res, rej) => r.readEntries(res, rej)); for (const x of batch) await walk(x); } while (batch.length); }
+    };
+    for (const e of entries) { try { await walk(e); } catch (err) {} }
+    return out;
+  }
+  async function unzip(file) {
+    const buf = new Uint8Array(await file.arrayBuffer()), dv = new DataView(buf.buffer);
+    let eocd = -1; for (let i = buf.length - 22; i >= Math.max(0, buf.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    if (eocd < 0) throw new Error("zip inválido");
+    const n = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true); const out = [];
+    const dec = new TextDecoder();
+    for (let k = 0; k < n && dv.getUint32(p, true) === 0x02014b50; k++) {
+      const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true);
+      const name = dec.decode(buf.subarray(p + 46, p + 46 + nl)); p += 46 + nl + xl + cl;
+      const base = name.split("/").pop();
+      if (!base || name.endsWith("/") || /(^|\/)(__MACOSX|\.)/.test(name) || !(IMG_RE.test(base) || TXT_RE.test(base))) continue;
+      const start = lo + 30 + dv.getUint16(lo + 26, true) + dv.getUint16(lo + 28, true), raw = buf.slice(start, start + csize);
+      let data;
+      if (method === 0) data = raw;
+      else if (method === 8 && typeof DecompressionStream !== "undefined") data = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
+      else continue;
+      const ext = (base.match(/\.([a-z0-9]+)$/i) || [, ""])[1].toLowerCase();
+      out.push(new File([data], base, { type: MIME[ext] || (TXT_RE.test(base) ? "text/plain" : "") }));
+    }
+    return out;
+  }
+  async function addImportFiles(list) {
+    const im = S.imp; if (!im) return;
+    let imgs = [], texts = [], bad = 0;
+    for (const f of list) {
+      if (/\.zip$/i.test(f.name) || f.type === "application/zip" || f.type === "application/x-zip-compressed") {
+        try { const inner = await unzip(f); inner.forEach((x) => (IMG_RE.test(x.name) ? imgs : texts).push(x)); } catch (e) { bad++; }
+      } else if (/^image\//.test(f.type) || IMG_RE.test(f.name)) imgs.push(f);
+      else if (TXT_RE.test(f.name)) texts.push(f);
+    }
+    const have = new Set(im.files.map((f) => f.name + "|" + f.size));
+    im.files = im.files.concat(imgs.filter((f) => { const k = f.name + "|" + f.size; if (have.has(k)) return false; have.add(k); return true; }));
+    let msg = imgs.length ? (imgs.length === 1 ? "1 imagem adicionada." : imgs.length + " imagens adicionadas.") : "";
+    if (texts.length && !String(im.text || "").trim()) { im.text = await texts[0].text(); msg += " Texto do planejamento carregado."; }
+    if (bad) toast("Não consegui abrir o .zip. Descompacte e selecione as imagens.", "err");
+    else if (!imgs.length && !texts.length) toast("Nenhuma imagem encontrada nos arquivos.", "err");
+    else toast(msg.trim());
+    recomputeMerge(); render();
   }
   function viewImport() {
     const a = S.adata, im = S.imp;
@@ -2927,8 +2978,8 @@ Imagem:`;
         <div class="row" style="justify-content:space-between;flex-wrap:wrap"><h3>1. Cole o planejamento do mês</h3><button class="btn btn-ghost btn-sm" data-a="imp-sample">Ver exemplo de formato</button></div>
         <p class="hint">Aceita texto com campos (Data, Tipo, Título, Objetivo, Descrição, Legenda, Imagem), JSON ou tabela copiada da planilha. Nada é inventado: o que não vier no texto fica em branco.</p>
         <textarea class="textarea" id="imp-text" data-bind="imp.text" style="min-height:280px;font-family:var(--f-mono);font-size:13px" placeholder="CLIENTE:\nEmpresa X\n\nMÊS:\nOutubro de 2026\n\n1.\nData: 03/10\nTipo: Reel\nTítulo: …">${esc(im.text)}</textarea>
-        <div class="drop" id="imp-drop" data-drop="imp">${I.upload}<span>Arraste as imagens do planejamento aqui ou <label for="imp-files" class="linkish" style="cursor:pointer">escolha os arquivos</label>.<br><span class="hint">O nome do arquivo liga a imagem ao conteúdo (ex.: “Imagem: capa.jpg”).</span></span>
-          <input id="imp-files" type="file" accept="image/*" multiple class="sr" data-a-change="imp-files">
+        <div class="drop" id="imp-drop" data-drop="imp">${I.upload}<span>Arraste aqui as imagens, a pasta de imagens ou o <b>.zip</b> do planejamento, ou <label for="imp-files" class="linkish" style="cursor:pointer">escolha os arquivos</label>.<br><span class="hint">O nome do arquivo liga a imagem ao conteúdo (ex.: “Imagem: capa.jpg”). No .zip, o texto também é carregado.</span></span>
+          <input id="imp-files" type="file" accept="image/*,.zip,application/zip" multiple class="sr" data-a-change="imp-files">
           ${im.files.length ? `<div class="files">${im.files.map((f) => `<span title="${esc(f.name)}">${esc(f.name)}</span>`).join("")}</div><button class="btn btn-ghost btn-sm" data-a="imp-clear-files">Limpar arquivos</button>` : ""}${imgReport(im)}</div>
         ${im.error ? `<div class="form-error" role="alert">${I.alert}<span>${esc(im.error)}</span></div>` : ""}
         <div class="row" style="flex-wrap:wrap"><button class="btn btn-primary" data-a="imp-parse">Interpretar planejamento</button>
@@ -3285,7 +3336,7 @@ ${im.text.slice(0, 50000)}
     if (t.dataset.bind && t.tagName === "SELECT") { setPath(t.dataset.bind, t.dataset.num !== undefined ? +t.value || 0 : t.value); if (t.dataset.recompute !== undefined) recomputeMerge(); render(); return; }
     if (t.dataset.bind && t.dataset.recompute !== undefined) { recomputeMerge(); render(); return; }
     const a = t.dataset.aChange; if (!a) return;
-    if (a === "imp-files") { S.imp.files = S.imp.files.concat(Array.from(t.files || [])); recomputeMerge(); render(); }
+    if (a === "imp-files") { const fs = Array.from(t.files || []); t.value = ""; await addImportFiles(fs); }
     if (a === "imp-item-file") { const i = +t.dataset.i; const fs = Array.from(t.files || []); S.imp.itemFiles[i] = fs; S.imp.parsed.items[i]._files = fs; recomputeMerge(); render(); }
     if (a === "imp-choice") { S.imp.choices[+t.dataset.i] = t.value; }
     if (a === "imp-rm") { S.imp.removeOld = t.checked; render(); }
@@ -3355,8 +3406,9 @@ ${im.text.slice(0, 50000)}
   document.addEventListener("drop", (ev) => {
     const d = ev.target.closest && ev.target.closest("[data-drop]"); if (!d) return;
     ev.preventDefault(); d.classList.remove("over");
-    const files = Array.from(ev.dataTransfer.files || []).filter((f) => /^image\//.test(f.type) || /\.(jpe?g|png|webp|gif|svg)$/i.test(f.name));
-    S.imp.files = S.imp.files.concat(files); recomputeMerge(); render();
+    const dt = ev.dataTransfer, entries = Array.from(dt.items || []).map((it) => it.webkitGetAsEntry && it.webkitGetAsEntry()).filter(Boolean);
+    if (entries.some((e) => e.isDirectory)) readEntries(entries).then(addImportFiles);
+    else addImportFiles(Array.from(dt.files || []));
   });
   // imagem quebrada -> aviso visual
   document.addEventListener("error", (ev) => {
