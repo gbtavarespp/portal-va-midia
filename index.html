@@ -868,6 +868,19 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .rich h5:first-child{margin-top:0}
 .rich li .cont{display:block;color:var(--muted);font-size:13.5px}
 
+/* ---------- ajustes da VA Mídia (v11) ---------- */
+.tag.upd{background:rgba(110,214,160,.12);color:#7fd6a4;border:1px solid rgba(110,214,160,.35)}
+.upd-note{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:var(--radius);background:rgba(110,214,160,.08);border:1px solid rgba(110,214,160,.3);font-size:14px;line-height:1.5}
+.upd-note svg{width:18px;height:18px;flex:none;color:#7fd6a4;margin-top:2px}
+.upd-note em{display:block;font-style:normal;margin:4px 0;padding-left:10px;border-left:2px solid rgba(110,214,160,.5);color:var(--text)}
+.upd-box{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:var(--radius);border:1px dashed rgba(110,214,160,.4);background:rgba(110,214,160,.04)}
+.upd-box > label{font-weight:600;font-size:14px}
+.upd-box .hint svg{width:13px;height:13px;vertical-align:-2px;color:#7fd6a4}
+.slim.upd{border-color:rgba(110,214,160,.4);background:linear-gradient(90deg,rgba(110,214,160,.1),transparent 70%)}
+.slim.upd .okdot{color:#7fd6a4}
+.cal-chip.upd{box-shadow:inset 0 0 0 1px rgba(110,214,160,.6)}
+.ig-tile.upd::after{content:"Atualizado";position:absolute;left:6px;bottom:6px;font:600 9.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 6px;border-radius:6px;background:rgba(14,30,22,.85);color:#7fd6a4;border:1px solid rgba(110,214,160,.45);z-index:2}
+
 </style>
 <div id="app" aria-live="polite"></div>
 <div id="modal"></div>
@@ -1332,6 +1345,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   /* ============================================================
      ArtifactStore — banco do Claude
      ============================================================ */
+  // "ajuste" feito pela VA Mídia: registra no histórico (o cliente vê a etiqueta "Atualizado" até aprovar ou pedir outra alteração)
+  function ajustePatch(c, note) {
+    const at = nowISO(), back = c.status === "aprovado";
+    const entry = { status: back ? "em_analise" : c.status, at, by: "VA Mídia", kind: "ajuste", note: String(note || "").trim().slice(0, 600) };
+    const patch = { changeRequested: false, updatedAt: at, history: (c.history || []).concat(entry) };
+    if (back) { patch.status = "em_analise"; patch.approvedAt = null; }
+    return patch;
+  }
   class ArtifactStore {
     constructor(db, caps) {
       this.db = db; this.user = caps.user; this.assets = caps.assets; this.sample = caps.sample;
@@ -1439,6 +1460,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       await ref.update(statusPatch(s.data(), status));
     }
     async resolveChange(contentId) { await this.db.doc("contents/" + contentId).update({ changeRequested: false, updatedAt: nowISO() }); }
+    async markUpdated(contentId, note) {
+      const ref = this.db.doc("contents/" + contentId); const snap = await ref.get();
+      if (!snap.exists) throw new PortalError("not_found", "Conteúdo não encontrado.");
+      await ref.update(ajustePatch(snap.data(), note));
+    }
     async agencyComment(contentId, text) {
       const t = checkText(text);
       const s = await this.db.doc("contents/" + contentId).get();
@@ -1599,6 +1625,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     watchAdmin(cb) { return this._on(() => cb({ clients: this.d.clients, vault: this.d.vault, plannings: this.d.plannings, contents: this.d.contents, comments: this.d.comments, notifications: this.d.notifications, reports: this.d.reports, traffic: this.d.traffic })); }
     async setStatus(id, status) { const c = this.d.contents.find((x) => x.id === id); if (!c || c.status === status) return; this._replace(id, statusPatch(c, status)); this._emit(); }
     async resolveChange(id) { this._replace(id, { changeRequested: false }); this._emit(); }
+    async markUpdated(id, note) { const c = this.d.contents.find((x) => x.id === id); if (!c) throw new PortalError("not_found", "Conteúdo não encontrado."); this._replace(id, ajustePatch(c, note)); this._emit(); }
     async agencyComment(id, text) { const t = checkText(text); const c = this.d.contents.find((x) => x.id === id); this.d.comments = this.d.comments.concat({ id: uid("cm-"), contentId: id, clientId: c.clientId, planningId: c.planningId, authorRole: "agency", authorName: "VA Mídia", kind: "comment", message: t, createdAt: nowISO() }); this._emit(); }
     async markRead(ids) { this.d.notifications = this.d.notifications.map((n) => (ids.includes(n.id) ? Object.assign({}, n, { read: true }) : n)); this._emit(); }
     async setContentImage(id, ref) { this._replace(id, { image: ref, images: [] }); this._emit(); }
@@ -1784,6 +1811,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     }
     async setStatus(id, status) { const c = await this._getContent(id); if (c.status === status) return; await this._updContent(id, statusPatch(c, status)); this._after(); }
     async resolveChange(id) { await this._updContent(id, { changeRequested: false, updatedAt: nowISO() }); this._after(); }
+    async markUpdated(id, note) { const c = await this._getContent(id); await this._updContent(id, ajustePatch(c, note)); this._after(); }
     async agencyComment(id, text) { const t = checkText(text); const c = await this._getContent(id); const { error } = await this.sb.from("comments").insert({ content_id: id, client_id: c.clientId, planning_id: c.planningId, author_role: "agency", author_name: "VA Mídia", kind: "comment", message: t }); if (error) throw new PortalError("server", error.message); this._after(); }
     async markRead(ids) { if (!ids.length) return; await this.sb.from("notifications").update({ read: true }).in("id", ids); this._after(); }
     async setContentImage(id, ref) { await this._updContent(id, { image: ref, images: [], updatedAt: nowISO() }); this._after(); }
@@ -2185,7 +2213,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 
   /* ---------------- central de conteúdos e painel ---------------- */
   const TYPE_FILTERS = [["all", "Todos"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Publi", "Publis"], ["Story", "Stories"], ["Destaque", "Destaques"]];
-  const matchType = (c, f) => f === "all" || (f === "Story" ? kindOf(c) === "story" : f === "Destaque" ? kindOf(c) === "destaque" : f === "Post" ? kindOf(c) === "feed" && c.type !== "Reel" && c.type !== "Carrossel" && c.type !== "Publi" : c.type === f);
+  const lastAjuste = (c) => { const h = c.history || []; const e = h[h.length - 1]; return e && e.kind === "ajuste" ? e : null; };
+  const isUpdated = (c) => c.status === "em_analise" && !c.changeRequested && !!lastAjuste(c);
+  const updTag = (c) => isUpdated(c) ? ' <span class="tag upd">Atualizado</span>' : "";
+  const matchType = (c, f) => f === "all" || f === "upd" ? (f === "all" || isUpdated(c)) : (f === "Story" ? kindOf(c) === "story" : f === "Destaque" ? kindOf(c) === "destaque" : f === "Post" ? kindOf(c) === "feed" && c.type !== "Reel" && c.type !== "Carrossel" && c.type !== "Publi" : c.type === f);
   function typeChips(key, list) {
     const cur = S.tf[key] || "all";
     return `<div class="fchips" role="group" aria-label="Tipo de conteúdo">${TYPE_FILTERS.map(([k, l]) => {
@@ -2218,7 +2249,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
           <span class="dc-top">${d ? `${WD[d.getDay()]} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}` : ""} · ${typeIcon(c.type)} ${esc(c.type || "")}</span>
           <b class="${c.title ? "" : "none"}">${esc(c.title || "Título não informado")}</b>
           ${cl ? `<span class="dc-cl">${esc(cl.company)}</span>` : ""}
-          ${c.changeRequested && c.status === "em_analise" ? '<span class="tag change">Ajuste pedido</span>' : ""}
+          ${c.changeRequested && c.status === "em_analise" ? '<span class="tag change">Ajuste pedido</span>' : ""}${updTag(c)}
         </button>
         ${nx ? `<button class="btn btn-sm dc-next" data-a="quick-status" data-id="${esc(c.id)}" data-s="${nx[0]}" ${S.busy["q-" + c.id] ? "disabled" : ""}>${nx[1]} ${I.arrow}</button>` : ""}
       </div>`;
@@ -2271,7 +2302,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       <span class="cc-media">${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(c)}<span class="cc-st ${esc(c.status)}"><i></i>${STATUS[c.status]}</span></span>
       <span class="cc-body"><span class="cc-top">${typeIcon(c.type)}<span>${esc(TYPE_NAME(c.type))}</span><span class="cc-date">${d ? `${WD[d.getDay()]} ${pad(d.getDate())}/${pad(d.getMonth() + 1)}` : "Sem data"}</span></span>
       <b class="${c.title ? "" : "none"}">${esc(c.title || "Título não informado")}</b>
-      ${c.changeRequested && c.status === "em_analise" ? '<span class="tag change">Ajuste pedido</span>' : ""}</span>
+      ${c.changeRequested && c.status === "em_analise" ? '<span class="tag change">Ajuste pedido</span>' : ""}${updTag(c)}</span>
     </button>`;
   }
   function weeksCards(list, planning, scope) {
@@ -2285,7 +2316,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     const posts = all.filter((c) => kindOf(c) === "feed").length, st = all.filter((c) => kindOf(c) === "story").length, hl = all.filter((c) => kindOf(c) === "destaque").length;
     return `<div class="ig-head rv"><span class="avatar big">${avatarInner(client)}</span><div class="ig-id"><b>${esc(handleOf(client))}</b><span class="muted">${esc(client.company)}</span><span class="ig-count"><b data-count="${posts}">${posts}</b> posts <b data-count="${st}">${st}</b> stories <b data-count="${hl}">${hl}</b> destaques</span></div></div>`;
   }
-  function homeTab(all, client, isAdmin) {
+  function homeTab(all, client, isAdmin, key) {
     const c = counts(all);
     const pending = all.filter((x) => x.status === "em_analise" && !x.changeRequested);
     const changes = all.filter((x) => x.status === "em_analise" && x.changeRequested);
@@ -2295,9 +2326,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     const feed = all.filter((x) => kindOf(x) === "feed" && (S.filter === "all" || x.status === S.filter)).sort((a, b) => byDate(b, a));
     const grid = feed.map((x, i) => {
       const img = imgSrc(imagesOf(x)[0]);
-      return `<button class="ig-tile rv" style="--d:${Math.min(i, 9) * 35}ms" data-a="open" data-id="${esc(x.id)}" data-scope="feed" aria-label="${esc(TYPE_NAME(x.type) + ": " + (x.title || "") + ", " + STATUS[x.status])}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(x)}${x.type === "Reel" || x.type === "Carrossel" || x.type === "Publi" ? `<span class="ig-fmt">${typeIcon(x.type)}</span>` : ""}<span class="ig-st ${esc(x.status)}" title="${STATUS[x.status]}"></span><span class="ig-hover"><b>${esc(x.title || "")}</b><span>${STATUS[x.status]}</span></span></button>`;
+      return `<button class="ig-tile rv${isUpdated(x) ? " upd" : ""}" style="--d:${Math.min(i, 9) * 35}ms" data-a="open" data-id="${esc(x.id)}" data-scope="feed" aria-label="${esc(TYPE_NAME(x.type) + ": " + (x.title || "") + ", " + STATUS[x.status])}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : mockHTML(x)}${x.type === "Reel" || x.type === "Carrossel" || x.type === "Publi" ? `<span class="ig-fmt">${typeIcon(x.type)}</span>` : ""}<span class="ig-st ${esc(x.status)}" title="${STATUS[x.status]}"></span><span class="ig-hover"><b>${esc(x.title || "")}</b><span>${STATUS[x.status]}</span></span></button>`;
     }).join("");
-    return `${note}${summaryBar(c)}<div class="ig home">${profileHead(client, all)}
+    const upd = all.filter(isUpdated);
+    const updBar = upd.length ? `<div class="slim upd rv"><span class="okdot">${I.check}</span><span class="slim-t"><b>${upd.length === 1 ? "1 conteúdo foi ajustado" : upd.length + " conteúdos foram ajustados"} pela VA Mídia.</b> <span class="muted">${isAdmin ? "Aguardando nova aprovação do cliente." : "Confira as novas versões e aprove."}</span></span><button class="btn btn-sm btn-outline" data-a="see-upd" data-key="${esc("central-" + key)}">Ver ajustados</button></div>` : "";
+    return `${updBar}${note}${summaryBar(c)}<div class="ig home">${profileHead(client, all)}
       <div class="ig-sec"><div class="ig-label">Feed <span class="muted">· posts, reels, carrosséis e influenciadores · toque para avaliar</span></div>${grid ? `<div class="ig-grid">${grid}</div>` : `<p class="wk-empty">Nenhum post de feed${S.filter !== "all" ? " com este status" : ""} neste mês.</p>`}</div></div>`;
   }
   function storiesTab(all, planning) {
@@ -2318,7 +2351,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="ig hl-page">${profileHead(client, all)}<div class="rings big rv">${hls.map((c) => { const img = imgSrc(imagesOf(c)[0]); return ringHTML(c, c.status, c.title || "Destaque", "destaque", img ? `<img src="${esc(img)}" alt="" loading="lazy" data-fallback>` : `<span class="ring-ic">${I.highlight}</span>`); }).join("")}</div></div>
       <div class="cgrid hl">${hls.map((c, i) => ccard(c, "destaque", i)).join("")}</div>`;
   }
-  const CENTRAL_FILTERS = [["all", "Todos"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Publi", "Influenciador"], ["Story", "Stories"], ["Destaque", "Destaques"]];
+  const CENTRAL_FILTERS = [["all", "Todos"], ["upd", "Atualizados"], ["Reel", "Reels"], ["Carrossel", "Carrossel"], ["Post", "Posts"], ["Publi", "Influenciador"], ["Story", "Stories"], ["Destaque", "Destaques"]];
   function centralTab(all, planning, key) {
     const fkey = "central-" + key, cur = S.tf[fkey] || "all";
     const chips = CENTRAL_FILTERS.map(([k, l]) => { const n = all.filter((c) => matchType(c, k)).length; if (!n && k !== "all" && cur !== k) return ""; return `<button class="fbtn" data-a="tfilter" data-key="${esc(fkey)}" data-f="${k}" aria-pressed="${cur === k}"><span>${l}</span><b data-count="${n}">${n}</b></button>`; }).join("");
@@ -2395,7 +2428,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     else if (S.ctab === "destaques") body = destaquesTab(all, client);
     else if (S.ctab === "central") body = centralTab(all, planning, key);
     else if (S.ctab === "cal") body = overviewTab(all, planning, isAdmin);
-    else body = homeTab(all, client, isAdmin);
+    else body = homeTab(all, client, isAdmin, key);
     const months = !["reports", "traffic", "dash"].includes(S.ctab) && planning ? monthChips(plannings, planning, key) : "";
     return { planning, nav: navHTML(), html: `${months ? `<div class="months-row">${months}</div>` : ""}<div class="ctab-body">${body}</div>` };
   }
@@ -2432,7 +2465,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       const k = ymd(d), items = byDay[k] || [];
       const inMonth = d.getMonth() === planning.month - 1 && d.getFullYear() === planning.year;
       const label = d.getDate() === 1 || +d === +startD ? `${d.getDate()} ${MES3[d.getMonth()].toLowerCase()}` : d.getDate();
-      cells += `<div class="cal-cell${inMonth ? "" : " other"}${k === today ? " today" : ""}${items.length ? " has" : ""}"><span class="cal-d">${label}</span>${items.map((c) => `<button class="cal-chip ${esc(c.status)}" data-a="open" data-id="${esc(c.id)}" title="${esc((c.type || "Conteúdo") + " · " + (c.title || "") + " · " + STATUS[c.status])}" aria-label="${esc((c.type || "Conteúdo") + ": " + (c.title || "sem título") + ", " + STATUS[c.status])}"><i></i>${typeIcon(c.type)}<span>${esc(c.title || c.type || "Conteúdo")}</span></button>`).join("")}</div>`;
+      cells += `<div class="cal-cell${inMonth ? "" : " other"}${k === today ? " today" : ""}${items.length ? " has" : ""}"><span class="cal-d">${label}</span>${items.map((c) => `<button class="cal-chip ${esc(c.status)}${isUpdated(c) ? " upd" : ""}" data-a="open" data-id="${esc(c.id)}" title="${esc((c.type || "Conteúdo") + " · " + (c.title || "") + " · " + STATUS[c.status])}" aria-label="${esc((c.type || "Conteúdo") + ": " + (c.title || "sem título") + ", " + STATUS[c.status])}"><i></i>${typeIcon(c.type)}<span>${esc(c.title || c.type || "Conteúdo")}</span></button>`).join("")}</div>`;
     }
     void endD;
     const undated = undatedOf(list).length;
@@ -2447,7 +2480,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
     return `<button class="wk-row" data-a="open" data-id="${esc(c.id)}">
       <span class="wk-d">${d ? `<b>${pad(d.getDate())}</b>${WD[d.getDay()]}` : "<b>—</b>s/ data"}</span>
       <span class="wk-type">${typeIcon(c.type)}<span>${esc(c.type || "Tipo?")}</span></span>
-      <span class="wk-title${c.title ? "" : " none"}">${esc(c.title || "Título não informado")}${c.changeRequested && c.status === "em_analise" ? ' <span class="tag change">Ajuste pedido</span>' : ""}</span>
+      <span class="wk-title${c.title ? "" : " none"}">${esc(c.title || "Título não informado")}${c.changeRequested && c.status === "em_analise" ? ' <span class="tag change">Ajuste pedido</span>' : ""}${updTag(c)}</span>
       <span class="status ${esc(c.status)}">${STATUS[c.status]}</span></button>`;
   }
   function weeksHTML(planning, list) {
@@ -2742,7 +2775,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="actions"><button class="btn btn-primary" data-a="change-send" ${S.busy.change ? "disabled" : ""}>${S.busy.change ? "Enviando…" : "Enviar solicitação"}</button><button class="btn btn-ghost" data-a="change-cancel">Cancelar</button></div></div>`;
     else body = `<div class="actions"><button class="btn btn-primary" data-a="approve">${I.check}Aprovar conteúdo</button><button class="btn btn-outline" data-a="change">${I.edit}${c.changeRequested ? "Pedir outra alteração" : "Solicitar alteração"}</button></div>`;
     return `<div class="state-card em_analise"><div class="top">${num}<span class="status em_analise">Em análise</span></div>
-      ${c.changeRequested ? `<div class="pending-change">${I.edit}<span>Você pediu uma alteração. A VA Mídia está ajustando e responde por aqui. Se preferir, você ainda pode aprovar como está.</span></div>` : `<div class="msg"><b>Aguardando sua aprovação</b><small>Confira a arte, a legenda e a estratégia. Se estiver tudo certo, aprove.</small></div>`}
+      ${c.changeRequested ? `<div class="pending-change">${I.edit}<span>Você pediu uma alteração. A VA Mídia está ajustando e responde por aqui. Se preferir, você ainda pode aprovar como está.</span></div>` : isUpdated(c) ? `<div class="upd-note">${I.check}<span><b>A VA Mídia ajustou este conteúdo</b> em ${esc(dt(lastAjuste(c).at))}.${lastAjuste(c).note ? `<em>${esc(lastAjuste(c).note)}</em>` : " "}Confira a nova versão e aprove se estiver tudo certo.</span></div>` : `<div class="msg"><b>Aguardando sua aprovação</b><small>Confira a arte, a legenda e a estratégia. Se estiver tudo certo, aprove.</small></div>`}
       ${u.flash === "change" ? `<div class="success">${I.check}Solicitação enviada para a VA Mídia.</div>` : ""}
       ${body}</div>`;
   }
@@ -2759,14 +2792,20 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
         <div class="seg" role="group" aria-label="Status">${Object.keys(STATUS).map((k) => `<button class="${k}" data-a="pick-status" data-s="${k}" aria-pressed="${sel === k}">${STATUS[k]}</button>`).join("")}</div></div>
       ${pend && pend !== c.status ? `<div class="confirm"><p>Mudar de <b>${STATUS[c.status]}</b> para <b>${STATUS[pend]}</b>?${pend === "em_analise" ? " A aprovação registrada será desfeita." : ""}${pend === "publicado" ? " A data de publicação será registrada agora." : ""}${pend === "em_execucao" ? " O cliente verá que o conteúdo está em produção." : ""}</p>
         <div class="actions"><button class="btn btn-primary btn-sm" data-a="save-status" ${S.busy.status ? "disabled" : ""}>Salvar status</button><button class="btn btn-ghost btn-sm" data-a="cancel-status">Cancelar</button></div></div>` : ""}
+      ${c.status === "em_analise" || c.status === "aprovado" ? `<div class="upd-box">
+        <label for="upd-note">${c.changeRequested && c.status === "em_analise" ? "Ajuste feito? Avise o cliente" : "Ajustou este conteúdo? Avise o cliente"}</label>
+        ${isUpdated(c) ? `<span class="hint">${I.check} Cliente avisado em ${esc(dt(lastAjuste(c).at))}${lastAjuste(c).note ? `: “${esc(lastAjuste(c).note)}”` : ""}. A etiqueta “Atualizado” some quando ele aprovar.</span>` : ""}
+        <textarea class="textarea" id="upd-note" data-draft="upd-${esc(c.id)}" maxlength="600" placeholder="O que mudou? Ex.: Trocamos o texto do story 2, como você pediu." style="min-height:64px">${esc(S.drafts["upd-" + c.id] || "")}</textarea>
+        ${c.status === "aprovado" ? '<span class="hint">Este conteúdo já foi aprovado: ao avisar, ele volta para “Em análise” para o cliente aprovar a nova versão.</span>' : ""}
+        <div class="row"><button class="btn btn-primary btn-sm" data-a="mark-upd" ${S.busy.upd ? "disabled" : ""}>${I.check}${S.busy.upd ? "Avisando…" : "Marcar como ajustado e avisar"}</button></div>
+      </div>` : ""}
       <div class="field"><label for="ad-date">Data de publicação</label><input class="input" type="date" id="ad-date" value="${esc(c.date || "")}" data-a-change="set-date" style="max-width:220px">${c.date ? "" : '<span class="hint">Sem data: o conteúdo aparece em "Sem data definida". Escolha uma data para ele entrar no calendário.</span>'}</div>
       <div class="row" style="flex-wrap:wrap;gap:8px">
-        ${c.changeRequested && c.status === "em_analise" ? `<button class="btn btn-sm" data-a="resolve">${I.check}Marcar alteração como resolvida</button>` : ""}
         ${S.info.canUploadImages ? `<label class="btn btn-sm" for="img-swap">${I.upload}Trocar imagem</label><input type="file" id="img-swap" accept="image/*" class="sr" data-a-change="swap-image">` : ""}
         ${S.ui.del ? `<button class="btn btn-danger btn-sm" data-a="delete-yes">Confirmar exclusão</button><button class="btn btn-ghost btn-sm" data-a="delete-no">Cancelar</button>` : `<button class="btn btn-ghost btn-sm" data-a="delete">${I.trash}Excluir</button>`}
       </div>
       ${c.approvedAt ? `<p class="hint">Aprovado em ${esc(dt(c.approvedAt))}${c.publishedAt ? ` · Publicado em ${esc(dt(c.publishedAt))}` : ""}</p>` : ""}
-      ${hist.length ? `<div class="history"><span class="label">Histórico</span>${hist.map((h) => `<span><i style="background:var(--st-${h.status === "em_analise" ? "analise" : h.status === "em_execucao" ? "exec" : h.status})"></i>${STATUS[h.status] || esc(h.status)} · ${esc(dt(h.at))}${h.by ? " · " + esc(h.by) : ""}</span>`).join("")}</div>` : ""}
+      ${hist.length ? `<div class="history"><span class="label">Histórico</span>${hist.map((h) => `<span><i style="background:var(--st-${h.status === "em_analise" ? "analise" : h.status === "em_execucao" ? "exec" : h.status})"></i>${h.kind === "ajuste" ? "Ajustado" : STATUS[h.status] || esc(h.status)} · ${esc(dt(h.at))}${h.by ? " · " + esc(h.by) : ""}</span>`).join("")}</div>` : ""}
     </div>`;
   }
 
@@ -3089,6 +3128,8 @@ Imagem:`;
           <span class="hint">${im.untouched.map((c) => "“" + esc(c.title || "sem título") + "”" + (c.date ? " (" + day(c.date).short + ")" : "")).join(", ")}</span>
           <label class="row" style="gap:10px;cursor:pointer"><input type="checkbox" id="imp-rm" data-a-change="imp-rm" ${im.removeOld ? "checked" : ""}> <span>Substituir o planejamento: <b>remover estes conteúdos</b> do portal (comentários deles também saem)</span></label>
           ${im.removeOld ? "" : '<span class="hint">Sem marcar, eles continuam no portal como estão.</span>'}</div>` : ""}
+        ${n.update + n.conflict ? `<div class="card" style="margin-top:12px;gap:8px"><label class="row" style="gap:10px;cursor:pointer"><input type="checkbox" id="imp-notify" data-a-change="imp-notify" ${im.notifyUpd !== false ? "checked" : ""}> <span><b>Avisar o cliente</b> que os conteúdos alterados foram ajustados (eles aparecem com a etiqueta “Atualizado” até ele aprovar)</span></label>
+          <span class="hint">Desmarque se for só uma correção pequena que não precisa de nova revisão.</span></div>` : ""}
         <div class="row" style="margin-top:18px;flex-wrap:wrap"><button class="btn btn-primary" data-a="imp-apply" ${im.busy || !im.clientId || !im.month || !im.year ? "disabled" : ""}>${im.busy ? "Publicando…" : "Publicar planejamento"}</button>
           ${!im.clientId || !im.month ? '<span class="hint">Escolha o cliente e o mês para publicar.</span>' : ""}</div>`;
     }
@@ -3258,6 +3299,13 @@ Imagem:`;
       S.busy.status = false; render();
     },
     resolve: async () => { try { await S.store.resolveChange(S.open.id); toast("Alteração marcada como resolvida."); } catch (e) { toast(dbErr(e), "err"); } },
+    "mark-upd": async () => {
+      const id = S.open.id, el = document.getElementById("upd-note"), note = el ? el.value : (S.drafts["upd-" + id] || "");
+      S.busy.upd = true; render();
+      try { await S.store.markUpdated(id, note); delete S.drafts["upd-" + id]; toast("Cliente avisado: o conteúdo aparece como “Atualizado” para ele."); } catch (e) { toast(dbErr(e), "err"); }
+      S.busy.upd = false; render();
+    },
+    "see-upd": (el) => { S.ctab = "central"; S.tf[el.dataset.key] = "upd"; render(); const n = document.getElementById("topnav"); if (n) n.scrollIntoView({ behavior: "smooth", block: "start" }); },
     delete: () => { S.ui.del = true; render(); },
     "delete-no": () => { S.ui.del = false; render(); },
     "delete-yes": async () => { const id = S.open.id; try { S.open = null; resetUI(); await S.store.deleteContent(id); toast("Conteúdo excluído."); } catch (e) { toast(dbErr(e), "err"); } render(); },
@@ -3371,6 +3419,13 @@ ${im.text.slice(0, 50000)}
           r.changes.forEach((f) => { if (f !== "images") data[f] = it[f]; });
           if (refs.length) { data.image = refs[0]; data.images = refs.length > 1 ? refs : []; }
           if (r.action === "conflict" && r.match.status === "aprovado") { data.status = "em_analise"; data.approvedAt = null; data.history = (r.match.history || []).concat({ status: "em_analise", at: now, by: "VA Mídia (planejamento atualizado)" }); }
+          const FN = { title: "título", caption: "legenda", description: "descrição", objective: "objetivo", images: "imagem", image: "imagem", date: "data", type: "formato" };
+          const meaningful = r.changes.filter((f) => FN[f]);
+          if (im.notifyUpd !== false && (meaningful.length || refs.length) && (r.match.status === "em_analise" || data.status === "em_analise")) {
+            const what = Array.from(new Set(meaningful.map((f) => FN[f]).concat(refs.length ? ["imagem"] : [])));
+            data.history = (data.history || r.match.history || []).concat({ status: "em_analise", at: now, by: "VA Mídia", kind: "ajuste", note: what.length ? "Atualizado: " + what.join(", ") + "." : "" });
+            data.changeRequested = false;
+          }
           plan.ops.push({ kind: "update", id: r.match.id, data });
           tally.update++;
         }
@@ -3426,6 +3481,7 @@ ${im.text.slice(0, 50000)}
     if (a === "imp-item-file") { const i = +t.dataset.i; const fs = Array.from(t.files || []); S.imp.itemFiles[i] = fs; S.imp.parsed.items[i]._files = fs; recomputeMerge(); render(); }
     if (a === "imp-choice") { S.imp.choices[+t.dataset.i] = t.value; }
     if (a === "imp-rm") { S.imp.removeOld = t.checked; render(); }
+    if (a === "imp-notify") { S.imp.notifyUpd = t.checked; render(); }
     if (a === "imp-date" && t.value) { const it = S.imp.parsed.items[+t.dataset.i]; it.date = t.value; it._manualDate = true; it.warnings = it.warnings.filter((w) => !/^Data/.test(w)); recomputeMerge(); render(); }
     if (a === "set-date") { try { await S.store.setContentDate(S.open.id, t.value || ""); toast(t.value ? "Data atualizada." : "Data removida."); } catch (e) { toast(errMsg(e), "err"); } }
     if (a === "client-logo" && t.files[0]) { try { const ref = await S.store.uploadImage(t.files[0]); await S.store.setClientLogo(t.dataset.id, ref); toast("Logo do cliente atualizado."); } catch (e) { toast(errMsg(e), "err"); } }
